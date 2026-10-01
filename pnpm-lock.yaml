@@ -177,7 +177,7 @@ importers:
         version: 3.0.1(ajv@8.20.0)
       immer:
         specifier: ^11.0.0
-        version: 11.0.0
+        version: 11.1.18
     devDependencies:
       '@biomejs/biome':
         specifier: ^2.5.14
@@ -2621,8 +2621,8 @@ packages:
     resolution: {integrity: sha512-4fCk79wshMdzMp2rH06qWrJE4iolqLhCUH+OiuIgU++RB0+94NlDL81atO7GX55uUKueo0txHNtvEyI6D7WdMw==}
     engines: {node: '>=0.10.0'}
 
-  immer@11.0.0:
-    resolution: {integrity: sha512-XtRG4SINt4dpqlnJvs70O2j6hH7H0X8fUzFsjMn1rwnETaxwp83HLNimXBjZ78MrKl3/d3/pkzDH0o0Lkxm37Q==}
+  immer@11.1.18:
+    resolution: {integrity: sha512-EQyQtLiYW029lyoczMl/Hh4Xu7cDecSc58JRYpHyL4tIAu3eqd1yJzQX04d2BZHDkzFFvm6qJEJWOtfDSWAXbQ==}
 
   import-lazy@4.0.0:
     resolution: {integrity: sha512-rKtvo6a868b5Hu3heneU+L4yEQ4jYKLtjpnPeUdK7h0yzXGmyBTypknlkCvHFBqfX9YlorEiMM6Dnq/5atfHkw==}
@@ -6146,7 +6146,7 @@ snapshots:
     dependencies:
       safer-buffer: 2.1.2
 
-  immer@11.0.0: {}
+  immer@11.1.18: {}
 
   import-lazy@4.0.0: {}
 
