@@ -6,6 +6,11 @@ updates:
       interval: weekly
       day: monday
     open-pull-requests-limit: 10
+    ignore:
+      # jsdom >=30 requires Node ^22.22.2 (via undici 8); CI still covers
+      # Node 20. Revisit when the Node 20 matrix entry is dropped.
+      - dependency-name: "jsdom"
+        update-types: ["version-update:semver-major"]
     groups:
       dev-dependencies:
         dependency-type: development
