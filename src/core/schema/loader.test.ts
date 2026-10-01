@@ -15,26 +15,28 @@ import { clearSchemaCache, createSchemaLoader } from "./loader";
 
 // ---------- helpers ----------
 
-function mockFetch(response: unknown, status = 200, statusText = "OK"): ReturnType<typeof vi.fn> {
-  return vi.fn().mockResolvedValue({
+type FetchLike = (input: string | URL | Request, init?: RequestInit) => Promise<Response>;
+
+function mockFetch(response: unknown, status = 200, statusText = "OK"): typeof fetch {
+  return vi.fn<FetchLike>().mockResolvedValue({
     ok: status >= 200 && status < 300,
     status,
     statusText,
     json: async () => response,
-  });
+  } as unknown as Response) as unknown as typeof fetch;
 }
 
-function mockFetchWithDelay(response: unknown, delayMs: number): ReturnType<typeof vi.fn> {
-  return vi.fn().mockImplementation(
-    (_url: string, init?: RequestInit) =>
-      new Promise((resolve, reject) => {
+function mockFetchWithDelay(response: unknown, delayMs: number): typeof fetch {
+  return vi.fn<FetchLike>().mockImplementation(
+    (_url: string | URL | Request, init?: RequestInit) =>
+      new Promise<Response>((resolve, reject) => {
         const timer = setTimeout(() => {
           resolve({
             ok: true,
             status: 200,
             statusText: "OK",
             json: async () => response,
-          });
+          } as unknown as Response);
         }, delayMs);
 
         if (init?.signal) {
@@ -45,7 +47,7 @@ function mockFetchWithDelay(response: unknown, delayMs: number): ReturnType<type
           });
         }
       }),
-  );
+  ) as unknown as typeof fetch;
 }
 
 const minimalWorkbook = {
@@ -89,9 +91,7 @@ describe("createSchemaLoader", () => {
 
     expect(workbook.schemaVersion).toBe("4.1.1");
     expect(globalThis.fetch).toHaveBeenCalledTimes(1);
-    expect((globalThis.fetch as ReturnType<typeof vi.fn>).mock.calls[0][0]).toBe(
-      "https://cdn.example.com/workbook.json",
-    );
+    expect(vi.mocked(globalThis.fetch).mock.calls[0][0]).toBe("https://cdn.example.com/workbook.json");
   });
 
   // ---- caching ----

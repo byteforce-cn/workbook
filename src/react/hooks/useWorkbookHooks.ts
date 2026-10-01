@@ -89,7 +89,7 @@ export function useWorkbookHooks(
   hooks: WorkbookHookDefinition[] | undefined,
   data: WorkbookData,
 ) {
-  const timersRef = useRef<Map<string, number>>(new Map());
+  const timersRef = useRef<Map<string, ReturnType<typeof setTimeout>>>(new Map());
 
   const runTrigger = useCallback(
     async (trigger: WorkbookHookTrigger, dispatch?: (eventName: string, payload?: unknown) => void) => {
