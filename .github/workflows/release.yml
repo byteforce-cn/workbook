@@ -32,8 +32,11 @@ jobs:
       - name: Create release PR or publish
         uses: changesets/action@v2
         with:
-          version: pnpm changeset version
-          publish: pnpm changeset publish
+          # v2 renamed the v1 `version`/`publish` inputs (unknown inputs are
+          # ignored), and now pushes release commits, tags and GitHub Releases
+          # via the GitHub API by default.
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          version-script: pnpm changeset version
+          publish-script: pnpm changeset publish
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_CONFIG_PROVENANCE: "true"
