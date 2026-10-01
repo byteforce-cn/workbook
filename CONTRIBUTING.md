@@ -145,6 +145,13 @@ message, certifying that you have the right to contribute the code.
 - Removal happens no earlier than the **next major** release, and never sooner
   than 6 months after the deprecation lands.
 
+## AI coding assistants
+
+AI agents (GitHub Copilot & Copilot coding agent, Claude Code, Cursor, …) must
+follow [`AGENTS.md`](./AGENTS.md) in addition to this guide: never push to
+`main`, never touch the release machinery, never hand-edit generated files, and
+run the full gate set before proposing a change.
+
 ## Community
 
 - Please follow our [Code of Conduct](./CODE_OF_CONDUCT.md).
