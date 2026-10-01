@@ -2,10 +2,10 @@ import { defineConfig } from "vitepress";
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
+  // Deployed as a GitHub Pages project site: https://byteforce-cn.github.io/workbook/
+  base: "/workbook/",
   title: "@byteforce/workbook",
   description: "BF Workbook v4.1.1 schema-driven runtime for form, page, and sheet views.",
-
-  head: [["link", { rel: "icon", href: "/favicon.ico" }]],
 
   themeConfig: {
     // Shared across locales unless overridden.
