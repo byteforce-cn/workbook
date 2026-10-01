@@ -1,0 +1,23 @@
+{
+  "kind": "workbook",
+  "schemaVersion": "4.1.1",
+  "data": {},
+  "views": [
+    {
+      "type": "form",
+      "id": "main",
+      "fields": [
+        {
+          "name": "username",
+          "type": "string",
+          "label": "用户名",
+          "validations": [
+            {
+              "type": "required"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

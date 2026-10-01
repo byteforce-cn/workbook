@@ -1,0 +1,60 @@
+{
+  "kind": "workbook",
+  "schemaVersion": "4.1.1",
+  "locale": "zh-CN",
+  "data": {},
+  "assets": {
+    "floating-badge": {
+      "src": "https://assets.example/floating-badge.png",
+      "type": "image/png"
+    }
+  },
+  "views": [
+    {
+      "type": "page",
+      "id": "floating-absolute-and-percent-layout",
+      "label": "浮动块定位 conformance",
+      "pageSettings": {
+        "width": 600,
+        "height": 800,
+        "marginTop": 72,
+        "marginLeft": 72,
+        "marginRight": 72,
+        "marginBottom": 72
+      },
+      "content": [
+        {
+          "type": "floating",
+          "layout": {
+            "x": 36,
+            "y": 48,
+            "width": 180,
+            "height": 64
+          },
+          "content": {
+            "type": "paragraph",
+            "runs": [{ "type": "text", "text": "绝对定位浮动段落" }]
+          }
+        },
+        {
+          "type": "floating",
+          "layout": {
+            "x": "50%",
+            "y": "25%",
+            "width": "20%",
+            "height": "10%"
+          },
+          "content": {
+            "type": "image",
+            "src": "floating-badge",
+            "alt": "浮动图章"
+          }
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "type": "text", "text": "普通正文" }]
+        }
+      ]
+    }
+  ]
+}

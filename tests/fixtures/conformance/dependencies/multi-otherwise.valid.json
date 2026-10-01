@@ -1,0 +1,53 @@
+{
+  "kind": "workbook",
+  "schemaVersion": "4.1.1",
+  "data": {
+    "status": "draft",
+    "approver": ""
+  },
+  "views": [
+    {
+      "type": "form",
+      "id": "multi-otherwise",
+      "label": "多字段 Otherwise 依赖",
+      "fields": [
+        {
+          "name": "status",
+          "type": "select",
+          "label": "状态",
+          "bind": { "path": "status", "mode": "twoWay" },
+          "options": [
+            { "value": "draft", "label": "草稿" },
+            { "value": "review", "label": "审核中" },
+            { "value": "approved", "label": "已批准" }
+          ]
+        },
+        {
+          "name": "approver",
+          "type": "string",
+          "label": "审批人",
+          "bind": { "path": "approver", "mode": "twoWay" },
+          "dependencies": [
+            {
+              "targetField": "approver",
+              "condition": {
+                "op": "eq",
+                "path": "status",
+                "value": "review"
+              },
+              "effect": {
+                "visible": true,
+                "required": true,
+                "validations": [{ "type": "required", "message": "审批人不能为空" }]
+              },
+              "otherwise": {
+                "visible": false,
+                "required": false
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

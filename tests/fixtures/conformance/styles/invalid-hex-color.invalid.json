@@ -1,0 +1,28 @@
+{
+  "kind": "workbook",
+  "schemaVersion": "4.1.1",
+  "data": {},
+  "styles": {
+    "paragraphStyles": {
+      "headline": {
+        "color": "red"
+      }
+    }
+  },
+  "views": [
+    {
+      "type": "page",
+      "pageSettings": {
+        "width": 595,
+        "height": 842
+      },
+      "content": [
+        {
+          "type": "paragraph",
+          "style": "headline",
+          "runs": [{ "type": "text", "text": "非法颜色" }]
+        }
+      ]
+    }
+  ]
+}

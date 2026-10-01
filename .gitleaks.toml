@@ -1,0 +1,24 @@
+# gitleaks configuration for @byteforce/workbook
+# Docs: https://github.com/gitleaks/gitleaks
+#
+# Extends the default gitleaks rule set and adds allowlists for build
+# artifacts / generated directories that never ship in the public repository.
+
+title = "workbook"
+
+[extend]
+useDefault = true
+
+[[allowlists]]
+description = "Generated and vendored paths (never published from source)"
+paths = [
+  '''node_modules/''',
+  '''dist/''',
+  '''coverage/''',
+  '''storybook-static/''',
+  '''docs-site/\.vitepress/dist/''',
+  '''docs-site/\.vitepress/cache/''',
+  '''docs-site/public/api-reference/''',
+  '''playwright-report/''',
+  '''test-results/''',
+]

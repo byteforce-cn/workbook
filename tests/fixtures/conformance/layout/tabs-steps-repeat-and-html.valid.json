@@ -1,0 +1,225 @@
+{
+  "kind": "workbook",
+  "schemaVersion": "4.1.1",
+  "locale": "zh-CN",
+  "data": {
+    "title": "Q3 升级项目",
+    "archived": false,
+    "summary": "先完成基础信息，再补充审批与交付说明。",
+    "approver": "张工",
+    "showNotice": true,
+    "notice": "审批说明需要同步 PMO。",
+    "deliveryNote": "需要联合测试后再上线。",
+    "milestones": [
+      {
+        "name": "需求澄清"
+      }
+    ]
+  },
+  "views": [
+    {
+      "type": "form",
+      "id": "layout-compositions",
+      "label": "布局能力",
+      "fields": [
+        {
+          "name": "title",
+          "type": "string",
+          "label": "项目标题",
+          "bind": {
+            "path": "title",
+            "mode": "twoWay"
+          }
+        },
+        {
+          "name": "archived",
+          "type": "boolean",
+          "label": "归档标记",
+          "bind": {
+            "path": "archived",
+            "mode": "twoWay"
+          }
+        },
+        {
+          "name": "summary",
+          "type": "textarea",
+          "label": "项目摘要",
+          "bind": {
+            "path": "summary",
+            "mode": "twoWay"
+          }
+        },
+        {
+          "name": "approver",
+          "type": "string",
+          "label": "审批人",
+          "bind": {
+            "path": "approver",
+            "mode": "twoWay"
+          }
+        },
+        {
+          "name": "showNotice",
+          "type": "boolean",
+          "label": "显示审批说明",
+          "bind": {
+            "path": "showNotice",
+            "mode": "twoWay"
+          }
+        },
+        {
+          "name": "notice",
+          "type": "textarea",
+          "label": "审批说明",
+          "bind": {
+            "path": "notice",
+            "mode": "twoWay"
+          }
+        },
+        {
+          "name": "deliveryNote",
+          "type": "textarea",
+          "label": "交付备注",
+          "bind": {
+            "path": "deliveryNote",
+            "mode": "twoWay"
+          }
+        },
+        {
+          "name": "milestones",
+          "type": "array",
+          "label": "里程碑清单",
+          "bind": {
+            "path": "milestones",
+            "mode": "twoWay"
+          },
+          "arrayConfig": {
+            "addLabel": "新增里程碑",
+            "removeLabel": "删除里程碑",
+            "itemFields": [
+              {
+                "name": "name",
+                "type": "string",
+                "label": "里程碑名称"
+              }
+            ]
+          }
+        },
+        {
+          "name": "milestoneName",
+          "type": "string",
+          "label": "里程碑名称",
+          "bind": {
+            "path": "milestones[*].name",
+            "mode": "twoWay"
+          }
+        }
+      ],
+      "layout": [
+        {
+          "type": "group",
+          "title": "基础信息",
+          "children": [
+            {
+              "type": "row",
+              "gutter": 16,
+              "children": [
+                {
+                  "type": "field",
+                  "name": "title"
+                },
+                {
+                  "type": "field",
+                  "name": "archived"
+                }
+              ]
+            },
+            {
+              "type": "html",
+              "content": "<p>布局提示：先完成基础信息，再补充审批与交付说明。</p>"
+            }
+          ]
+        },
+        {
+          "type": "tabs",
+          "defaultActiveKey": "summary",
+          "tabs": [
+            {
+              "key": "summary",
+              "title": "摘要信息",
+              "children": [
+                {
+                  "type": "field",
+                  "name": "summary"
+                }
+              ]
+            },
+            {
+              "key": "approval",
+              "title": "审批配置",
+              "children": [
+                {
+                  "type": "field",
+                  "name": "approver"
+                },
+                {
+                  "type": "conditional",
+                  "condition": {
+                    "op": "eq",
+                    "path": "showNotice",
+                    "value": true
+                  },
+                  "children": [
+                    {
+                      "type": "field",
+                      "name": "notice"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "steps",
+          "steps": [
+            {
+              "key": "summary-step",
+              "title": "摘要步骤",
+              "children": [
+                {
+                  "type": "field",
+                  "name": "showNotice"
+                }
+              ]
+            },
+            {
+              "key": "delivery-step",
+              "title": "交付步骤",
+              "children": [
+                {
+                  "type": "field",
+                  "name": "deliveryNote"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "repeat",
+          "field": "milestones",
+          "arrayConfig": {
+            "addLabel": "新增里程碑",
+            "removeLabel": "删除里程碑"
+          },
+          "children": [
+            {
+              "type": "field",
+              "name": "milestoneName"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

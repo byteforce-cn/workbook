@@ -1,0 +1,217 @@
+{
+  "kind": "workbook",
+  "schemaVersion": "4.1.1",
+  "locale": "zh-CN",
+  "data": {
+    "owner": "Alice",
+    "age": 32,
+    "active": true,
+    "startDate": "2026-05-29",
+    "bio": "负责核心交付与验收协调。",
+    "role": "manager",
+    "skills": ["schema", "playwright"],
+    "tags": ["alpha", "beta"],
+    "metadata": {
+      "region": "east",
+      "priority": "high"
+    }
+  },
+  "views": [
+    {
+      "type": "form",
+      "id": "primitive-fields",
+      "label": "字段能力",
+      "config": {
+        "validateMode": "onBlur",
+        "submitLabel": "保存字段",
+        "resetLabel": "重置字段"
+      },
+      "fields": [
+        {
+          "name": "owner",
+          "type": "string",
+          "label": "负责人",
+          "bind": {
+            "path": "owner",
+            "mode": "twoWay"
+          },
+          "validations": [
+            {
+              "type": "required",
+              "message": "负责人不能为空"
+            }
+          ]
+        },
+        {
+          "name": "age",
+          "type": "number",
+          "label": "工期天数",
+          "bind": {
+            "path": "age",
+            "mode": "twoWay"
+          },
+          "validations": [
+            {
+              "type": "min",
+              "params": 1,
+              "message": "工期天数必须大于 0"
+            }
+          ]
+        },
+        {
+          "name": "active",
+          "type": "boolean",
+          "label": "启用状态",
+          "bind": {
+            "path": "active",
+            "mode": "twoWay"
+          }
+        },
+        {
+          "name": "startDate",
+          "type": "date",
+          "label": "启动日期",
+          "bind": {
+            "path": "startDate",
+            "mode": "twoWay"
+          }
+        },
+        {
+          "name": "bio",
+          "type": "textarea",
+          "label": "方案说明",
+          "bind": {
+            "path": "bio",
+            "mode": "twoWay"
+          }
+        },
+        {
+          "name": "role",
+          "type": "select",
+          "label": "项目角色",
+          "bind": {
+            "path": "role",
+            "mode": "twoWay"
+          },
+          "options": [
+            {
+              "label": "项目经理",
+              "value": "manager"
+            },
+            {
+              "label": "架构师",
+              "value": "architect"
+            },
+            {
+              "label": "测试负责人",
+              "value": "qa"
+            }
+          ]
+        },
+        {
+          "name": "skills",
+          "type": "multiselect",
+          "label": "技能标签",
+          "bind": {
+            "path": "skills",
+            "mode": "twoWay"
+          },
+          "options": [
+            {
+              "label": "Schema",
+              "value": "schema"
+            },
+            {
+              "label": "Playwright",
+              "value": "playwright"
+            },
+            {
+              "label": "Canvas",
+              "value": "canvas"
+            }
+          ]
+        },
+        {
+          "name": "tags",
+          "type": "array",
+          "label": "标签数组",
+          "bind": {
+            "path": "tags",
+            "mode": "twoWay"
+          }
+        },
+        {
+          "name": "metadata",
+          "type": "object",
+          "label": "扩展数据",
+          "bind": {
+            "path": "metadata",
+            "mode": "twoWay"
+          }
+        }
+      ],
+      "layout": [
+        {
+          "type": "group",
+          "title": "基础字段",
+          "children": [
+            {
+              "type": "row",
+              "gutter": 16,
+              "children": [
+                {
+                  "type": "field",
+                  "name": "owner"
+                },
+                {
+                  "type": "field",
+                  "name": "age"
+                }
+              ]
+            },
+            {
+              "type": "row",
+              "gutter": 16,
+              "children": [
+                {
+                  "type": "field",
+                  "name": "active"
+                },
+                {
+                  "type": "field",
+                  "name": "startDate"
+                }
+              ]
+            },
+            {
+              "type": "field",
+              "name": "bio"
+            },
+            {
+              "type": "row",
+              "gutter": 16,
+              "children": [
+                {
+                  "type": "field",
+                  "name": "role"
+                },
+                {
+                  "type": "field",
+                  "name": "skills"
+                }
+              ]
+            },
+            {
+              "type": "field",
+              "name": "tags"
+            },
+            {
+              "type": "field",
+              "name": "metadata"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "kind": "workbook",
+  "schemaVersion": "4.1.1",
+  "data": {
+    "region": "east"
+  },
+  "views": [
+    {
+      "type": "form",
+      "id": "invalid-option-label",
+      "fields": [
+        {
+          "name": "region",
+          "type": "select",
+          "label": "区域",
+          "options": [
+            {
+              "value": "east"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

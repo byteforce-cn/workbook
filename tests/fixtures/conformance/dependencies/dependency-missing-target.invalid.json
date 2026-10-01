@@ -1,0 +1,32 @@
+{
+  "kind": "workbook",
+  "schemaVersion": "4.1.1",
+  "data": {
+    "budget": 100
+  },
+  "views": [
+    {
+      "type": "form",
+      "id": "invalid-dependency-target",
+      "fields": [
+        {
+          "name": "budget",
+          "type": "number",
+          "label": "预算额度",
+          "dependencies": [
+            {
+              "condition": {
+                "op": "eq",
+                "path": "budget",
+                "value": 100
+              },
+              "effect": {
+                "disabled": true
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

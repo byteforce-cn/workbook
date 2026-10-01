@@ -1,0 +1,23 @@
+{
+  "kind": "workbook",
+  "schemaVersion": "4.1.1",
+  "data": {},
+  "views": [
+    {
+      "type": "form",
+      "id": "invalid-options",
+      "label": "无效选项源",
+      "fields": [
+        {
+          "name": "city",
+          "type": "select",
+          "label": "城市",
+          "bind": { "path": "city" },
+          "options": {
+            "type": "url"
+          }
+        }
+      ]
+    }
+  ]
+}

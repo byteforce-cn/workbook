@@ -1,0 +1,66 @@
+{
+  "kind": "workbook",
+  "schemaVersion": "4.1.1",
+  "locale": "zh-CN",
+  "data": {
+    "region": "east",
+    "pagedCity": ""
+  },
+  "views": [
+    {
+      "type": "form",
+      "id": "paginated-dependent-options",
+      "label": "分页依赖选项源",
+      "fields": [
+        {
+          "name": "region",
+          "type": "select",
+          "label": "区域",
+          "bind": {
+            "path": "region",
+            "mode": "twoWay"
+          },
+          "options": [{ "label": "华东", "value": "east" }, { "label": "华西", "value": "west" }]
+        },
+        {
+          "name": "pagedCity",
+          "type": "select",
+          "label": "分页城市",
+          "bind": {
+            "path": "pagedCity",
+            "mode": "twoWay"
+          },
+          "options": {
+            "type": "url",
+            "endpoint": "https://workbook.example/api/paged-cities",
+            "method": "POST",
+            "params": {
+              "region": {
+                "$field": "region"
+              }
+            },
+            "pagination": {
+              "enabled": true,
+              "pageSize": 10,
+              "totalPath": "payload.total",
+              "pageParam": "page"
+            },
+            "dependsOn": ["region"],
+            "fetchOnMount": false,
+            "searchDebounce": 1,
+            "dataPath": "payload.records",
+            "valueKey": "id",
+            "labelKey": "name"
+          }
+        }
+      ],
+      "layout": [
+        {
+          "type": "row",
+          "gutter": 16,
+          "children": [{ "type": "field", "name": "region" }, { "type": "field", "name": "pagedCity" }]
+        }
+      ]
+    }
+  ]
+}

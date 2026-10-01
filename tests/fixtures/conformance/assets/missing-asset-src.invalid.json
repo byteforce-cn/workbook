@@ -1,0 +1,25 @@
+{
+  "kind": "workbook",
+  "schemaVersion": "4.1.1",
+  "data": {},
+  "assets": {
+    "logo": {
+      "type": "image/svg+xml"
+    }
+  },
+  "views": [
+    {
+      "type": "page",
+      "pageSettings": {
+        "width": 595,
+        "height": 842
+      },
+      "content": [
+        {
+          "type": "image",
+          "src": "logo"
+        }
+      ]
+    }
+  ]
+}

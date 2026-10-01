@@ -1,0 +1,694 @@
+/* ==========================================================================
+ * @byteforce/workbook — 默认主题（workbook-theme.css）
+ *
+ * 设计基调（面向单据编辑场景）：
+ *   - 主色   $primary   #2563EB（focus ring / 选中 / 提交主按钮）
+ *   - 文本   #172033（主） #334155（字段） #64748B（说明） #94A3B8（占位）
+ *   - 边框   #D7DEE9（默认） #2563EB（focus） #DC2626（error）
+ *   - 表面   #FFFFFF（控件） #F8FAFC（禁用底） #EFF6FF（选中底）
+ *   - 圆角   6px（控件） 10px（分组卡片）  触控高 36px（desktop）
+ * 全部控件统一：hover 边框加深、focus 主色 ring、disabled 灰底、error 红框红字。
+ * ========================================================================== */
+
+.bf-workbook-view-stack,
+.bf-workbook-form-view,
+.bf-workbook-sheet-view,
+.bf-workbook-page-view {
+  color: #172033;
+  font-family:
+    Inter, "Noto Sans SC", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+.bf-workbook-view-stack {
+  display: grid;
+  gap: 24px;
+  min-width: 0;
+}
+
+.bf-workbook-form-view {
+  display: grid;
+  gap: 18px;
+  min-width: 0;
+}
+
+.bf-workbook-form-view > h2,
+.bf-workbook-sheet-view > h2 {
+  margin: 0;
+  color: #111827;
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  line-height: 1.4;
+}
+
+.bf-workbook-form-view form {
+  display: grid;
+  gap: 18px;
+}
+
+.bf-workbook-layout {
+  display: grid;
+  gap: 18px;
+  min-width: 0;
+}
+
+/* ------------------------------------------------------------------ */
+/* 分组卡片（group）：白底 + 细边框 + 标题左竖线                          */
+/* ------------------------------------------------------------------ */
+.bf-workbook-group {
+  position: relative;
+  display: grid;
+  gap: 16px;
+  min-width: 0;
+  border: 1px solid #dbe4f0;
+  border-radius: 10px;
+  background: #ffffff;
+  box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04);
+  padding: 18px 20px 20px;
+}
+
+.bf-workbook-group > h3 {
+  margin: 0;
+  color: #1f2a44;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.35;
+  padding-left: 10px;
+  position: relative;
+}
+
+.bf-workbook-group > h3::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 2px;
+  bottom: 2px;
+  width: 3px;
+  border-radius: 2px;
+  background: #2563eb;
+}
+
+.bf-workbook-row {
+  align-items: start;
+}
+
+/* row 多栏：每个子项一个栅格单元，layoutField.span 决定跨列数（grid-column: span N） */
+.bf-workbook-row-item {
+  min-width: 0;
+}
+
+.bf-workbook-row-item > .bf-workbook-layout,
+.bf-workbook-row > .bf-workbook-layout {
+  display: contents;
+}
+
+/* ------------------------------------------------------------------ */
+/* 字段：标签 + 控件 + 错误                                              */
+/* ------------------------------------------------------------------ */
+.bf-workbook-field {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+  color: #334155;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.35;
+}
+
+.bf-workbook-field > span:first-child {
+  color: #344054;
+}
+
+/* 必填星号：经 data-required 由 ::after 渲染，不污染标签文本/a11y 树 */
+.bf-workbook-field > span:first-child[data-required="true"]::after {
+  content: "*";
+  margin-left: 3px;
+  color: #dc2626;
+  font-weight: 700;
+}
+
+/* ---- 输入类控件统一 ---- */
+.bf-workbook-field input,
+.bf-workbook-field select,
+.bf-workbook-field textarea {
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 36px;
+  border: 1px solid #d7dee9;
+  border-radius: 6px;
+  background: #ffffff;
+  color: #172033;
+  font: inherit;
+  font-weight: 500;
+  outline: none;
+  padding: 7px 11px;
+  transition:
+    border-color 120ms ease,
+    box-shadow 120ms ease,
+    background-color 120ms ease;
+}
+
+.bf-workbook-field input::placeholder,
+.bf-workbook-field textarea::placeholder {
+  color: #a6b0c3;
+  font-weight: 400;
+}
+
+.bf-workbook-field input:hover:not(:disabled),
+.bf-workbook-field select:hover:not(:disabled),
+.bf-workbook-field textarea:hover:not(:disabled) {
+  border-color: #94a3b8;
+}
+
+.bf-workbook-field input:focus,
+.bf-workbook-field select:focus,
+.bf-workbook-field textarea:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.13);
+}
+
+.bf-workbook-field input:disabled,
+.bf-workbook-field select:disabled,
+.bf-workbook-field textarea:disabled {
+  cursor: not-allowed;
+  background: #f4f6f9;
+  color: #7c8798;
+}
+
+.bf-workbook-field textarea {
+  min-height: 88px;
+  resize: vertical;
+  line-height: 1.55;
+}
+
+/* ---- 下拉：去除原生箭头，换主色 chevron ---- */
+.bf-workbook-field select {
+  appearance: none;
+  -webkit-appearance: none;
+  padding-right: 32px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2364748B' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+}
+
+.bf-workbook-field select:hover:not(:disabled) {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%232563EB' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+}
+
+.bf-workbook-field select[multiple] {
+  appearance: auto;
+  -webkit-appearance: auto;
+  min-height: 112px;
+  padding: 6px;
+  background-image: none;
+}
+
+/* ---- 日期：日历图标着色 ---- */
+.bf-workbook-field input[type="date"]::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  opacity: 0.55;
+  transition: opacity 120ms ease;
+}
+
+.bf-workbook-field input[type="date"]:hover:not(:disabled)::-webkit-calendar-picker-indicator {
+  opacity: 0.9;
+}
+
+/* ---- 布尔开关（checkbox）：统一方形主色 ---- */
+.bf-workbook-field-inline {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  cursor: pointer;
+}
+
+.bf-workbook-field-inline input[type="checkbox"] {
+  width: 17px;
+  min-width: 17px;
+  min-height: 17px;
+  padding: 0;
+  accent-color: #2563eb;
+  cursor: pointer;
+}
+
+.bf-workbook-field-inline input[type="checkbox"]:disabled {
+  cursor: not-allowed;
+}
+
+/* ---- 错误态：控件红框 + 红字（:has 现代浏览器） ---- */
+.bf-workbook-field:has(> small) input,
+.bf-workbook-field:has(> small) select,
+.bf-workbook-field:has(> small) textarea {
+  border-color: #dc2626;
+}
+
+.bf-workbook-field:has(> small) input:focus,
+.bf-workbook-field:has(> small) select:focus,
+.bf-workbook-field:has(> small) textarea:focus {
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.12);
+}
+
+.bf-workbook-field small {
+  color: #b42318;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+/* ------------------------------------------------------------------ */
+/* 标签选择器（tags）                                                    */
+/* ------------------------------------------------------------------ */
+.bf-workbook-tag-selector__control {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  min-height: 38px;
+  border: 1px solid #d7dee9;
+  border-radius: 6px;
+  background: #ffffff;
+  padding: 5px;
+  transition:
+    border-color 120ms ease,
+    box-shadow 120ms ease;
+}
+
+.bf-workbook-tag-selector__control:focus-within {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.13);
+}
+
+.bf-workbook-tag-selector__control input {
+  flex: 1 1 120px;
+  width: auto;
+  min-height: 28px;
+  border: 0;
+  box-shadow: none;
+  padding: 4px 6px;
+}
+
+.bf-workbook-tag-selector__control input:focus {
+  box-shadow: none;
+}
+
+.bf-workbook-tag-selector__control button {
+  min-height: 28px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  background: #f8fafc;
+  color: #172033;
+  cursor: pointer;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 4px 10px;
+  transition:
+    border-color 120ms ease,
+    color 120ms ease;
+}
+
+.bf-workbook-tag-selector__control button:not(:disabled):hover {
+  border-color: #2563eb;
+  color: #1d4ed8;
+}
+
+.bf-workbook-tag-selector__control button:disabled {
+  cursor: not-allowed;
+  color: #94a3b8;
+}
+
+.bf-workbook-tag-selector__tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border-color: #bfdbfe !important;
+  background: #eff6ff !important;
+  color: #1d4ed8 !important;
+  border-radius: 999px !important;
+}
+
+.bf-workbook-tag-selector__tag > span:last-child {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 14px;
+  height: 14px;
+  border-radius: 999px;
+  background: rgba(37, 99, 235, 0.14);
+  font-size: 10px;
+  line-height: 1;
+}
+
+.bf-workbook-tag-selector__tag:disabled {
+  opacity: 0.55;
+}
+
+/* ------------------------------------------------------------------ */
+/* 表单操作按钮                                                          */
+/* ------------------------------------------------------------------ */
+.bf-workbook-form-actions,
+.bf-workbook-steps-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: flex-end;
+  padding-top: 2px;
+}
+
+.bf-workbook-form-actions button,
+.bf-workbook-steps-actions button,
+.bf-workbook-repeat > button,
+.bf-workbook-tabs-list button,
+.bf-workbook-steps-list button {
+  min-height: 36px;
+  border: 1px solid #d7dee9;
+  border-radius: 6px;
+  background: #ffffff;
+  color: #344054;
+  cursor: pointer;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 7px 14px;
+  transition:
+    background-color 120ms ease,
+    border-color 120ms ease,
+    box-shadow 120ms ease,
+    color 120ms ease;
+}
+
+.bf-workbook-form-actions button:not(:disabled):hover,
+.bf-workbook-steps-actions button:not(:disabled):hover,
+.bf-workbook-repeat > button:not(:disabled):hover,
+.bf-workbook-tabs-list button:not(:disabled):hover,
+.bf-workbook-steps-list button:not(:disabled):hover {
+  border-color: #2563eb;
+  color: #1d4ed8;
+  background: #f5f8ff;
+}
+
+.bf-workbook-form-actions button[type="submit"] {
+  border-color: #2563eb;
+  background: #2563eb;
+  color: #ffffff;
+}
+
+.bf-workbook-form-actions button[type="submit"]:not(:disabled):hover {
+  border-color: #1d4ed8;
+  background: #1d4ed8;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.28);
+}
+
+.bf-workbook-form-actions button:disabled,
+.bf-workbook-steps-actions button:disabled,
+.bf-workbook-repeat > button:disabled,
+.bf-workbook-tabs-list button:disabled,
+.bf-workbook-steps-list button:disabled {
+  cursor: not-allowed;
+  border-color: #e3e8f0;
+  background: #f4f6f9;
+  color: #a6b0c3;
+  box-shadow: none;
+}
+
+/* ------------------------------------------------------------------ */
+/* 标签页（tabs）/ 步骤（steps）：下划线式                                */
+/* ------------------------------------------------------------------ */
+.bf-workbook-tabs,
+.bf-workbook-steps,
+.bf-workbook-repeat {
+  display: grid;
+  gap: 14px;
+  min-width: 0;
+}
+
+.bf-workbook-tabs-list,
+.bf-workbook-steps-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  border-bottom: 1px solid #e3e8f0;
+}
+
+.bf-workbook-tabs-list button,
+.bf-workbook-steps-list button {
+  min-height: 38px;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  border-radius: 0;
+  background: transparent;
+  color: #5b6472;
+  font-weight: 600;
+  padding: 8px 14px;
+  margin-bottom: -1px;
+}
+
+.bf-workbook-tabs-list button:not(:disabled):hover,
+.bf-workbook-steps-list button:not(:disabled):hover {
+  border-bottom-color: #bfdbfe;
+  background: transparent;
+  color: #2563eb;
+}
+
+.bf-workbook-tabs-list button[aria-selected="true"],
+.bf-workbook-steps-list button[aria-current="step"] {
+  border-bottom-color: #2563eb;
+  background: transparent;
+  color: #2563eb;
+  font-weight: 700;
+}
+
+.bf-workbook-tabs-list button:disabled,
+.bf-workbook-steps-list button:disabled {
+  border-bottom-color: transparent;
+  background: transparent;
+  color: #a6b0c3;
+}
+
+.bf-workbook-tabs [role="tabpanel"] {
+  padding-top: 4px;
+  outline: none;
+}
+
+/* ------------------------------------------------------------------ */
+/* 重复行（repeat）                                                     */
+/* ------------------------------------------------------------------ */
+.bf-workbook-repeat-item {
+  display: grid;
+  gap: 12px;
+  border: 1px dashed #cbd5e1;
+  border-radius: 10px;
+  background: #fafbfd;
+  padding: 16px;
+}
+
+.bf-workbook-repeat-item > button {
+  justify-self: end;
+  min-height: 30px;
+  border: 1px solid #fecaca;
+  border-radius: 6px;
+  background: #fff5f5;
+  color: #b42318;
+  cursor: pointer;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 5px 12px;
+}
+
+.bf-workbook-repeat-item > button:not(:disabled):hover {
+  background: #fee2e2;
+}
+
+.bf-workbook-repeat-item > button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.bf-workbook-repeat > button {
+  justify-self: start;
+  border-style: dashed;
+  background: #f8fafc;
+  color: #2563eb;
+}
+
+.bf-workbook-repeat > button:not(:disabled):hover {
+  background: #eff6ff;
+}
+
+.bf-workbook-sheet-view {
+  display: grid;
+  gap: 14px;
+  min-width: 0;
+}
+
+.bf-workbook-sheet-view canvas {
+  display: block;
+  border-radius: 0;
+}
+
+.bf-workbook-sheet-view [data-testid="bf-sheet-viewport"],
+.bf-workbook-sheet-view [data-testid="bf-sheet-scroll-viewport"] {
+  border-color: #d7dee9 !important;
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(16, 24, 40, 0.05);
+}
+
+.bf-workbook-sheet-forms {
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+  padding-top: 2px;
+}
+
+.bf-workbook-page-view {
+  display: grid;
+  gap: 14px;
+  justify-items: center;
+}
+
+.bf-workbook-page-view svg {
+  max-width: 100%;
+  height: auto;
+  border-radius: 2px;
+  box-shadow: 0 12px 32px rgba(15, 23, 42, 0.08);
+}
+
+.bf-shadcn-status-field {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+  color: #344054;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.bf-shadcn-status-field__control {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  width: fit-content;
+  border: 1px solid #d7dee9;
+  border-radius: 8px;
+  background: #f8fafc;
+  padding: 4px;
+}
+
+.bf-shadcn-status-field__control button {
+  min-height: 30px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: #475569;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 600;
+  padding: 6px 10px;
+}
+
+.bf-shadcn-status-field__control button[data-state="active"] {
+  background: #ffffff;
+  color: #2563eb;
+  font-weight: 700;
+  box-shadow: 0 1px 4px rgba(15, 23, 42, 0.12);
+}
+
+.bf-shadcn-status-field__control button:disabled {
+  cursor: not-allowed;
+  color: #94a3b8;
+}
+
+.bf-shadcn-status-field small {
+  color: #b42318;
+  font-size: 12px;
+}
+
+/* ------------------------------------------------------------------ */
+/* Multi-device (desktop / tablet / mobile)                            */
+/* ------------------------------------------------------------------ */
+/* 三端适配策略：
+ *   desktop — 多列 row 布局、完整尺寸页面与 Sheet
+ *   tablet  — row 最多两列（JS 计算）、触控目标 40px
+ *   mobile  — row 单列堆叠（JS 计算）、触控目标 44px、表单操作栏吸底全宽
+ *
+ * 1) 列数由 LayoutRenderer 依据 useDevice() 计算并写入 inline style，
+ *    因此强制设备时即使视口很宽也生效；
+ * 2) `[data-device=...]` 与 `@media` 负责触控目标、操作栏等纯样式差异；
+ * 3) `@media` 查询同时作为纯 CSS 回退：未挂载 DeviceProvider 时，
+ *    DocumentRenderer 在真实窄视口下同样具备响应式表现。
+ */
+
+/* tablet：触控目标 40px（JS 强制模式 + 窄视口回退） */
+[data-device="tablet"] .bf-workbook-field input,
+[data-device="tablet"] .bf-workbook-field select,
+[data-device="tablet"] .bf-workbook-field textarea {
+  min-height: 40px;
+}
+
+/* mobile：触控目标 44px（JS 强制模式） */
+[data-device="mobile"] .bf-workbook-field input,
+[data-device="mobile"] .bf-workbook-field select,
+[data-device="mobile"] .bf-workbook-field textarea {
+  min-height: 44px;
+}
+
+/* mobile：表单操作栏吸底全宽（JS 强制模式，由 FormView 附加类名） */
+.bf-workbook-form-actions--mobile {
+  position: sticky;
+  bottom: 0;
+  z-index: 10;
+  flex-direction: column;
+  padding-top: 10px;
+  background: linear-gradient(to top, #eef3f8 70%, rgba(238, 243, 248, 0));
+}
+
+.bf-workbook-form-actions--mobile button {
+  flex: 1 1 100%;
+  min-height: 44px;
+}
+
+/* ---- 纯 CSS 回退（无 DeviceProvider 时的真实窄视口） ---- */
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  /* 单列 row 保持单列，多列 row 收敛为两列（尊重 data-cols 声明） */
+  .bf-workbook-row[data-cols="1"] {
+    grid-template-columns: 1fr !important;
+  }
+
+  .bf-workbook-row:not([data-cols="1"]) {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  .bf-workbook-field input,
+  .bf-workbook-field select,
+  .bf-workbook-field textarea {
+    min-height: 40px;
+  }
+}
+
+@media (max-width: 767px) {
+  .bf-workbook-row {
+    grid-template-columns: 1fr !important;
+  }
+
+  .bf-workbook-field input,
+  .bf-workbook-field select,
+  .bf-workbook-field textarea {
+    min-height: 44px;
+  }
+
+  .bf-workbook-form-actions,
+  .bf-workbook-steps-actions {
+    position: sticky;
+    bottom: 0;
+    z-index: 10;
+    flex-direction: column;
+    padding-top: 10px;
+    background: linear-gradient(to top, #eef3f8 70%, rgba(238, 243, 248, 0));
+  }
+
+  .bf-workbook-form-actions button,
+  .bf-workbook-steps-actions button {
+    flex: 1 1 100%;
+    min-height: 44px;
+  }
+}

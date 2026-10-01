@@ -1,0 +1,45 @@
+{
+  "kind": "workbook",
+  "schemaVersion": "4.1.1",
+  "locale": "zh-CN",
+  "data": {},
+  "views": [
+    {
+      "type": "page",
+      "id": "page-break-conformance",
+      "label": "分页符 conformance",
+      "pageSettings": {
+        "width": 600,
+        "height": 900,
+        "marginTop": 72,
+        "marginLeft": 72,
+        "marginRight": 72,
+        "marginBottom": 72
+      },
+      "content": [
+        {
+          "type": "paragraph",
+          "alignment": "left",
+          "runs": [{ "type": "text", "text": "第一页内容" }]
+        },
+        {
+          "type": "page-break"
+        },
+        {
+          "type": "paragraph",
+          "alignment": "left",
+          "runs": [{ "type": "text", "text": "第二页内容（分页后）" }]
+        },
+        {
+          "type": "page-break",
+          "comment": "显式分页分隔"
+        },
+        {
+          "type": "paragraph",
+          "alignment": "left",
+          "runs": [{ "type": "text", "text": "第三页内容" }]
+        }
+      ]
+    }
+  ]
+}

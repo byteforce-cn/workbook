@@ -1,0 +1,34 @@
+# Dependencies
+node_modules/
+
+# Build outputs
+dist/
+*.tsbuildinfo
+
+# Test artifacts
+coverage/
+playwright-report/
+test-results/
+
+# Storybook static build
+storybook-static/
+
+# Docs site build & generated API reference
+docs-site/.vitepress/dist/
+docs-site/.vitepress/cache/
+docs-site/public/api-reference/
+
+# OS noise
+.DS_Store
+Thumbs.db
+
+# Local env files (keep the example)
+.env*
+!.env.example
+
+# api-extractor scratch
+.temp/
+temp/
+
+# Internal-only material — NEVER commit
+.internal/

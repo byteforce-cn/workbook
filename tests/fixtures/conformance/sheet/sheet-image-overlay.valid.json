@@ -1,0 +1,42 @@
+{
+  "kind": "workbook",
+  "schemaVersion": "4.1.1",
+  "data": {},
+  "assets": {
+    "sheet-logo": {
+      "src": "https://assets.example/sheet-logo.png",
+      "type": "image/png"
+    }
+  },
+  "views": [
+    {
+      "type": "sheet",
+      "id": "sheet-image-overlay",
+      "label": "表格图片覆盖层 conformance",
+      "name": "表格图片覆盖层",
+      "columns": [{ "width": 120 }, { "width": 100 }],
+      "rows": [
+        {
+          "height": 30,
+          "cells": [{ "column": 0, "value": "A1" }, { "column": 1, "value": "B1" }]
+        },
+        {
+          "height": 40,
+          "cells": [{ "column": 0, "value": "A2" }, { "column": 1, "value": "B2" }]
+        }
+      ],
+      "images": [
+        {
+          "src": "sheet-logo",
+          "column": 1,
+          "row": 1,
+          "colOffset": 8,
+          "rowOffset": 6,
+          "width": 64,
+          "height": 32,
+          "lockAspectRatio": true
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,114 @@
+{
+  "kind": "workbook",
+  "schemaVersion": "4.1.1",
+  "locale": "zh-CN",
+  "data": {
+    "region": "east",
+    "deliveryMode": "standard",
+    "city": "sh",
+    "assignee": "u1",
+    "remarks": ""
+  },
+  "views": [
+    {
+      "type": "form",
+      "id": "remote-option-sources",
+      "label": "远端选项源",
+      "fields": [
+        {
+          "name": "region",
+          "type": "select",
+          "label": "区域",
+          "bind": {
+            "path": "region",
+            "mode": "twoWay"
+          },
+          "options": [{ "label": "华东", "value": "east" }, { "label": "华西", "value": "west" }]
+        },
+        {
+          "name": "deliveryMode",
+          "type": "select",
+          "label": "交付模式",
+          "bind": {
+            "path": "deliveryMode",
+            "mode": "twoWay"
+          },
+          "options": [{ "label": "标准", "value": "standard" }, { "label": "加急", "value": "rush" }]
+        },
+        {
+          "name": "remarks",
+          "type": "textarea",
+          "label": "备注",
+          "bind": {
+            "path": "remarks",
+            "mode": "twoWay"
+          }
+        },
+        {
+          "name": "city",
+          "type": "select",
+          "label": "远端城市",
+          "bind": {
+            "path": "city",
+            "mode": "twoWay"
+          },
+          "options": {
+            "type": "url",
+            "endpoint": "https://workbook.example/api/cities",
+            "method": "POST",
+            "cache": "memory",
+            "params": {
+              "context": {
+                "region": {
+                  "$field": "region"
+                }
+              },
+              "paging": {
+                "size": 20
+              }
+            },
+            "dataPath": "payload.records",
+            "valueKey": "id",
+            "labelKey": "name"
+          }
+        },
+        {
+          "name": "assignee",
+          "type": "select",
+          "label": "远端负责人",
+          "bind": {
+            "path": "assignee",
+            "mode": "twoWay"
+          },
+          "options": {
+            "type": "graphql",
+            "endpoint": "https://workbook.example/graphql",
+            "query": "query Assignees($mode: String!) { assignees(mode: $mode) { nodes { code displayName } } }",
+            "cache": "session",
+            "params": {
+              "mode": {
+                "$field": "deliveryMode"
+              }
+            },
+            "dataPath": "data.assignees.nodes",
+            "valueKey": "code",
+            "labelKey": "displayName"
+          }
+        }
+      ],
+      "layout": [
+        {
+          "type": "row",
+          "gutter": 16,
+          "children": [{ "type": "field", "name": "region" }, { "type": "field", "name": "deliveryMode" }]
+        },
+        { "type": "field", "name": "remarks" },
+        {
+          "type": "row",
+          "gutter": 16,
+          "children": [{ "type": "field", "name": "city" }, { "type": "field", "name": "assignee" }]
+        }
+      ]
+    }
+  ]
+}

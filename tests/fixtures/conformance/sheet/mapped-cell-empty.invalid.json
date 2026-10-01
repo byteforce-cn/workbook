@@ -1,0 +1,27 @@
+{
+  "kind": "workbook",
+  "schemaVersion": "4.1.1",
+  "data": {
+    "items": [{ "name": "服务器", "qty": 2 }]
+  },
+  "views": [
+    {
+      "type": "sheet",
+      "id": "mapped-cell-invalid-span",
+      "label": "无效 cellMapping colspan",
+      "name": "无效映射",
+      "columns": [{ "width": 120 }],
+      "rowBind": {
+        "path": "items",
+        "mode": "oneWay",
+        "rowTemplate": {
+          "cellMapping": {
+            "0": {
+              "colspan": 0
+            }
+          }
+        }
+      }
+    }
+  ]
+}

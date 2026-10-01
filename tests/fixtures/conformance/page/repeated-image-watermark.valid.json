@@ -1,0 +1,41 @@
+{
+  "kind": "workbook",
+  "schemaVersion": "4.1.1",
+  "locale": "zh-CN",
+  "data": {},
+  "assets": {
+    "watermark-seal": {
+      "src": "https://assets.example/watermark.png",
+      "type": "image/png"
+    }
+  },
+  "views": [
+    {
+      "type": "page",
+      "id": "repeated-image-watermark",
+      "label": "图片水印平铺",
+      "pageSettings": {
+        "width": 595,
+        "height": 842,
+        "marginTop": 72,
+        "marginLeft": 72,
+        "marginRight": 72,
+        "marginBottom": 72
+      },
+      "content": [
+        {
+          "type": "watermark",
+          "text": "",
+          "image": "watermark-seal",
+          "repeat": true,
+          "opacity": 0.18,
+          "rotation": -18
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "type": "text", "text": "带平铺图片水印的正文" }]
+        }
+      ]
+    }
+  ]
+}

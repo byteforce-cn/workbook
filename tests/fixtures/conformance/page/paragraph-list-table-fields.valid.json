@@ -1,0 +1,119 @@
+{
+  "kind": "workbook",
+  "schemaVersion": "4.1.1",
+  "locale": "zh-CN",
+  "data": {},
+  "views": [
+    {
+      "type": "page",
+      "id": "paragraph-list-table-fields",
+      "label": "页面字段消费 conformance",
+      "pageSettings": {
+        "width": 600,
+        "height": 900,
+        "marginTop": 72,
+        "marginLeft": 72,
+        "marginRight": 72,
+        "marginBottom": 72
+      },
+      "content": [
+        {
+          "type": "paragraph",
+          "alignment": "center",
+          "indent": 24,
+          "spaceBefore": 12,
+          "spaceAfter": 18,
+          "lineHeight": 1.6,
+          "runs": [{ "type": "text", "text": "段落字段消费" }]
+        },
+        {
+          "type": "list",
+          "listType": "ordered",
+          "numberFormat": "upperRoman",
+          "start": 3,
+          "items": [
+            [
+              {
+                "type": "paragraph",
+                "runs": [{ "type": "text", "text": "第一项" }]
+              }
+            ],
+            [
+              {
+                "type": "paragraph",
+                "runs": [{ "type": "text", "text": "第二项" }]
+              }
+            ]
+          ]
+        },
+        {
+          "type": "list",
+          "listType": "bullet",
+          "bulletChar": "◆",
+          "items": [
+            [
+              {
+                "type": "paragraph",
+                "runs": [{ "type": "text", "text": "自定义项目符号" }]
+              }
+            ]
+          ]
+        },
+        {
+          "type": "table",
+          "width": 320,
+          "fill": "#fef3c7",
+          "border": {
+            "style": "thick",
+            "color": "#2563eb"
+          },
+          "columns": [160, 160],
+          "rows": [
+            {
+              "height": 54,
+              "cells": [
+                {
+                  "width": 80,
+                  "content": [
+                    {
+                      "type": "paragraph",
+                      "runs": [{ "type": "text", "text": "窄单元格" }]
+                    }
+                  ]
+                },
+                {
+                  "content": [
+                    {
+                      "type": "paragraph",
+                      "runs": [{ "type": "text", "text": "宽列" }]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "cells": [
+                {
+                  "content": [
+                    {
+                      "type": "paragraph",
+                      "runs": [{ "type": "text", "text": "固定高行" }]
+                    }
+                  ]
+                },
+                {
+                  "content": [
+                    {
+                      "type": "paragraph",
+                      "runs": [{ "type": "text", "text": "普通单元格" }]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,36 @@
+{
+  "kind": "workbook",
+  "schemaVersion": "4.1.1",
+  "data": {},
+  "views": [
+    {
+      "type": "form",
+      "id": "array-field-config",
+      "label": "数组字段配置",
+      "fields": [
+        {
+          "name": "tags",
+          "type": "array",
+          "label": "标签列表",
+          "bind": { "path": "tags", "mode": "twoWay" },
+          "arrayConfig": {
+            "minItems": 1,
+            "maxItems": 10,
+            "sortable": true,
+            "addLabel": "添加标签",
+            "removeLabel": "删除标签",
+            "itemFields": [
+              {
+                "name": "tagName",
+                "type": "string",
+                "label": "标签名",
+                "bind": { "path": "tagName", "mode": "twoWay" },
+                "validations": [{ "type": "required", "message": "标签名不能为空" }]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

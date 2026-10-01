@@ -1,0 +1,73 @@
+name: Bug report
+description: Something renders wrong, crashes, or behaves unexpectedly
+title: "[Bug] "
+labels: ["bug", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to file a bug! Please keep reports focused and reproducible.
+        Security issues: **do not** file them here — use the Security tab instead (see SECURITY.md).
+
+  - type: input
+    id: version
+    attributes:
+      label: Package version
+      description: Which version of @byteforce/workbook are you using?
+      placeholder: e.g. 1.0.0 (run `npm ls @byteforce/workbook`)
+    validations:
+      required: true
+
+  - type: dropdown
+    id: entry
+    attributes:
+      label: Which entry point?
+      options:
+        - "@byteforce/workbook (main)"
+        - "@byteforce/workbook/core"
+        - "@byteforce/workbook/react"
+        - "@byteforce/workbook/react-native"
+        - "@byteforce/workbook/quick"
+        - "@byteforce/workbook/adapters/zod"
+        - Not sure
+    validations:
+      required: true
+
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: Expected vs. actual behavior.
+    validations:
+      required: true
+
+  - type: textarea
+    id: schema
+    attributes:
+      label: Minimal reproduction
+      description: |
+        A minimal workbook schema JSON / code snippet that reproduces the issue.
+        This dramatically speeds up triage — thank you!
+      render: json
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Render the schema above with DocumentRenderer
+        2. Click ...
+        3. See error ...
+    validations:
+      required: true
+
+  - type: input
+    id: environment
+    attributes:
+      label: Environment
+      description: Browser / OS / React version
+      placeholder: e.g. Chrome 128, macOS 15, React 19.2
+    validations:
+      required: true

@@ -1,0 +1,37 @@
+{
+  "kind": "workbook",
+  "schemaVersion": "4.1.1",
+  "locale": "zh-CN",
+  "data": {},
+  "assets": {
+    "centered-image": {
+      "src": "https://assets.example/centered-image.png",
+      "type": "image/png"
+    }
+  },
+  "views": [
+    {
+      "type": "page",
+      "id": "image-alignment-and-alt",
+      "label": "图片对齐与替代文本",
+      "pageSettings": {
+        "width": 600,
+        "height": 800,
+        "marginTop": 72,
+        "marginLeft": 72,
+        "marginRight": 72,
+        "marginBottom": 72
+      },
+      "content": [
+        {
+          "type": "image",
+          "src": "centered-image",
+          "width": 120,
+          "height": 80,
+          "alignment": "center",
+          "alt": "居中图片"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,5 @@
+# pnpm configuration for this single package.
+# NOTE: this is NOT a monorepo — the file only pins pnpm settings
+# (`allowBuilds` approves postinstall scripts, e.g. esbuild).
+allowBuilds:
+  esbuild: true

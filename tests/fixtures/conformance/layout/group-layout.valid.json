@@ -1,0 +1,51 @@
+{
+  "kind": "workbook",
+  "schemaVersion": "4.1.1",
+  "locale": "zh-CN",
+  "data": {},
+  "views": [
+    {
+      "type": "form",
+      "id": "group-layout",
+      "label": "Group 布局测试",
+      "fields": [
+        {
+          "name": "title",
+          "type": "string",
+          "label": "标题",
+          "bind": { "path": "title", "mode": "twoWay" }
+        },
+        {
+          "name": "content",
+          "type": "textarea",
+          "label": "内容",
+          "bind": { "path": "content", "mode": "twoWay" }
+        },
+        {
+          "name": "enabled",
+          "type": "boolean",
+          "label": "启用",
+          "bind": { "path": "enabled", "mode": "twoWay" }
+        }
+      ],
+      "layout": [
+        {
+          "type": "group",
+          "title": "基本信息",
+          "collapsible": true,
+          "collapsed": false,
+          "children": [
+            { "type": "field", "name": "title" },
+            {
+              "type": "group",
+              "title": "详细配置",
+              "collapsible": true,
+              "collapsed": true,
+              "children": [{ "type": "field", "name": "content" }, { "type": "field", "name": "enabled" }]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

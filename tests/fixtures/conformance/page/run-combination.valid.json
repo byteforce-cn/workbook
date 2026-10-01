@@ -1,0 +1,40 @@
+{
+  "kind": "workbook",
+  "schemaVersion": "4.1.1",
+  "locale": "zh-CN",
+  "data": {},
+  "assets": {
+    "icon": {
+      "src": "https://assets.example/inline-icon.svg",
+      "type": "image/svg+xml"
+    }
+  },
+  "views": [
+    {
+      "type": "page",
+      "id": "run-combination",
+      "label": "文本运行组合 conformance",
+      "pageSettings": {
+        "width": 600,
+        "height": 900,
+        "marginTop": 72,
+        "marginLeft": 72,
+        "marginRight": 72,
+        "marginBottom": 72
+      },
+      "content": [
+        {
+          "type": "paragraph",
+          "alignment": "left",
+          "runs": [
+            { "type": "text", "text": "包含内联图标" },
+            { "type": "inline-image", "src": "icon", "width": 20, "height": 20 },
+            { "type": "text", "text": "的段落。" },
+            { "type": "break" },
+            { "type": "text", "text": "换行后的文字。" }
+          ]
+        }
+      ]
+    }
+  ]
+}

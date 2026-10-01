@@ -1,0 +1,25 @@
+{
+  "kind": "workbook",
+  "schemaVersion": "4.1.1",
+  "locale": "zh-CN",
+  "data": {
+    "title": "错误类型"
+  },
+  "views": [
+    {
+      "type": "form",
+      "id": "invalid-readonly-type",
+      "label": "错误只读配置",
+      "config": {
+        "readOnly": "yes"
+      },
+      "fields": [
+        {
+          "name": "title",
+          "type": "string",
+          "label": "标题"
+        }
+      ]
+    }
+  ]
+}

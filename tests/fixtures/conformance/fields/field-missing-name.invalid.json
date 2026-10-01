@@ -1,0 +1,17 @@
+{
+  "kind": "workbook",
+  "schemaVersion": "4.1.1",
+  "data": {},
+  "views": [
+    {
+      "type": "form",
+      "id": "invalid-field-missing-name",
+      "fields": [
+        {
+          "type": "string",
+          "label": "缺少字段名称"
+        }
+      ]
+    }
+  ]
+}

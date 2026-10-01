@@ -1,0 +1,24 @@
+{
+  "kind": "workbook",
+  "schemaVersion": "4.1.1",
+  "locale": "zh-CN",
+  "data": {},
+  "views": [
+    {
+      "type": "sheet",
+      "id": "sheet-column-hidden",
+      "label": "隐藏列 conformance",
+      "name": "隐藏列",
+      "columns": [{ "width": 120 }, { "width": 100, "hidden": true }, { "width": 120 }],
+      "rows": [
+        {
+          "cells": [
+            { "column": 0, "value": "可见列A" },
+            { "column": 1, "value": "隐藏列", "style": "hiddenCell" },
+            { "column": 2, "value": "可见列C" }
+          ]
+        }
+      ]
+    }
+  ]
+}

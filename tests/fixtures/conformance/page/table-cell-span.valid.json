@@ -1,0 +1,121 @@
+{
+  "kind": "workbook",
+  "schemaVersion": "4.1.1",
+  "locale": "zh-CN",
+  "data": {},
+  "views": [
+    {
+      "type": "page",
+      "id": "table-cell-span",
+      "label": "表格单元格合并 conformance",
+      "pageSettings": {
+        "width": 600,
+        "height": 900,
+        "marginTop": 72,
+        "marginLeft": 72,
+        "marginRight": 72,
+        "marginBottom": 72
+      },
+      "content": [
+        {
+          "type": "table",
+          "width": 500,
+          "columns": [125, 125, 125, 125],
+          "rows": [
+            {
+              "height": 40,
+              "cells": [
+                {
+                  "colSpan": 2,
+                  "content": [
+                    {
+                      "type": "paragraph",
+                      "alignment": "center",
+                      "runs": [{ "type": "text", "text": "合并标题A" }]
+                    }
+                  ]
+                },
+                {
+                  "colSpan": 2,
+                  "content": [
+                    {
+                      "type": "paragraph",
+                      "alignment": "center",
+                      "runs": [{ "type": "text", "text": "合并标题B" }]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "cells": [
+                {
+                  "rowSpan": 2,
+                  "content": [
+                    {
+                      "type": "paragraph",
+                      "runs": [{ "type": "text", "text": "垂直合并" }]
+                    }
+                  ]
+                },
+                {
+                  "content": [
+                    {
+                      "type": "paragraph",
+                      "runs": [{ "type": "text", "text": "C1" }]
+                    }
+                  ]
+                },
+                {
+                  "content": [
+                    {
+                      "type": "paragraph",
+                      "runs": [{ "type": "text", "text": "C2" }]
+                    }
+                  ]
+                },
+                {
+                  "content": [
+                    {
+                      "type": "paragraph",
+                      "runs": [{ "type": "text", "text": "C3" }]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "cells": [
+                {
+                  "content": [
+                    {
+                      "type": "paragraph",
+                      "runs": [{ "type": "text", "text": "C4" }]
+                    }
+                  ]
+                },
+                {
+                  "colSpan": 2,
+                  "content": [
+                    {
+                      "type": "paragraph",
+                      "runs": [{ "type": "text", "text": "水平合并" }]
+                    }
+                  ]
+                },
+                {
+                  "content": [
+                    {
+                      "type": "paragraph",
+                      "runs": [{ "type": "text", "text": "C6" }]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

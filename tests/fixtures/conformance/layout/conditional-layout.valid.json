@@ -1,0 +1,46 @@
+{
+  "kind": "workbook",
+  "schemaVersion": "4.1.1",
+  "locale": "zh-CN",
+  "data": {},
+  "views": [
+    {
+      "type": "form",
+      "id": "conditional-layout",
+      "label": "条件布局测试",
+      "fields": [
+        {
+          "name": "type",
+          "type": "select",
+          "label": "类型",
+          "bind": { "path": "type", "mode": "twoWay" },
+          "options": [{ "value": "personal", "label": "个人" }, { "value": "company", "label": "企业" }]
+        },
+        {
+          "name": "companyName",
+          "type": "string",
+          "label": "企业名称",
+          "bind": { "path": "companyName", "mode": "twoWay" }
+        },
+        {
+          "name": "taxId",
+          "type": "string",
+          "label": "税号",
+          "bind": { "path": "taxId", "mode": "twoWay" }
+        }
+      ],
+      "layout": [
+        { "type": "field", "name": "type" },
+        {
+          "type": "conditional",
+          "condition": {
+            "op": "eq",
+            "path": "type",
+            "value": "company"
+          },
+          "children": [{ "type": "field", "name": "companyName" }, { "type": "field", "name": "taxId" }]
+        }
+      ]
+    }
+  ]
+}

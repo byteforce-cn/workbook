@@ -1,0 +1,67 @@
+{
+  "kind": "workbook",
+  "schemaVersion": "4.1.1",
+  "locale": "zh-CN",
+  "data": {
+    "owner": "王五"
+  },
+  "assets": {
+    "logo": {
+      "type": "image",
+      "src": "https://assets.example/sheet-logo.png"
+    }
+  },
+  "views": [
+    {
+      "type": "sheet",
+      "id": "frozen-image-and-form-overlay",
+      "label": "冻结图片与表单 conformance",
+      "name": "冻结图片与表单",
+      "frozenRows": 1,
+      "frozenCols": 1,
+      "defaultColumnWidth": 100,
+      "defaultRowHeight": 32,
+      "columns": [{ "width": 100 }, { "width": 100 }, { "width": 100 }],
+      "rows": [
+        {
+          "cells": [{ "column": 0, "value": "H0" }, { "column": 1, "value": "H1" }, { "column": 2, "value": "H2" }]
+        },
+        {
+          "cells": [
+            { "column": 0, "value": "R1C0" },
+            { "column": 1, "value": "R1C1" },
+            { "column": 2, "value": "R1C2" }
+          ]
+        },
+        {
+          "cells": [
+            { "column": 0, "value": "R2C0" },
+            { "column": 1, "value": "R2C1" },
+            { "column": 2, "value": "R2C2" }
+          ]
+        }
+      ],
+      "images": [
+        { "src": "logo", "column": 0, "row": 0, "colOffset": 8, "rowOffset": 6, "width": 24, "height": 18 },
+        { "src": "logo", "column": 2, "row": 2, "colOffset": 5, "rowOffset": 4, "width": 30, "height": 20 }
+      ],
+      "forms": [
+        {
+          "type": "form",
+          "fields": [
+            {
+              "name": "owner",
+              "type": "string",
+              "label": "负责人",
+              "bind": { "path": "owner", "mode": "twoWay" }
+            }
+          ],
+          "config": {
+            "submitLabel": "保存",
+            "resetLabel": "重置"
+          }
+        }
+      ]
+    }
+  ]
+}

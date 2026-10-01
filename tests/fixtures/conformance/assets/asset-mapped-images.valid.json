@@ -1,0 +1,42 @@
+{
+  "kind": "workbook",
+  "schemaVersion": "4.1.1",
+  "data": {},
+  "assets": {
+    "logo": {
+      "src": "https://assets.example/logo.svg",
+      "type": "image/svg+xml"
+    },
+    "badge": {
+      "src": "https://assets.example/badge.png",
+      "type": "image/png"
+    }
+  },
+  "views": [
+    {
+      "type": "page",
+      "id": "asset-preview",
+      "label": "资源映射 conformance",
+      "pageSettings": {
+        "width": 595,
+        "height": 842
+      },
+      "content": [
+        {
+          "type": "paragraph",
+          "runs": [
+            { "type": "text", "text": "资产内联图标" },
+            { "type": "inline-image", "src": "badge", "width": 24, "height": 24 }
+          ]
+        },
+        {
+          "type": "image",
+          "src": "logo",
+          "width": 160,
+          "height": 80,
+          "alt": "Logo"
+        }
+      ]
+    }
+  ]
+}

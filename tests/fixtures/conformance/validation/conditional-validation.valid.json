@@ -1,0 +1,66 @@
+{
+  "kind": "workbook",
+  "schemaVersion": "4.1.1",
+  "locale": "zh-CN",
+  "data": {
+    "amount": 500,
+    "reason": ""
+  },
+  "views": [
+    {
+      "type": "form",
+      "id": "conditional-validation",
+      "label": "条件校验",
+      "config": {
+        "validateMode": "onBlur"
+      },
+      "fields": [
+        {
+          "name": "amount",
+          "type": "number",
+          "label": "金额",
+          "bind": {
+            "path": "amount",
+            "mode": "twoWay"
+          },
+          "validations": [
+            {
+              "type": "required",
+              "message": "金额不能为空"
+            },
+            {
+              "type": "min",
+              "params": { "value": 1000 },
+              "message": "大额需填写原因",
+              "condition": {
+                "op": "gt",
+                "path": "amount",
+                "value": 500
+              }
+            }
+          ]
+        },
+        {
+          "name": "reason",
+          "type": "textarea",
+          "label": "原因",
+          "bind": {
+            "path": "reason",
+            "mode": "twoWay"
+          },
+          "validations": [
+            {
+              "type": "required",
+              "message": "原因不能为空",
+              "condition": {
+                "op": "gt",
+                "path": "amount",
+                "value": 500
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

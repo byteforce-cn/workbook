@@ -1,0 +1,27 @@
+{
+  "kind": "workbook",
+  "schemaVersion": "4.1.1",
+  "data": {},
+  "views": [
+    {
+      "type": "sheet",
+      "id": "column-minmax",
+      "label": "列宽约束 conformance",
+      "name": "列宽限制",
+      "columns": [
+        { "width": 150, "minWidth": 80, "maxWidth": 300 },
+        { "width": 100 },
+        { "width": 120, "minWidth": 60 }
+      ],
+      "rows": [
+        {
+          "cells": [
+            { "column": 0, "value": "受限列" },
+            { "column": 1, "value": "普通列" },
+            { "column": 2, "value": "最小宽度列" }
+          ]
+        }
+      ]
+    }
+  ]
+}

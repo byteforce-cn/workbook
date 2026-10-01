@@ -1,0 +1,153 @@
+{
+  "name": "@byteforce/workbook",
+  "version": "1.0.0",
+  "type": "module",
+  "license": "MIT",
+  "packageManager": "pnpm@12.8.1",
+  "engines": {
+    "node": ">=20.16"
+  },
+  "description": "BF Workbook v4.1.1 schema-driven runtime for form, page, and sheet views.",
+  "homepage": "https://github.com/byteforce-cn/workbook#readme",
+  "bugs": {
+    "url": "https://github.com/byteforce-cn/workbook/issues"
+  },
+  "author": "ByteForce (https://github.com/byteforce-cn)",
+  "publishConfig": {
+    "access": "public"
+  },
+  "keywords": [
+    "workbook",
+    "form",
+    "document",
+    "spreadsheet",
+    "schema-driven",
+    "react",
+    "pdf",
+    "print"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/byteforce-cn/workbook"
+  },
+  "sideEffects": [
+    "./src/styles/workbook-theme.css"
+  ],
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    },
+    "./core": {
+      "types": "./dist/core.d.ts",
+      "import": "./dist/core.js",
+      "default": "./dist/core.js"
+    },
+    "./react": {
+      "types": "./dist/react.d.ts",
+      "import": "./dist/react.js",
+      "default": "./dist/react.js"
+    },
+    "./react-native": {
+      "types": "./dist/react-native.d.ts",
+      "import": "./dist/react-native.js",
+      "default": "./dist/react-native.js"
+    },
+    "./quick": {
+      "types": "./dist/quick.d.ts",
+      "import": "./dist/quick.js",
+      "default": "./dist/quick.js"
+    },
+    "./adapters/zod": {
+      "types": "./dist/adapters/zod.d.ts",
+      "import": "./dist/adapters/zod.js",
+      "default": "./dist/adapters/zod.js"
+    },
+    "./schema": "./src/schema/bf-schema-v4.1.1.json",
+    "./styles.css": "./src/styles/workbook-theme.css",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "src/schema/*.json",
+    "src/styles/workbook-theme.css",
+    "CHANGELOG.md"
+  ],
+  "scripts": {
+    "build": "pnpm generate:types && tsup",
+    "dev": "tsup --watch",
+    "lint": "biome check .",
+    "lint:fix": "biome check --write .",
+    "format": "biome format --write .",
+    "api:check": "api-extractor run",
+    "api:report": "api-extractor run --local",
+    "storybook": "storybook dev --port 6008 --config-dir .storybook",
+    "build-storybook": "storybook build --config-dir .storybook",
+    "typecheck": "pnpm exec tsc --noEmit",
+    "test": "pnpm test:unit && pnpm test:conformance && pnpm test:e2e",
+    "test:unit": "vitest run",
+    "test:unit:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "test:conformance": "vitest run --config vitest.conformance.config.ts",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:watch": "playwright test --headed --workers=1",
+    "test:e2e:slow": "SLOW_MO=1200 playwright test --headed --workers=1",
+    "generate:types": "node ./scripts/generate-types.mjs",
+    "docs:dev": "vitepress dev docs-site",
+    "docs:build": "vitepress build docs-site",
+    "docs:preview": "vitepress preview docs-site",
+    "docs:api": "typedoc --options typedoc.json"
+  },
+  "dependencies": {
+    "@tanstack/react-form": "^1.33.0",
+    "ajv": "^8.20.0",
+    "ajv-formats": "^3.0.1",
+    "immer": "^11.0.0"
+  },
+  "peerDependencies": {
+    "react": "^18.0.0 || ^19.0.0",
+    "react-dom": "^18.0.0 || ^19.0.0",
+    "zod": "^4.0.0"
+  },
+  "peerDependenciesMeta": {
+    "react-dom": {
+      "optional": true
+    },
+    "zod": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.5.14",
+    "@changesets/cli": "^3.0.3",
+    "@microsoft/api-extractor": "^7.59.3",
+    "@playwright/test": "1.52.0",
+    "@storybook/addon-a11y": "^10.5.5",
+    "@storybook/addon-docs": "^10.5.5",
+    "@storybook/react": "10.5.5",
+    "@storybook/react-vite": "10.5.5",
+    "@testing-library/react": "16.3.2",
+    "@testing-library/user-event": "14.6.1",
+    "@types/react": "19.1.8",
+    "@types/react-dom": "19.1.6",
+    "@vitest/coverage-v8": "^3.2.4",
+    "jsdom": "26.1.0",
+    "json-schema-to-typescript": "15.0.4",
+    "react": "19.2.0",
+    "react-dom": "19.2.0",
+    "react-native": "0.86.2",
+    "storybook": "10.5.5",
+    "tsup": "8.5.0",
+    "typedoc": "^0.28.20",
+    "typescript": "5.9.3",
+    "vite": "6.3.5",
+    "vitepress": "^1.6.4",
+    "vitest": "3.2.4",
+    "zod": "^4.4.3"
+  }
+}

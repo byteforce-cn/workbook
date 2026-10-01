@@ -1,0 +1,44 @@
+{
+  "kind": "workbook",
+  "schemaVersion": "4.1.1",
+  "locale": "zh-CN",
+  "data": {},
+  "views": [
+    {
+      "type": "page",
+      "id": "spreadsheet-block-embedded",
+      "label": "内嵌表格块 conformance",
+      "pageSettings": {
+        "width": 640,
+        "height": 900,
+        "marginTop": 72,
+        "marginLeft": 72,
+        "marginRight": 72,
+        "marginBottom": 72
+      },
+      "content": [
+        {
+          "type": "spreadsheet",
+          "comment": "内嵌进度表",
+          "renderHints": {
+            "height": 260
+          },
+          "sheet": {
+            "name": "进度表",
+            "frozenRows": 1,
+            "frozenCols": 1,
+            "columns": [{ "width": 90 }, { "width": 120 }],
+            "rows": [
+              {
+                "cells": [{ "column": 0, "value": "阶段" }, { "column": 1, "value": "状态" }]
+              },
+              {
+                "cells": [{ "column": 0, "value": "设计" }, { "column": 1, "value": "完成" }]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

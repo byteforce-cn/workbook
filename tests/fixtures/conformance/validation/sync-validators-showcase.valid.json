@@ -1,0 +1,75 @@
+{
+  "kind": "workbook",
+  "schemaVersion": "4.1.1",
+  "locale": "zh-CN",
+  "data": {
+    "customerName": "",
+    "quantity": 0,
+    "unitPrice": 1500,
+    "account": "ab",
+    "note": "这是一段超过二十个字符的备注文字用于触发最大长度校验",
+    "mobile": "12345"
+  },
+  "views": [
+    {
+      "type": "form",
+      "id": "sync-validators",
+      "label": "内置校验规则",
+      "config": {
+        "validateMode": "onChange"
+      },
+      "fields": [
+        {
+          "name": "customerName",
+          "type": "string",
+          "label": "客户姓名",
+          "bind": { "path": "customerName", "mode": "twoWay" },
+          "validations": [{ "type": "required", "message": "姓名不能为空" }]
+        },
+        {
+          "name": "quantity",
+          "type": "number",
+          "label": "数量",
+          "bind": { "path": "quantity", "mode": "twoWay" },
+          "validations": [{ "type": "min", "params": { "value": 1 }, "message": "数量不能小于 1" }]
+        },
+        {
+          "name": "unitPrice",
+          "type": "number",
+          "label": "单价",
+          "bind": { "path": "unitPrice", "mode": "twoWay" },
+          "validations": [{ "type": "max", "params": { "value": 1000 }, "message": "单价不能超过 1000" }]
+        },
+        {
+          "name": "account",
+          "type": "string",
+          "label": "账号",
+          "bind": { "path": "account", "mode": "twoWay" },
+          "validations": [{ "type": "minLength", "params": { "value": 3 }, "message": "账号至少 3 个字符" }]
+        },
+        {
+          "name": "note",
+          "type": "textarea",
+          "label": "备注",
+          "bind": { "path": "note", "mode": "twoWay" },
+          "validations": [{ "type": "maxLength", "params": { "value": 20 }, "message": "备注不能超过 20 个字符" }]
+        },
+        {
+          "name": "mobile",
+          "type": "string",
+          "label": "手机号",
+          "bind": { "path": "mobile", "mode": "twoWay" },
+          "validations": [{ "type": "pattern", "params": { "value": "^1\\d{10}$" }, "message": "手机号格式不正确" }]
+        }
+      ],
+      "layout": [
+        { "type": "field", "name": "customerName" },
+        { "type": "field", "name": "quantity" },
+        { "type": "field", "name": "unitPrice" },
+        { "type": "field", "name": "account" },
+        { "type": "field", "name": "note" },
+        { "type": "field", "name": "mobile" }
+      ]
+    }
+  ]
+}

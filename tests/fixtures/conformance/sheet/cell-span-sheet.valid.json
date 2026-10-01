@@ -1,0 +1,42 @@
+{
+  "kind": "workbook",
+  "schemaVersion": "4.1.1",
+  "data": {},
+  "views": [
+    {
+      "type": "sheet",
+      "id": "cell-span-sheet",
+      "label": "单元格合并 conformance",
+      "name": "合并单元格",
+      "columns": [{ "width": 120 }, { "width": 120 }, { "width": 120 }, { "width": 120 }],
+      "rows": [
+        {
+          "height": 32,
+          "cells": [
+            { "column": 0, "value": "合并标题", "colspan": 4, "style": "headerCell" },
+            { "column": 1, "value": "被覆盖" },
+            { "column": 2, "value": "被覆盖" },
+            { "column": 3, "value": "被覆盖" }
+          ]
+        },
+        {
+          "height": 32,
+          "cells": [
+            { "column": 0, "value": "行1列1" },
+            { "column": 1, "value": "合并垂直", "rowspan": 2 },
+            { "column": 2, "value": "行1列3" },
+            { "column": 3, "value": "行1列4" }
+          ]
+        },
+        {
+          "height": 32,
+          "cells": [
+            { "column": 0, "value": "行2列1" },
+            { "column": 2, "value": "行2列3", "colspan": 2 },
+            { "column": 3, "value": "被覆盖" }
+          ]
+        }
+      ]
+    }
+  ]
+}

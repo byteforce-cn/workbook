@@ -1,0 +1,44 @@
+{
+  "kind": "workbook",
+  "schemaVersion": "4.1.1",
+  "data": {
+    "items": [{ "name": "服务器", "qty": 2 }]
+  },
+  "views": [
+    {
+      "type": "sheet",
+      "id": "sheet-preview",
+      "label": "表格 conformance",
+      "name": "工程量",
+      "columns": [{ "width": 180 }, { "width": 120 }, { "width": 120 }],
+      "rows": [
+        {
+          "cells": [
+            { "column": 0, "value": "名称" },
+            { "column": 1, "value": "数量" },
+            { "column": 2, "value": "合计" }
+          ]
+        },
+        {
+          "cells": [
+            {
+              "column": 0,
+              "bind": {
+                "path": "items[0].name",
+                "mode": "oneWay"
+              }
+            },
+            {
+              "column": 1,
+              "bind": {
+                "path": "items[0].qty",
+                "mode": "oneWay"
+              }
+            },
+            { "column": 2, "formula": "=2*3" }
+          ]
+        }
+      ]
+    }
+  ]
+}

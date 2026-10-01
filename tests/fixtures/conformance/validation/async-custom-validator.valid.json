@@ -1,0 +1,89 @@
+{
+  "kind": "workbook",
+  "schemaVersion": "4.1.1",
+  "locale": "zh-CN",
+  "data": {
+    "username": "",
+    "budget": 200
+  },
+  "views": [
+    {
+      "type": "form",
+      "id": "async-validation",
+      "label": "异步校验",
+      "config": {
+        "validateMode": "onBlur"
+      },
+      "fields": [
+        {
+          "name": "username",
+          "type": "string",
+          "label": "用户名",
+          "bind": {
+            "path": "username",
+            "mode": "twoWay"
+          },
+          "validations": [
+            {
+              "type": "required",
+              "message": "用户名不能为空"
+            },
+            {
+              "type": "uniqueUsername",
+              "async": true,
+              "message": "用户名已被占用",
+              "params": {
+                "endpoint": "https://hooks.example/check-username"
+              }
+            }
+          ]
+        },
+        {
+          "name": "budget",
+          "type": "number",
+          "label": "预算",
+          "bind": {
+            "path": "budget",
+            "mode": "twoWay"
+          },
+          "validations": [
+            {
+              "type": "min",
+              "params": { "value": 100 },
+              "message": "预算不能低于100"
+            },
+            {
+              "type": "max",
+              "params": { "value": 1000 },
+              "message": "预算不能超过1000",
+              "condition": {
+                "op": "gt",
+                "path": "budget",
+                "value": 0
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "page",
+      "id": "validation-page",
+      "pageSettings": {
+        "width": 595,
+        "height": 842
+      },
+      "content": [
+        {
+          "type": "paragraph",
+          "runs": [
+            {
+              "type": "text",
+              "text": "Validation test page"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

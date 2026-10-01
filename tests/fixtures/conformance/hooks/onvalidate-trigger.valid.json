@@ -1,0 +1,95 @@
+{
+  "kind": "workbook",
+  "schemaVersion": "4.1.1",
+  "locale": "zh-CN",
+  "data": {
+    "name": "",
+    "email": ""
+  },
+  "hooks": [
+    {
+      "trigger": "onValidate",
+      "type": "api",
+      "description": "log-validation",
+      "config": {
+        "endpoint": "https://hooks.example/log-validation",
+        "method": "POST"
+      }
+    },
+    {
+      "trigger": "onValidate",
+      "type": "function",
+      "description": "audit-validation",
+      "config": {
+        "name": "auditLogger"
+      },
+      "condition": {
+        "op": "neq",
+        "path": "name",
+        "value": ""
+      }
+    }
+  ],
+  "views": [
+    {
+      "type": "form",
+      "id": "onvalidate-form",
+      "label": "onValidate 测试",
+      "config": {
+        "validateMode": "onBlur"
+      },
+      "fields": [
+        {
+          "name": "name",
+          "type": "string",
+          "label": "姓名",
+          "bind": {
+            "path": "name",
+            "mode": "twoWay"
+          },
+          "validations": [
+            {
+              "type": "required",
+              "message": "姓名不能为空"
+            }
+          ]
+        },
+        {
+          "name": "email",
+          "type": "string",
+          "label": "邮箱",
+          "bind": {
+            "path": "email",
+            "mode": "twoWay"
+          },
+          "validations": [
+            {
+              "type": "pattern",
+              "params": { "value": "^[\\w.-]+@[\\w.-]+\\.\\w+$" },
+              "message": "邮箱格式不正确"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "page",
+      "id": "hooks-page",
+      "pageSettings": {
+        "width": 595,
+        "height": 842
+      },
+      "content": [
+        {
+          "type": "paragraph",
+          "runs": [
+            {
+              "type": "text",
+              "text": "Hooks test page"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

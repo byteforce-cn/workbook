@@ -1,0 +1,40 @@
+{
+  "kind": "workbook",
+  "schemaVersion": "4.1.1",
+  "locale": "zh-CN",
+  "i18n": {
+    "zh-CN": {
+      "workbook.form.submit": "提交表单",
+      "workbook.form.reset": "重置表单",
+      "workbook.steps.previous": "上一步",
+      "workbook.steps.next": "下一步",
+      "custom.greeting": "你好，世界"
+    },
+    "en": {
+      "workbook.form.submit": "Submit",
+      "workbook.form.reset": "Reset",
+      "workbook.steps.previous": "Previous",
+      "workbook.steps.next": "Next"
+    }
+  },
+  "data": {},
+  "views": [
+    {
+      "type": "form",
+      "id": "i18n-fallback",
+      "label": "i18n 回退测试",
+      "fields": [
+        {
+          "name": "name",
+          "type": "string",
+          "label": "姓名",
+          "bind": { "path": "name", "mode": "twoWay" }
+        }
+      ],
+      "config": {
+        "submitLabel": "@:workbook.form.submit",
+        "resetLabel": "@:workbook.form.reset"
+      }
+    }
+  ]
+}

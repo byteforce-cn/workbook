@@ -1,0 +1,31 @@
+{
+  "kind": "workbook",
+  "schemaVersion": "4.1.1",
+  "data": {
+    "title": "布局错误"
+  },
+  "views": [
+    {
+      "type": "form",
+      "id": "invalid-layout-repeat",
+      "fields": [
+        {
+          "name": "title",
+          "type": "string",
+          "label": "项目标题"
+        }
+      ],
+      "layout": [
+        {
+          "type": "repeat",
+          "children": [
+            {
+              "type": "field",
+              "name": "title"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

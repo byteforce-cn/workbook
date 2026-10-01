@@ -1,0 +1,48 @@
+{
+  "kind": "workbook",
+  "schemaVersion": "4.1.1",
+  "locale": "zh-CN",
+  "data": {},
+  "hooks": [
+    {
+      "trigger": "onBeforePrint",
+      "type": "api",
+      "description": "prepare-print",
+      "config": {
+        "endpoint": "https://hooks.example/pre-print",
+        "method": "POST"
+      }
+    },
+    {
+      "trigger": "onAfterPrint",
+      "type": "api",
+      "description": "log-print",
+      "config": {
+        "endpoint": "https://hooks.example/post-print",
+        "method": "POST"
+      }
+    }
+  ],
+  "views": [
+    {
+      "type": "page",
+      "id": "print-hooks",
+      "label": "打印钩子测试",
+      "pageSettings": {
+        "width": 595,
+        "height": 842,
+        "marginTop": 72,
+        "marginLeft": 72,
+        "marginRight": 72,
+        "marginBottom": 72
+      },
+      "content": [
+        {
+          "type": "paragraph",
+          "alignment": "center",
+          "runs": [{ "type": "text", "text": "打印钩子测试文档" }]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,87 @@
+{
+  "kind": "workbook",
+  "schemaVersion": "4.1.1",
+  "locale": "zh-CN",
+  "data": {
+    "fieldA": "A 值",
+    "fieldB": "B 值",
+    "fieldC": "C 值",
+    "fieldD": "D 值",
+    "fieldE": "E 值",
+    "fieldF": "F 值",
+    "fieldG": "G 值"
+  },
+  "views": [
+    {
+      "type": "form",
+      "id": "row-field-span",
+      "label": "row 跨列混排",
+      "fields": [
+        {
+          "name": "fieldA",
+          "type": "string",
+          "label": "短字段A",
+          "bind": { "path": "fieldA", "mode": "twoWay" }
+        },
+        {
+          "name": "fieldB",
+          "type": "string",
+          "label": "短字段B",
+          "bind": { "path": "fieldB", "mode": "twoWay" }
+        },
+        {
+          "name": "fieldC",
+          "type": "string",
+          "label": "短字段C",
+          "bind": { "path": "fieldC", "mode": "twoWay" }
+        },
+        {
+          "name": "fieldD",
+          "type": "textarea",
+          "label": "宽字段D",
+          "bind": { "path": "fieldD", "mode": "twoWay" }
+        },
+        {
+          "name": "fieldE",
+          "type": "textarea",
+          "label": "宽字段E",
+          "bind": { "path": "fieldE", "mode": "twoWay" }
+        },
+        {
+          "name": "fieldF",
+          "type": "string",
+          "label": "短字段F",
+          "bind": { "path": "fieldF", "mode": "twoWay" }
+        },
+        {
+          "name": "fieldG",
+          "type": "textarea",
+          "label": "整行字段G",
+          "bind": { "path": "fieldG", "mode": "twoWay" }
+        }
+      ],
+      "layout": [
+        {
+          "type": "row",
+          "gutter": 12,
+          "children": [{ "type": "field", "name": "fieldA" }, { "type": "field", "name": "fieldB" }]
+        },
+        {
+          "type": "row",
+          "gutter": 12,
+          "children": [{ "type": "field", "name": "fieldC" }, { "type": "field", "name": "fieldD", "span": 2 }]
+        },
+        {
+          "type": "row",
+          "gutter": 12,
+          "children": [{ "type": "field", "name": "fieldE", "span": 2 }, { "type": "field", "name": "fieldF" }]
+        },
+        {
+          "type": "row",
+          "gutter": 12,
+          "children": [{ "type": "field", "name": "fieldG", "span": 3 }]
+        }
+      ]
+    }
+  ]
+}

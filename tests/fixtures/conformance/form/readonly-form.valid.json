@@ -1,0 +1,62 @@
+{
+  "kind": "workbook",
+  "schemaVersion": "4.1.1",
+  "locale": "zh-CN",
+  "data": {
+    "docNo": "DOC-2026-001",
+    "title": "跨海大桥桩基变更",
+    "owner": "张三",
+    "amount": 5000000,
+    "status": "approving"
+  },
+  "views": [
+    {
+      "type": "form",
+      "id": "readonly-review",
+      "label": "变更申请（审核中）",
+      "config": {
+        "readOnly": true,
+        "validateMode": "onChange"
+      },
+      "fields": [
+        {
+          "name": "docNo",
+          "type": "string",
+          "label": "单据编号",
+          "bind": { "path": "docNo", "mode": "twoWay" }
+        },
+        {
+          "name": "title",
+          "type": "string",
+          "label": "变更标题",
+          "bind": { "path": "title", "mode": "twoWay" }
+        },
+        {
+          "name": "owner",
+          "type": "select",
+          "label": "发起人",
+          "options": [{ "value": "张三", "label": "张三（项目经理）" }],
+          "bind": { "path": "owner", "mode": "twoWay" }
+        },
+        {
+          "name": "amount",
+          "type": "number",
+          "label": "影响金额",
+          "bind": { "path": "amount", "mode": "twoWay" }
+        },
+        {
+          "name": "status",
+          "type": "select",
+          "label": "审批状态",
+          "options": [{ "value": "approving", "label": "审批中" }],
+          "bind": { "path": "status", "mode": "twoWay" }
+        }
+      ],
+      "layout": [
+        { "type": "row", "children": [{ "type": "field", "name": "docNo" }, { "type": "field", "name": "status" }] },
+        { "type": "field", "name": "title" },
+        { "type": "row", "children": [{ "type": "field", "name": "owner" }, { "type": "field", "name": "amount" }] }
+      ]
+    }
+  ]
+}

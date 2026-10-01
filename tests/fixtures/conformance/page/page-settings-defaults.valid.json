@@ -1,0 +1,31 @@
+{
+  "kind": "workbook",
+  "schemaVersion": "4.1.1",
+  "locale": "zh-CN",
+  "data": {},
+  "views": [
+    {
+      "type": "page",
+      "id": "page-settings-defaults",
+      "label": "页面默认设置 conformance",
+      "pageSettings": {
+        "width": 620,
+        "height": 880,
+        "marginTop": 60,
+        "marginBottom": 64,
+        "marginLeft": 80,
+        "marginRight": 70,
+        "defaultFontFamily": "Times New Roman",
+        "defaultFontSize": 17,
+        "defaultLineHeight": 1.7,
+        "defaultColor": "#0f172a"
+      },
+      "content": [
+        {
+          "type": "paragraph",
+          "runs": [{ "type": "text", "text": "默认页面样式" }]
+        }
+      ]
+    }
+  ]
+}

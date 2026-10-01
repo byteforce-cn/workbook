@@ -1,0 +1,19 @@
+{
+  "kind": "workbook",
+  "schemaVersion": "4.1.1",
+  "data": {},
+  "views": [
+    {
+      "type": "sheet",
+      "id": "column-zero-width",
+      "label": "无效列宽",
+      "name": "零宽度列",
+      "columns": [{ "width": 0 }],
+      "rows": [
+        {
+          "cells": [{ "column": 0, "value": "不可见" }]
+        }
+      ]
+    }
+  ]
+}

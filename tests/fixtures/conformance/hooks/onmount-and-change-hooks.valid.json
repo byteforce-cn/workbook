@@ -1,0 +1,46 @@
+{
+  "kind": "workbook",
+  "schemaVersion": "4.1.1",
+  "data": {
+    "status": "draft"
+  },
+  "hooks": [
+    {
+      "trigger": "onMount",
+      "type": "api",
+      "config": {
+        "endpoint": "https://hooks.example/on-mount",
+        "method": "POST"
+      },
+      "description": "mount hook"
+    },
+    {
+      "trigger": "onChange",
+      "type": "api",
+      "config": {
+        "endpoint": "https://hooks.example/on-change",
+        "method": "POST"
+      },
+      "description": "change hook"
+    }
+  ],
+  "views": [
+    {
+      "type": "form",
+      "id": "hooks-form",
+      "label": "Hook conformance",
+      "fields": [
+        {
+          "name": "status",
+          "type": "string",
+          "label": "状态",
+          "bind": {
+            "path": "status",
+            "mode": "twoWay"
+          }
+        }
+      ],
+      "layout": [{ "type": "field", "name": "status" }]
+    }
+  ]
+}

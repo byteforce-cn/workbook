@@ -1,0 +1,35 @@
+{
+  "kind": "workbook",
+  "schemaVersion": "4.1.1",
+  "locale": "zh-CN",
+  "data": {},
+  "views": [
+    {
+      "type": "sheet",
+      "id": "sheet-row-props",
+      "label": "行属性 conformance",
+      "name": "行样式",
+      "columns": [{ "width": 120 }, { "width": 120 }],
+      "rows": [
+        {
+          "height": 40,
+          "style": "headerRow",
+          "cells": [{ "column": 0, "value": "标题列1" }, { "column": 1, "value": "标题列2" }]
+        },
+        {
+          "height": 28,
+          "cells": [{ "column": 0, "value": "数据A" }, { "column": 1, "value": "数据B" }]
+        },
+        {
+          "hidden": true,
+          "cells": [{ "column": 0, "value": "隐藏行A" }, { "column": 1, "value": "隐藏行B" }]
+        },
+        {
+          "height": 36,
+          "style": "totalRow",
+          "cells": [{ "column": 0, "value": "合计" }, { "column": 1, "formula": "=100+200" }]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "kind": "workbook",
+  "schemaVersion": "4.1.1",
+  "data": {},
+  "views": [
+    {
+      "type": "page",
+      "id": "invalid-page",
+      "content": [
+        {
+          "type": "paragraph",
+          "runs": [{ "type": "text", "text": "缺少 pageSettings" }]
+        }
+      ]
+    }
+  ]
+}

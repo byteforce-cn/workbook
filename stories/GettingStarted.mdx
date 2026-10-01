@@ -1,0 +1,81 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+
+<Meta title="Getting Started" />
+
+# BF Workbook — Schema 驱动的业务文档运行时
+
+> **一句话**：用一份 `BFDocumentSchema v4.1.1` 描述业务数据，同一份 schema 同时驱动
+> **表单录入 → 分页文档 → Sheet 台账 → PDF 二进制输出**。
+
+本 Storybook 是给 **开发者** 与 **使用者** 建立生产落地信心的入口。每个 story 均附带
+**可运行的示例代码**、**实时数据树** 与 **无障碍 (a11y) 检查**。
+
+---
+
+## 为什么用它？
+
+| 关注点 | BF Workbook 的答案 |
+|--------|-------------------|
+| 上手成本 | `SimpleForm` 5 行字段定义即可渲染完整表单，零 Schema 知识 |
+| 复用与一致 | Schema 驱动，表单 / 页面 / 表格 / PDF 由同一份数据与规则驱动 |
+| 复杂业务 | 校验、依赖引擎、条件引擎、插件体系、i18n、Hook 生命周期 |
+| 交付安全 | 内置 XSS 清洗、三级错误边界、PDF-1.7 纯字节输出（无外部依赖） |
+
+---
+
+## 快速开始（5 分钟）
+
+```tsx
+import { SimpleForm } from "@byteforce/workbook/quick";
+
+export function OrderForm() {
+  return (
+    <SimpleForm
+      fields={[
+        { name: "customerName", type: "text", label: "客户名称", required: true },
+        { name: "amount", type: "number", label: "订单金额" },
+        { name: "deliveryDate", type: "date", label: "交付日期" },
+      ]}
+      onSubmit={(data) => console.log("提交", data)}
+    />
+  );
+}
+```
+
+> 👉 在左侧导航 **Quick Start / SimpleForm** 中直接体验，右侧「查看示例代码」可复制。
+
+---
+
+## 能力导航
+
+| 能力域 | 入口 | 关键 Story |
+|--------|------|-----------|
+| 🚀 新手快速上手 | Quick Start | `SimpleFormBasics` / `SimpleFormSelect` / `SimpleFormLayouts` |
+| 📋 表单引擎 | Workbook / Fields · Layout · Validation · Dependencies · Option Sources | 字段全景、布局、内置校验、依赖显隐、选项源 |
+| 🔌 插件体系 | Workbook / Plugin System | 自定义字段 / 布局 / 校验 / 条件 |
+| ⚛️ React 集成 | Workbook / React Integration | DataProvider 多视图联动、PluginProvider 隔离、三级错误边界 |
+| 🌐 运行时 | Workbook / Runtime | i18n、条件引擎矩阵、Hook 生命周期 |
+| 📄 页面深度 | Workbook / Page | 水印、页眉页脚分页规则、浮动块、复杂表格 |
+| 📊 表格深度 | Workbook / Sheet | 冻结窗格、公式计算（SUM/AVG）、虚拟滚动（300 行） |
+| 📄 📊 输出 | Workbook / DocumentRenderer | Page / Sheet / 分页打印 / PDF / 生产样张 |
+
+---
+
+## 生产就绪度
+
+- ✅ **核心能力全覆盖**：18 个能力域中 14+ 已在 Storybook 中以交互式 story 呈现（34 个 story）
+- ✅ **一致性容器**：所有 story 统一使用 `StoryShell`（标题、能力标签、示例代码、实时数据树）
+- ✅ **无障碍自动化**：每个 story 均可通过 **Accessibility 面板** 运行 axe 规则检查
+- ✅ **e2e 守护**：35 条 Playwright 用例（9 个 spec）覆盖全部能力级 story，防止回归
+- ✅ **静态构建**：`pnpm build-storybook` 产出可部署的 `storybook-static/`
+
+---
+
+## 给使用者的建议路径
+
+1. **评估能力**：先看「生产样张」—— 同一 schema 驱动 form → page → sheet → PDF
+2. **验证场景**：在对应能力域 story 中修改字段，观察数据树与错误状态是否符合业务预期
+3. **跑通 a11y**：打开 Accessibility 面板确认关键流程无障碍达标
+4. **复制落地**：每个 story 的「查看示例代码」均可直接复制到业务代码
+
+> 所有能力均可在本 Storybook 中交互验证；问题与建议欢迎通过 GitHub Issues 反馈。

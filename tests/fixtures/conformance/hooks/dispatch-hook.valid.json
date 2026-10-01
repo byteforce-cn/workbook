@@ -1,0 +1,37 @@
+{
+  "kind": "workbook",
+  "schemaVersion": "4.1.1",
+  "locale": "zh-CN",
+  "data": {},
+  "hooks": [
+    {
+      "trigger": "custom",
+      "type": "dispatch",
+      "description": "internal-analytics",
+      "config": {
+        "event": "workbook:analytics",
+        "payload": { "source": "renderer" }
+      },
+      "condition": {
+        "op": "eq",
+        "path": "",
+        "value": ""
+      }
+    }
+  ],
+  "views": [
+    {
+      "type": "form",
+      "id": "dispatch-hook",
+      "label": "Dispatch 钩子测试",
+      "fields": [
+        {
+          "name": "note",
+          "type": "string",
+          "label": "备注",
+          "bind": { "path": "note", "mode": "twoWay" }
+        }
+      ]
+    }
+  ]
+}

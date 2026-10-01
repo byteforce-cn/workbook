@@ -1,0 +1,43 @@
+{
+  "kind": "workbook",
+  "schemaVersion": "4.1.1",
+  "locale": "zh-CN",
+  "data": {
+    "name": "",
+    "email": ""
+  },
+  "views": [
+    {
+      "type": "form",
+      "id": "render-hints",
+      "label": "renderHints 测试",
+      "fields": [
+        {
+          "name": "name",
+          "type": "string",
+          "label": "姓名",
+          "bind": { "path": "name", "mode": "twoWay" }
+        },
+        {
+          "name": "email",
+          "type": "string",
+          "label": "邮箱",
+          "bind": { "path": "email", "mode": "twoWay" }
+        }
+      ],
+      "layout": [
+        {
+          "type": "row",
+          "children": [{ "type": "field", "name": "name" }, { "type": "field", "name": "email" }]
+        }
+      ],
+      "renderHints": {
+        "submitPosition": "bottom",
+        "layoutDensity": "compact"
+      },
+      "config": {
+        "submitLabel": "提交"
+      }
+    }
+  ]
+}

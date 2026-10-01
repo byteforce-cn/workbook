@@ -1,0 +1,12 @@
+{
+  "kind": "workbook",
+  "schemaVersion": "4.1.1",
+  "data": {},
+  "views": [
+    {
+      "type": "sheet",
+      "name": "无列配置",
+      "columns": []
+    }
+  ]
+}

@@ -1,0 +1,1356 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://byteforce.cn/schema/workbook-v4.1.1.json",
+  "title": "BF Document Schema v4.1.1",
+  "description": "Optimized schema with strict conditions, flexible option sources, floating block improvements, and style safety.",
+  "type": "object",
+  "required": ["kind", "schemaVersion", "data", "views"],
+  "properties": {
+    "kind": { "const": "workbook" },
+    "schemaVersion": { "const": "4.1.1" },
+    "id": { "type": "string", "minLength": 1 },
+    "locale": { "$ref": "#/definitions/localeString" },
+    "metadata": { "type": "object", "additionalProperties": true },
+    "data": {
+      "type": "object",
+      "description": "Central reactive data tree. All bindings read/write to this object."
+    },
+    "i18n": {
+      "type": "object",
+      "description": "Internationalization dictionary. Keys are locale codes (e.g., 'en', 'zh-CN'), values are objects with translation key-value pairs. Labels, titles etc. may reference keys via '@:path' syntax.",
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": { "type": "string" }
+      }
+    },
+    "assets": { "$ref": "#/definitions/assetMap" },
+    "styles": { "$ref": "#/definitions/styleCatalog" },
+    "hooks": {
+      "type": "array",
+      "description": "Lifecycle hooks for document-level actions (e.g., onMount, onSubmit, onChange).",
+      "items": { "$ref": "#/definitions/hook" }
+    },
+    "printConfig": { "$ref": "#/definitions/printConfig" },
+    "views": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/view" },
+      "minItems": 1
+    }
+  },
+  "additionalProperties": false,
+  "definitions": {
+    "localeString": {
+      "type": "string",
+      "minLength": 2,
+      "pattern": "^[A-Za-z]{2,3}(?:-[A-Za-z]{4})?(?:-(?:[A-Za-z]{2}|\\d{3}))?(?:-(?:[A-Za-z0-9]{5,8}|\\d[A-Za-z0-9]{3}))*$",
+      "default": "en-US"
+    },
+    "nonEmptyString": { "type": "string", "minLength": 1 },
+    "positiveNumber": { "type": "number", "exclusiveMinimum": 0 },
+    "nonNegativeNumber": { "type": "number", "minimum": 0 },
+    "hexColor": { "type": "string", "pattern": "^#[0-9a-fA-F]{6}$" },
+    "assetMap": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["src"],
+        "properties": {
+          "src": { "type": "string", "format": "uri-reference" },
+          "type": { "type": "string" }
+        },
+        "additionalProperties": false
+      }
+    },
+    "bind": {
+      "type": "object",
+      "required": ["path"],
+      "properties": {
+        "path": { "type": "string", "description": "Data path using dot/bracket notation." },
+        "mode": { "type": "string", "enum": ["twoWay", "oneWay", "oneWayToData"], "default": "twoWay" },
+        "format": { "type": "string" },
+        "placeholder": {}
+      },
+      "additionalProperties": false
+    },
+    "condition": {
+      "type": "object",
+      "required": ["op"],
+      "properties": {
+        "op": {
+          "type": "string",
+          "enum": ["eq", "neq", "gt", "gte", "lt", "lte", "in", "contains", "isEmpty", "and", "or", "not", "custom"]
+        },
+        "path": { "type": "string" },
+        "value": {},
+        "conditions": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/condition" }
+        },
+        "condition": { "$ref": "#/definitions/condition" },
+        "name": { "type": "string" },
+        "params": { "type": "object" }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": { "op": { "enum": ["eq", "neq", "gt", "gte", "lt", "lte", "in", "contains"] } }
+          },
+          "then": { "required": ["path", "value"] }
+        },
+        {
+          "if": {
+            "properties": { "op": { "const": "isEmpty" } }
+          },
+          "then": { "required": ["path"] }
+        },
+        {
+          "if": {
+            "properties": { "op": { "enum": ["and", "or"] } }
+          },
+          "then": { "required": ["conditions"] }
+        },
+        {
+          "if": {
+            "properties": { "op": { "const": "not" } }
+          },
+          "then": { "required": ["condition"] }
+        },
+        {
+          "if": {
+            "properties": { "op": { "const": "custom" } }
+          },
+          "then": { "required": ["name"] }
+        }
+      ],
+      "additionalProperties": false
+    },
+    "validation": {
+      "type": "object",
+      "required": ["type", "message"],
+      "properties": {
+        "type": { "type": "string" },
+        "params": {},
+        "message": { "type": "string" },
+        "async": { "type": "boolean", "default": false },
+        "condition": { "$ref": "#/definitions/condition" }
+      },
+      "additionalProperties": false
+    },
+    "optionSource": {
+      "oneOf": [
+        {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["value", "label"],
+            "properties": {
+              "value": {},
+              "label": { "type": "string" },
+              "disabled": { "type": "boolean" },
+              "group": { "type": "string" }
+            },
+            "additionalProperties": true
+          }
+        },
+        {
+          "type": "object",
+          "required": ["type"],
+          "properties": {
+            "type": { "type": "string", "enum": ["url", "graphql", "custom"] },
+            "endpoint": { "type": "string", "format": "uri-reference" },
+            "method": { "type": "string", "enum": ["GET", "POST"], "default": "GET" },
+            "headers": { "type": "object", "additionalProperties": { "type": "string" } },
+            "params": {
+              "type": "object",
+              "additionalProperties": {
+                "anyOf": [
+                  {},
+                  {
+                    "type": "object",
+                    "required": ["$field"],
+                    "properties": { "$field": { "type": "string" } },
+                    "additionalProperties": false
+                  }
+                ]
+              }
+            },
+            "query": { "type": "string" },
+            "operationName": { "type": "string" },
+            "dataPath": { "type": "string" },
+            "valueKey": { "type": "string", "default": "value" },
+            "labelKey": { "type": "string", "default": "label" },
+            "pagination": {
+              "type": "object",
+              "required": ["enabled", "pageSize", "totalPath", "pageParam"],
+              "properties": {
+                "enabled": { "type": "boolean" },
+                "pageSize": { "type": "integer", "minimum": 1 },
+                "totalPath": { "type": "string" },
+                "pageParam": { "type": "string" }
+              },
+              "additionalProperties": false
+            },
+            "dependsOn": { "type": "array", "items": { "type": "string" } },
+            "fetchOnMount": { "type": "boolean", "default": true },
+            "cache": { "type": "string", "enum": ["none", "memory", "session"], "default": "none" },
+            "searchDebounce": { "type": "number", "minimum": 0, "default": 300 }
+          },
+          "allOf": [
+            {
+              "if": {
+                "properties": { "type": { "const": "url" } }
+              },
+              "then": { "required": ["endpoint", "dataPath"] }
+            },
+            {
+              "if": {
+                "properties": { "type": { "const": "graphql" } }
+              },
+              "then": { "required": ["endpoint", "dataPath", "query"] }
+            }
+          ],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "dependency": {
+      "type": "object",
+      "required": ["targetField", "condition", "effect"],
+      "properties": {
+        "targetField": { "$ref": "#/definitions/nonEmptyString" },
+        "condition": { "$ref": "#/definitions/condition" },
+        "debounce": { "type": "number", "minimum": 0 },
+        "effect": {
+          "type": "object",
+          "properties": {
+            "visible": { "type": "boolean" },
+            "required": { "type": "boolean" },
+            "disabled": { "type": "boolean" },
+            "options": { "$ref": "#/definitions/optionSource" },
+            "validations": { "type": "array", "items": { "$ref": "#/definitions/validation" } },
+            "defaultValue": {},
+            "props": { "type": "object", "additionalProperties": true }
+          },
+          "additionalProperties": false
+        },
+        "otherwise": {
+          "type": "object",
+          "properties": {
+            "visible": { "type": "boolean" },
+            "required": { "type": "boolean" },
+            "disabled": { "type": "boolean" },
+            "options": { "$ref": "#/definitions/optionSource" },
+            "validations": { "type": "array", "items": { "$ref": "#/definitions/validation" } },
+            "defaultValue": {},
+            "props": { "type": "object", "additionalProperties": true }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "fieldDefinition": {
+      "type": "object",
+      "required": ["name", "type"],
+      "properties": {
+        "name": { "$ref": "#/definitions/nonEmptyString" },
+        "type": {
+          "type": "string",
+          "enum": [
+            "string",
+            "number",
+            "boolean",
+            "date",
+            "select",
+            "multiselect",
+            "textarea",
+            "array",
+            "object",
+            "custom"
+          ]
+        },
+        "label": { "type": "string" },
+        "bind": { "$ref": "#/definitions/bind" },
+        "validations": { "type": "array", "items": { "$ref": "#/definitions/validation" } },
+        "dependencies": { "type": "array", "items": { "$ref": "#/definitions/dependency" } },
+        "defaultValue": {},
+        "options": { "$ref": "#/definitions/optionSource" },
+        "visible": {
+          "oneOf": [{ "type": "boolean" }, { "$ref": "#/definitions/condition" }],
+          "default": true
+        },
+        "disabled": {
+          "oneOf": [{ "type": "boolean" }, { "$ref": "#/definitions/condition" }],
+          "default": false
+        },
+        "component": { "type": "string" },
+        "props": { "type": "object", "additionalProperties": true },
+        "arrayConfig": {
+          "type": "object",
+          "properties": {
+            "minItems": { "type": "integer", "minimum": 0 },
+            "maxItems": { "type": "integer", "minimum": 1 },
+            "sortable": { "type": "boolean" },
+            "addLabel": { "type": "string" },
+            "removeLabel": { "type": "string" },
+            "itemFields": {
+              "type": "array",
+              "items": { "$ref": "#/definitions/fieldDefinition" }
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "layoutNode": {
+      "oneOf": [
+        { "$ref": "#/definitions/layoutField" },
+        { "$ref": "#/definitions/layoutGroup" },
+        { "$ref": "#/definitions/layoutRow" },
+        { "$ref": "#/definitions/layoutTabs" },
+        { "$ref": "#/definitions/layoutSteps" },
+        { "$ref": "#/definitions/layoutConditional" },
+        { "$ref": "#/definitions/layoutRepeat" },
+        { "$ref": "#/definitions/layoutHtml" },
+        { "$ref": "#/definitions/layoutCustom" }
+      ]
+    },
+    "layoutField": {
+      "type": "object",
+      "required": ["type", "name"],
+      "properties": {
+        "type": { "const": "field" },
+        "name": { "$ref": "#/definitions/nonEmptyString" },
+        "span": { "type": "integer", "minimum": 1 },
+        "overrides": { "$ref": "#/definitions/fieldDefinition" }
+      },
+      "additionalProperties": false
+    },
+    "layoutGroup": {
+      "type": "object",
+      "required": ["type", "children"],
+      "properties": {
+        "type": { "const": "group" },
+        "title": { "type": "string" },
+        "children": { "type": "array", "items": { "$ref": "#/definitions/layoutNode" }, "minItems": 1 },
+        "collapsible": { "type": "boolean" },
+        "collapsed": { "type": "boolean" }
+      },
+      "additionalProperties": false
+    },
+    "layoutRow": {
+      "type": "object",
+      "required": ["type", "children"],
+      "properties": {
+        "type": { "const": "row" },
+        "children": { "type": "array", "items": { "$ref": "#/definitions/layoutNode" }, "minItems": 1 },
+        "align": { "type": "string", "enum": ["start", "center", "end", "stretch"] },
+        "gutter": { "type": "number", "minimum": 0 }
+      },
+      "additionalProperties": false
+    },
+    "layoutTabs": {
+      "type": "object",
+      "required": ["type", "tabs"],
+      "properties": {
+        "type": { "const": "tabs" },
+        "tabs": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["key", "title", "children"],
+            "properties": {
+              "key": { "$ref": "#/definitions/nonEmptyString" },
+              "title": { "type": "string" },
+              "children": { "type": "array", "items": { "$ref": "#/definitions/layoutNode" }, "minItems": 1 },
+              "lazy": { "type": "boolean" },
+              "keepAlive": { "type": "boolean" },
+              "visible": { "$ref": "#/definitions/condition" },
+              "badge": {}
+            },
+            "additionalProperties": false
+          },
+          "minItems": 1
+        },
+        "defaultActiveKey": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "layoutSteps": {
+      "type": "object",
+      "required": ["type", "steps"],
+      "properties": {
+        "type": { "const": "steps" },
+        "steps": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["key", "title", "children"],
+            "properties": {
+              "key": { "$ref": "#/definitions/nonEmptyString" },
+              "title": { "type": "string" },
+              "children": { "type": "array", "items": { "$ref": "#/definitions/layoutNode" }, "minItems": 1 },
+              "enableCondition": { "$ref": "#/definitions/condition" },
+              "validateOnNext": { "type": "boolean" }
+            },
+            "additionalProperties": false
+          },
+          "minItems": 1
+        },
+        "current": { "type": "integer", "minimum": 0 },
+        "direction": { "type": "string", "enum": ["horizontal", "vertical"], "default": "horizontal" }
+      },
+      "additionalProperties": false
+    },
+    "layoutConditional": {
+      "type": "object",
+      "required": ["type", "condition", "children"],
+      "properties": {
+        "type": { "const": "conditional" },
+        "condition": { "$ref": "#/definitions/condition" },
+        "children": { "type": "array", "items": { "$ref": "#/definitions/layoutNode" }, "minItems": 1 }
+      },
+      "additionalProperties": false
+    },
+    "layoutRepeat": {
+      "type": "object",
+      "required": ["type", "field", "children"],
+      "properties": {
+        "type": { "const": "repeat" },
+        "field": { "$ref": "#/definitions/nonEmptyString" },
+        "children": { "type": "array", "items": { "$ref": "#/definitions/layoutNode" }, "minItems": 1 },
+        "arrayConfig": { "$ref": "#/definitions/fieldDefinition/properties/arrayConfig" },
+        "addPosition": { "type": "string", "enum": ["top", "bottom", "both"] },
+        "emptyText": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "layoutHtml": {
+      "type": "object",
+      "required": ["type", "content"],
+      "properties": {
+        "type": { "const": "html" },
+        "content": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "layoutCustom": {
+      "type": "object",
+      "required": ["type", "component"],
+      "properties": {
+        "type": { "const": "custom" },
+        "component": { "$ref": "#/definitions/nonEmptyString" },
+        "props": { "type": "object", "additionalProperties": true },
+        "children": { "type": "array", "items": { "$ref": "#/definitions/layoutNode" } }
+      },
+      "additionalProperties": false
+    },
+    "formBlock": {
+      "type": "object",
+      "required": ["type", "fields"],
+      "description": "Embedded form used within sheet views. Not available as a standalone page content block.",
+      "properties": {
+        "type": { "const": "form" },
+        "config": {
+          "type": "object",
+          "properties": {
+            "validateMode": { "type": "string", "enum": ["onChange", "onBlur", "onSubmit", "onTouched"] },
+            "readOnly": {
+              "type": "boolean",
+              "default": false,
+              "description": "Render the form in read-only mode: all fields are disabled and submit/reset actions are hidden. Intended for reviewing documents under approval (审核中表单只读)."
+            },
+            "submitLabel": { "type": "string" },
+            "resetLabel": { "type": "string" },
+            "autoSave": {
+              "type": "object",
+              "properties": {
+                "enabled": { "type": "boolean" },
+                "debounce": { "type": "number", "minimum": 0 }
+              },
+              "additionalProperties": false
+            }
+          },
+          "additionalProperties": false
+        },
+        "fields": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/fieldDefinition" },
+          "minItems": 1
+        },
+        "layout": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/layoutNode" }
+        },
+        "comment": { "type": "string" },
+        "renderHints": { "type": "object", "additionalProperties": true }
+      },
+      "additionalProperties": false
+    },
+    "view": {
+      "oneOf": [
+        { "$ref": "#/definitions/pageView" },
+        { "$ref": "#/definitions/sheetView" },
+        { "$ref": "#/definitions/formView" }
+      ]
+    },
+    "pageView": {
+      "type": "object",
+      "required": ["type", "pageSettings", "content"],
+      "properties": {
+        "type": { "const": "page" },
+        "id": { "type": "string" },
+        "label": { "type": "string" },
+        "visible": {
+          "oneOf": [{ "type": "boolean" }, { "$ref": "#/definitions/condition" }],
+          "default": true
+        },
+        "pageSettings": { "$ref": "#/definitions/pageSettings" },
+        "content": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/pageContentBlock" }
+        }
+      },
+      "additionalProperties": false
+    },
+    "sheetView": {
+      "type": "object",
+      "required": ["type", "name", "columns"],
+      "properties": {
+        "type": { "const": "sheet" },
+        "id": { "type": "string" },
+        "label": { "type": "string" },
+        "visible": {
+          "oneOf": [{ "type": "boolean" }, { "$ref": "#/definitions/condition" }],
+          "default": true
+        },
+        "name": { "$ref": "#/definitions/nonEmptyString" },
+        "frozenRows": { "type": "integer", "minimum": 0, "default": 0 },
+        "frozenCols": { "type": "integer", "minimum": 0, "default": 0 },
+        "defaultColumnWidth": { "type": "number", "exclusiveMinimum": 0, "default": 80 },
+        "defaultRowHeight": { "type": "number", "exclusiveMinimum": 0, "default": 25 },
+        "widthMode": {
+          "type": "string",
+          "enum": ["fixed", "stretch"],
+          "default": "fixed",
+          "description": "How the sheet adapts to its container width. 'fixed' keeps natural column widths (wide containers leave empty space on the right); 'stretch' distributes the extra container width to stretchable columns (respecting maxWidth) so the sheet fills the container."
+        },
+        "columns": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/columnDef" },
+          "minItems": 1
+        },
+        "rowBind": {
+          "type": "object",
+          "description": "Dynamic row source from data array. When set, rows are generated from this binding instead of using static 'rows'. If both rows and rowBind are absent, an empty table is displayed.",
+          "required": ["path"],
+          "properties": {
+            "path": { "$ref": "#/definitions/bind/properties/path" },
+            "mode": { "$ref": "#/definitions/bind/properties/mode" },
+            "rowTemplate": {
+              "type": "object",
+              "description": "Template for each generated row. Uses column indices or field paths.",
+              "properties": {
+                "height": { "$ref": "#/definitions/sheetView/properties/defaultRowHeight" },
+                "hidden": { "type": "boolean" },
+                "style": { "type": "string" },
+                "cellMapping": {
+                  "type": "object",
+                  "description": "Map column index (string) to cell definition. Uses mappedSheetCell (column property is excluded as it's the key).",
+                  "additionalProperties": { "$ref": "#/definitions/mappedSheetCell" }
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          "additionalProperties": false
+        },
+        "rows": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/sheetRow" },
+          "description": "Static rows, used when rowBind is not defined. Can be omitted for an empty table."
+        },
+        "images": { "type": "array", "items": { "$ref": "#/definitions/sheetImage" } },
+        "forms": { "type": "array", "items": { "$ref": "#/definitions/formBlock" } },
+        "comment": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "formView": {
+      "type": "object",
+      "required": ["type", "fields"],
+      "properties": {
+        "type": { "const": "form" },
+        "id": { "type": "string" },
+        "label": { "type": "string" },
+        "visible": {
+          "oneOf": [{ "type": "boolean" }, { "$ref": "#/definitions/condition" }],
+          "default": true
+        },
+        "config": { "$ref": "#/definitions/formBlock/properties/config" },
+        "fields": { "$ref": "#/definitions/formBlock/properties/fields" },
+        "layout": { "$ref": "#/definitions/formBlock/properties/layout" },
+        "comment": { "type": "string" },
+        "renderHints": { "type": "object", "additionalProperties": true }
+      },
+      "additionalProperties": false
+    },
+    "pageContentBlock": {
+      "oneOf": [
+        { "$ref": "#/definitions/paragraph" },
+        { "$ref": "#/definitions/table" },
+        { "$ref": "#/definitions/image" },
+        { "$ref": "#/definitions/list" },
+        { "$ref": "#/definitions/pageBreak" },
+        { "$ref": "#/definitions/floatingBlock" },
+        { "$ref": "#/definitions/spreadsheetBlock" },
+        { "$ref": "#/definitions/headerBlock" },
+        { "$ref": "#/definitions/footerBlock" },
+        { "$ref": "#/definitions/watermarkBlock" }
+      ]
+    },
+    "headerBlock": {
+      "type": "object",
+      "required": ["type", "content"],
+      "properties": {
+        "type": { "const": "header" },
+        "style": {
+          "type": "string",
+          "description": "Paragraph style fallback applied to header content when a paragraph does not define its own style."
+        },
+        "content": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/paragraph" },
+          "minItems": 1
+        },
+        "alignment": { "type": "string", "enum": ["left", "center", "right"] },
+        "showOnFirstPage": { "type": "boolean", "default": true },
+        "showOnEvenPages": { "type": "boolean", "default": true },
+        "showOnOddPages": { "type": "boolean", "default": true }
+      },
+      "additionalProperties": false
+    },
+    "footerBlock": {
+      "type": "object",
+      "required": ["type", "content"],
+      "properties": {
+        "type": { "const": "footer" },
+        "style": {
+          "type": "string",
+          "description": "Paragraph style fallback applied to footer content when a paragraph does not define its own style."
+        },
+        "content": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/paragraph" },
+          "minItems": 1
+        },
+        "alignment": { "type": "string", "enum": ["left", "center", "right"] },
+        "showOnFirstPage": { "type": "boolean", "default": true },
+        "showOnEvenPages": { "type": "boolean", "default": true },
+        "showOnOddPages": { "type": "boolean", "default": true }
+      },
+      "additionalProperties": false
+    },
+    "watermarkBlock": {
+      "type": "object",
+      "required": ["type", "text"],
+      "properties": {
+        "type": { "const": "watermark" },
+        "text": { "type": "string" },
+        "fontSize": { "$ref": "#/definitions/positiveNumber" },
+        "color": { "$ref": "#/definitions/hexColor" },
+        "opacity": { "type": "number", "minimum": 0, "maximum": 1 },
+        "rotation": { "type": "number" },
+        "repeat": { "type": "boolean", "default": true },
+        "image": { "type": "string", "description": "Alternative watermark image asset key" }
+      },
+      "additionalProperties": false
+    },
+    "spreadsheetBlock": {
+      "type": "object",
+      "required": ["type", "sheet"],
+      "properties": {
+        "type": { "const": "spreadsheet" },
+        "sheet": {
+          "type": "object",
+          "required": ["name", "columns"],
+          "properties": {
+            "name": { "$ref": "#/definitions/nonEmptyString" },
+            "columns": { "$ref": "#/definitions/sheetView/properties/columns" },
+            "rowBind": { "$ref": "#/definitions/sheetView/properties/rowBind" },
+            "rows": { "$ref": "#/definitions/sheetView/properties/rows" },
+            "frozenRows": { "$ref": "#/definitions/sheetView/properties/frozenRows" },
+            "frozenCols": { "$ref": "#/definitions/sheetView/properties/frozenCols" }
+          },
+          "additionalProperties": false
+        },
+        "comment": { "type": "string" },
+        "renderHints": { "type": "object", "additionalProperties": true }
+      },
+      "additionalProperties": false
+    },
+    "paragraph": {
+      "type": "object",
+      "required": ["type", "runs"],
+      "properties": {
+        "type": { "const": "paragraph" },
+        "style": { "type": "string" },
+        "visible": { "oneOf": [{ "type": "boolean" }, { "$ref": "#/definitions/condition" }] },
+        "alignment": { "type": "string", "enum": ["left", "center", "right", "justify"] },
+        "indent": { "type": "number" },
+        "spaceBefore": { "$ref": "#/definitions/nonNegativeNumber" },
+        "spaceAfter": { "$ref": "#/definitions/nonNegativeNumber" },
+        "lineHeight": { "$ref": "#/definitions/positiveNumber" },
+        "runs": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/run" },
+          "minItems": 1
+        },
+        "comment": { "type": "string" },
+        "renderHints": { "type": "object", "additionalProperties": true }
+      },
+      "additionalProperties": false
+    },
+    "run": {
+      "oneOf": [
+        { "$ref": "#/definitions/textRun" },
+        { "$ref": "#/definitions/lineBreak" },
+        { "$ref": "#/definitions/inlineImage" }
+      ]
+    },
+    "textRun": {
+      "type": "object",
+      "required": ["type"],
+      "properties": {
+        "type": { "const": "text" },
+        "text": { "type": "string", "description": "Static text, or fallback when bind is not resolved." },
+        "bind": {
+          "$ref": "#/definitions/bind",
+          "description": "Data binding. When both text and bind are present, bind takes precedence and text serves as default."
+        },
+        "style": { "type": "string" },
+        "fontWeight": { "type": "string", "enum": ["normal", "bold"] },
+        "fontStyle": { "type": "string", "enum": ["normal", "italic"] },
+        "textDecoration": { "type": "string", "enum": ["none", "underline", "line-through"] },
+        "fontFamily": { "type": "string" },
+        "fontSize": { "$ref": "#/definitions/positiveNumber" },
+        "color": { "$ref": "#/definitions/hexColor" },
+        "link": {
+          "type": "object",
+          "required": ["href"],
+          "properties": {
+            "href": { "type": "string", "format": "uri" },
+            "tooltip": { "type": "string" }
+          },
+          "additionalProperties": false
+        }
+      },
+      "anyOf": [{ "required": ["text"] }, { "required": ["bind"] }],
+      "additionalProperties": false
+    },
+    "lineBreak": {
+      "type": "object",
+      "required": ["type"],
+      "properties": { "type": { "const": "break" } },
+      "additionalProperties": false
+    },
+    "inlineImage": {
+      "type": "object",
+      "required": ["type", "src"],
+      "properties": {
+        "type": { "const": "inline-image" },
+        "src": { "type": "string" },
+        "width": { "$ref": "#/definitions/positiveNumber" },
+        "height": { "$ref": "#/definitions/positiveNumber" },
+        "lockAspectRatio": { "type": "boolean", "default": true },
+        "alt": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "table": {
+      "type": "object",
+      "required": ["type", "columns", "rows"],
+      "properties": {
+        "type": { "const": "table" },
+        "style": { "type": "string" },
+        "visible": { "oneOf": [{ "type": "boolean" }, { "$ref": "#/definitions/condition" }] },
+        "width": { "$ref": "#/definitions/measurementOrPercent" },
+        "columns": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/measurementOrPercent" },
+          "minItems": 1
+        },
+        "rows": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/tableRow" },
+          "minItems": 1
+        },
+        "border": { "$ref": "#/definitions/border" },
+        "fill": { "$ref": "#/definitions/hexColor" },
+        "comment": { "type": "string" },
+        "renderHints": { "type": "object", "additionalProperties": true }
+      },
+      "additionalProperties": false
+    },
+    "tableRow": {
+      "type": "object",
+      "required": ["cells"],
+      "properties": {
+        "height": { "$ref": "#/definitions/positiveNumber" },
+        "cells": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/tableCell" },
+          "minItems": 1
+        }
+      },
+      "additionalProperties": false
+    },
+    "tableCell": {
+      "type": "object",
+      "required": ["content"],
+      "properties": {
+        "colSpan": { "type": "integer", "minimum": 1, "default": 1 },
+        "rowSpan": { "type": "integer", "minimum": 1, "default": 1 },
+        "style": { "type": "string" },
+        "verticalAlign": { "type": "string", "enum": ["top", "middle", "bottom"], "default": "top" },
+        "width": { "$ref": "#/definitions/measurementOrPercent" },
+        "content": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/pageCellBlock" },
+          "minItems": 1
+        },
+        "comment": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "pageCellBlock": {
+      "oneOf": [
+        { "$ref": "#/definitions/paragraph" },
+        { "$ref": "#/definitions/image" },
+        { "$ref": "#/definitions/list" }
+      ]
+    },
+    "image": {
+      "type": "object",
+      "required": ["type", "src"],
+      "properties": {
+        "type": { "const": "image" },
+        "src": { "type": "string" },
+        "width": { "$ref": "#/definitions/positiveNumber" },
+        "height": { "$ref": "#/definitions/positiveNumber" },
+        "lockAspectRatio": { "type": "boolean", "default": true },
+        "alignment": { "type": "string", "enum": ["left", "center", "right"] },
+        "alt": { "type": "string" },
+        "comment": { "type": "string" },
+        "renderHints": { "type": "object", "additionalProperties": true }
+      },
+      "additionalProperties": false
+    },
+    "list": {
+      "type": "object",
+      "required": ["type", "items"],
+      "properties": {
+        "type": { "const": "list" },
+        "style": { "type": "string" },
+        "visible": { "oneOf": [{ "type": "boolean" }, { "$ref": "#/definitions/condition" }] },
+        "listType": { "type": "string", "enum": ["bullet", "ordered"], "default": "bullet" },
+        "bulletChar": { "type": "string" },
+        "numberFormat": {
+          "type": "string",
+          "enum": ["decimal", "lowerLetter", "upperLetter", "lowerRoman", "upperRoman"]
+        },
+        "start": { "type": "integer", "minimum": 1, "default": 1 },
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "array",
+            "items": { "$ref": "#/definitions/pageCellBlock" },
+            "minItems": 1
+          },
+          "minItems": 1
+        },
+        "comment": { "type": "string" },
+        "renderHints": { "type": "object", "additionalProperties": true }
+      },
+      "additionalProperties": false
+    },
+    "pageBreak": {
+      "type": "object",
+      "required": ["type"],
+      "properties": {
+        "type": { "const": "page-break" },
+        "comment": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "floatingBlock": {
+      "type": "object",
+      "required": ["type", "layout", "content"],
+      "properties": {
+        "type": { "const": "floating" },
+        "layout": {
+          "type": "object",
+          "required": ["x", "y", "width", "height"],
+          "properties": {
+            "x": {
+              "oneOf": [{ "type": "number" }, { "type": "string", "pattern": "^-?\\d+(\\.\\d+)?%$" }],
+              "description": "Horizontal position. Number for absolute points, string percentage relative to page width."
+            },
+            "y": {
+              "oneOf": [{ "type": "number" }, { "type": "string", "pattern": "^-?\\d+(\\.\\d+)?%$" }],
+              "description": "Vertical position. Number for absolute points, string percentage relative to page height."
+            },
+            "width": { "$ref": "#/definitions/measurementOrPercent" },
+            "height": { "$ref": "#/definitions/measurementOrPercent" }
+          },
+          "additionalProperties": false
+        },
+        "content": { "$ref": "#/definitions/floatingContentBlock" },
+        "comment": { "type": "string" },
+        "renderHints": { "type": "object", "additionalProperties": true }
+      },
+      "additionalProperties": false
+    },
+    "floatingContentBlock": {
+      "oneOf": [
+        { "$ref": "#/definitions/paragraph" },
+        { "$ref": "#/definitions/table" },
+        { "$ref": "#/definitions/image" },
+        { "$ref": "#/definitions/list" }
+      ]
+    },
+    "columnDef": {
+      "type": "object",
+      "properties": {
+        "width": { "type": "number", "exclusiveMinimum": 0 },
+        "minWidth": { "type": "number", "minimum": 0 },
+        "maxWidth": { "type": "number", "exclusiveMinimum": 0 },
+        "hidden": { "type": "boolean", "default": false },
+        "style": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "sheetRow": {
+      "type": "object",
+      "properties": {
+        "height": { "type": "number", "exclusiveMinimum": 0 },
+        "hidden": { "type": "boolean", "default": false },
+        "style": { "type": "string" },
+        "cells": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/sheetCell" },
+          "minItems": 1
+        }
+      },
+      "additionalProperties": false
+    },
+    "sheetCell": {
+      "type": "object",
+      "required": ["column"],
+      "properties": {
+        "column": { "type": "integer", "minimum": 0 },
+        "style": { "type": "string" },
+        "colspan": { "type": "integer", "minimum": 1, "default": 1 },
+        "rowspan": { "type": "integer", "minimum": 1, "default": 1 },
+        "bind": { "$ref": "#/definitions/bind" },
+        "value": {},
+        "formula": { "type": "string", "pattern": "^=.*" },
+        "format": { "type": "string" },
+        "comment": { "type": "string" }
+      },
+      "anyOf": [{ "not": { "required": ["bind", "formula"] } }],
+      "additionalProperties": false
+    },
+    "mappedSheetCell": {
+      "type": "object",
+      "description": "Used in cellMapping where column index is the key; column property is omitted.",
+      "properties": {
+        "style": { "type": "string" },
+        "colspan": { "type": "integer", "minimum": 1, "default": 1 },
+        "rowspan": { "type": "integer", "minimum": 1, "default": 1 },
+        "bind": { "$ref": "#/definitions/bind" },
+        "value": {},
+        "formula": { "type": "string", "pattern": "^=.*" },
+        "format": { "type": "string" },
+        "comment": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "sheetImage": {
+      "type": "object",
+      "required": ["src", "column", "row"],
+      "properties": {
+        "src": { "type": "string" },
+        "column": { "type": "integer", "minimum": 0 },
+        "colOffset": { "type": "number", "minimum": 0, "default": 0 },
+        "row": { "type": "integer", "minimum": 0 },
+        "rowOffset": { "type": "number", "minimum": 0, "default": 0 },
+        "width": { "$ref": "#/definitions/positiveNumber" },
+        "height": { "$ref": "#/definitions/positiveNumber" },
+        "lockAspectRatio": { "type": "boolean", "default": true },
+        "comment": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "pageSettings": {
+      "type": "object",
+      "required": ["width", "height"],
+      "properties": {
+        "width": { "$ref": "#/definitions/positiveNumber" },
+        "height": { "$ref": "#/definitions/positiveNumber" },
+        "marginTop": { "$ref": "#/definitions/nonNegativeNumber", "default": 72 },
+        "marginBottom": { "$ref": "#/definitions/nonNegativeNumber", "default": 72 },
+        "marginLeft": { "$ref": "#/definitions/nonNegativeNumber", "default": 90 },
+        "marginRight": { "$ref": "#/definitions/nonNegativeNumber", "default": 90 },
+        "defaultFontFamily": { "type": "string", "default": "Arial" },
+        "defaultFontSize": { "$ref": "#/definitions/positiveNumber", "default": 12 },
+        "defaultLineHeight": { "$ref": "#/definitions/positiveNumber", "default": 1.15 },
+        "defaultColor": { "$ref": "#/definitions/hexColor", "default": "#000000" }
+      },
+      "additionalProperties": false
+    },
+    "printConfig": {
+      "type": "object",
+      "description": "Printer/export-specific instructions that do not affect screen rendering.",
+      "properties": {
+        "paperSource": { "type": "string" },
+        "duplex": { "type": "string", "enum": ["simplex", "duplexLong", "duplexShort"] },
+        "copies": { "type": "integer", "minimum": 1, "default": 1 },
+        "collate": { "type": "boolean" },
+        "orientation": { "type": "string", "enum": ["portrait", "landscape"] },
+        "scale": { "type": "string", "description": "e.g., 'fitToWidth', 'fitToPage', or a percentage like '80%'" }
+      },
+      "additionalProperties": false
+    },
+    "measurementOrPercent": {
+      "oneOf": [{ "$ref": "#/definitions/positiveNumber" }, { "type": "string", "pattern": "^[0-9]+(\\.[0-9]+)?%$" }]
+    },
+    "border": {
+      "type": "object",
+      "properties": {
+        "style": {
+          "type": "string",
+          "enum": ["thin", "medium", "thick", "dashed", "dotted", "none"],
+          "default": "thin"
+        },
+        "color": { "$ref": "#/definitions/hexColor" }
+      },
+      "additionalProperties": false
+    },
+    "styleCatalog": {
+      "type": "object",
+      "properties": {
+        "paragraphStyles": {
+          "type": "object",
+          "additionalProperties": { "$ref": "#/definitions/paragraphStyle" }
+        },
+        "characterStyles": {
+          "type": "object",
+          "additionalProperties": { "$ref": "#/definitions/characterStyle" }
+        },
+        "tableStyles": {
+          "type": "object",
+          "additionalProperties": { "$ref": "#/definitions/tableStyle" }
+        },
+        "cellStyles": {
+          "type": "object",
+          "additionalProperties": { "$ref": "#/definitions/cellStyle" }
+        },
+        "listStyles": {
+          "type": "object",
+          "additionalProperties": { "$ref": "#/definitions/listStyle" }
+        }
+      },
+      "additionalProperties": false
+    },
+    "paragraphStyle": {
+      "type": "object",
+      "properties": {
+        "inherit": { "type": "string" },
+        "fontFamily": { "type": "string" },
+        "fontSize": { "$ref": "#/definitions/positiveNumber" },
+        "color": { "$ref": "#/definitions/hexColor" },
+        "fontWeight": { "type": "string", "enum": ["normal", "bold"] },
+        "fontStyle": { "type": "string", "enum": ["normal", "italic"] },
+        "textDecoration": { "type": "string", "enum": ["none", "underline", "line-through"] },
+        "lineHeight": { "$ref": "#/definitions/positiveNumber" },
+        "alignment": { "type": "string", "enum": ["left", "center", "right", "justify"] },
+        "spaceBefore": { "$ref": "#/definitions/nonNegativeNumber" },
+        "spaceAfter": { "$ref": "#/definitions/nonNegativeNumber" },
+        "indent": { "type": "number" },
+        "conditional": {
+          "type": "array",
+          "description": "Conditional style rules that override properties based on data conditions.",
+          "items": {
+            "type": "object",
+            "required": ["condition"],
+            "properties": {
+              "condition": { "$ref": "#/definitions/condition" },
+              "priority": { "type": "integer", "default": 0 },
+              "style": {
+                "type": "object",
+                "description": "Override style properties when condition is met. Only listed properties are allowed.",
+                "properties": {
+                  "fontFamily": { "type": "string" },
+                  "fontSize": { "$ref": "#/definitions/positiveNumber" },
+                  "color": { "$ref": "#/definitions/hexColor" },
+                  "fontWeight": { "type": "string", "enum": ["normal", "bold"] },
+                  "fontStyle": { "type": "string", "enum": ["normal", "italic"] },
+                  "textDecoration": { "type": "string", "enum": ["none", "underline", "line-through"] },
+                  "lineHeight": { "$ref": "#/definitions/positiveNumber" },
+                  "alignment": { "type": "string", "enum": ["left", "center", "right", "justify"] },
+                  "spaceBefore": { "$ref": "#/definitions/nonNegativeNumber" },
+                  "spaceAfter": { "$ref": "#/definitions/nonNegativeNumber" },
+                  "indent": { "type": "number" }
+                },
+                "additionalProperties": false
+              }
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "characterStyle": {
+      "type": "object",
+      "properties": {
+        "inherit": { "type": "string" },
+        "fontFamily": { "type": "string" },
+        "fontSize": { "$ref": "#/definitions/positiveNumber" },
+        "color": { "$ref": "#/definitions/hexColor" },
+        "fontWeight": { "type": "string", "enum": ["normal", "bold"] },
+        "fontStyle": { "type": "string", "enum": ["normal", "italic"] },
+        "textDecoration": { "type": "string", "enum": ["none", "underline", "line-through"] },
+        "conditional": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["condition"],
+            "properties": {
+              "condition": { "$ref": "#/definitions/condition" },
+              "priority": { "type": "integer", "default": 0 },
+              "style": {
+                "type": "object",
+                "description": "Only these character properties can be overridden conditionally.",
+                "properties": {
+                  "fontFamily": { "type": "string" },
+                  "fontSize": { "$ref": "#/definitions/positiveNumber" },
+                  "color": { "$ref": "#/definitions/hexColor" },
+                  "fontWeight": { "type": "string", "enum": ["normal", "bold"] },
+                  "fontStyle": { "type": "string", "enum": ["normal", "italic"] },
+                  "textDecoration": { "type": "string", "enum": ["none", "underline", "line-through"] }
+                },
+                "additionalProperties": false
+              }
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "tableStyle": {
+      "type": "object",
+      "properties": {
+        "inherit": { "type": "string" },
+        "fontFamily": { "type": "string" },
+        "fontSize": { "$ref": "#/definitions/positiveNumber" },
+        "color": { "$ref": "#/definitions/hexColor" },
+        "fontWeight": { "type": "string", "enum": ["normal", "bold"] },
+        "fontStyle": { "type": "string", "enum": ["normal", "italic"] },
+        "textDecoration": { "type": "string", "enum": ["none", "underline", "line-through"] },
+        "borderWidth": { "type": "number", "minimum": 0 },
+        "borderColor": { "$ref": "#/definitions/hexColor" },
+        "backgroundColor": { "$ref": "#/definitions/hexColor" },
+        "cellPadding": { "type": "number", "minimum": 0 },
+        "hAlign": { "type": "string", "enum": ["left", "center", "right"] },
+        "vAlign": { "type": "string", "enum": ["top", "middle", "bottom"] },
+        "conditional": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["condition"],
+            "properties": {
+              "condition": { "$ref": "#/definitions/condition" },
+              "priority": { "type": "integer", "default": 0 },
+              "style": {
+                "type": "object",
+                "properties": {
+                  "fontFamily": { "type": "string" },
+                  "fontSize": { "$ref": "#/definitions/positiveNumber" },
+                  "color": { "$ref": "#/definitions/hexColor" },
+                  "fontWeight": { "type": "string", "enum": ["normal", "bold"] },
+                  "fontStyle": { "type": "string", "enum": ["normal", "italic"] },
+                  "textDecoration": { "type": "string", "enum": ["none", "underline", "line-through"] },
+                  "borderWidth": { "type": "number", "minimum": 0 },
+                  "borderColor": { "$ref": "#/definitions/hexColor" },
+                  "backgroundColor": { "$ref": "#/definitions/hexColor" },
+                  "cellPadding": { "type": "number", "minimum": 0 },
+                  "hAlign": { "type": "string", "enum": ["left", "center", "right"] },
+                  "vAlign": { "type": "string", "enum": ["top", "middle", "bottom"] }
+                },
+                "additionalProperties": false
+              }
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "cellStyle": {
+      "type": "object",
+      "properties": {
+        "inherit": { "type": "string" },
+        "fontFamily": { "type": "string" },
+        "fontSize": { "$ref": "#/definitions/positiveNumber" },
+        "color": { "$ref": "#/definitions/hexColor" },
+        "fontWeight": { "type": "string", "enum": ["normal", "bold"] },
+        "fontStyle": { "type": "string", "enum": ["normal", "italic"] },
+        "textDecoration": { "type": "string", "enum": ["none", "underline", "line-through"] },
+        "backgroundColor": { "$ref": "#/definitions/hexColor" },
+        "hAlign": { "type": "string", "enum": ["left", "center", "right"] },
+        "vAlign": { "type": "string", "enum": ["top", "middle", "bottom"] },
+        "borderTop": { "$ref": "#/definitions/border" },
+        "borderRight": { "$ref": "#/definitions/border" },
+        "borderBottom": { "$ref": "#/definitions/border" },
+        "borderLeft": { "$ref": "#/definitions/border" },
+        "wrapText": { "type": "boolean" },
+        "textRotation": { "type": "number", "minimum": -180, "maximum": 180 },
+        "format": { "type": "string" },
+        "conditional": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["condition"],
+            "properties": {
+              "condition": { "$ref": "#/definitions/condition" },
+              "priority": { "type": "integer", "default": 0 },
+              "style": {
+                "type": "object",
+                "properties": {
+                  "fontFamily": { "type": "string" },
+                  "fontSize": { "$ref": "#/definitions/positiveNumber" },
+                  "color": { "$ref": "#/definitions/hexColor" },
+                  "fontWeight": { "type": "string", "enum": ["normal", "bold"] },
+                  "fontStyle": { "type": "string", "enum": ["normal", "italic"] },
+                  "textDecoration": { "type": "string", "enum": ["none", "underline", "line-through"] },
+                  "backgroundColor": { "$ref": "#/definitions/hexColor" },
+                  "hAlign": { "type": "string", "enum": ["left", "center", "right"] },
+                  "vAlign": { "type": "string", "enum": ["top", "middle", "bottom"] },
+                  "borderTop": { "$ref": "#/definitions/border" },
+                  "borderRight": { "$ref": "#/definitions/border" },
+                  "borderBottom": { "$ref": "#/definitions/border" },
+                  "borderLeft": { "$ref": "#/definitions/border" },
+                  "wrapText": { "type": "boolean" },
+                  "textRotation": { "type": "number", "minimum": -180, "maximum": 180 },
+                  "format": { "type": "string" }
+                },
+                "additionalProperties": false
+              }
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "listStyle": {
+      "type": "object",
+      "properties": {
+        "inherit": { "type": "string" },
+        "listType": { "type": "string", "enum": ["bullet", "ordered"], "default": "bullet" },
+        "bulletChar": { "type": "string" },
+        "numberFormat": {
+          "type": "string",
+          "enum": ["decimal", "lowerLetter", "upperLetter", "lowerRoman", "upperRoman"],
+          "default": "decimal"
+        },
+        "start": { "type": "integer", "minimum": 1, "default": 1 },
+        "fontFamily": { "type": "string" },
+        "fontSize": { "$ref": "#/definitions/positiveNumber" },
+        "color": { "$ref": "#/definitions/hexColor" },
+        "fontWeight": { "type": "string", "enum": ["normal", "bold"] },
+        "fontStyle": { "type": "string", "enum": ["normal", "italic"] },
+        "textDecoration": { "type": "string", "enum": ["none", "underline", "line-through"] },
+        "alignment": { "type": "string", "enum": ["left", "center", "right", "justify"] },
+        "indent": { "type": "number" },
+        "spaceBefore": { "$ref": "#/definitions/nonNegativeNumber" },
+        "spaceAfter": { "$ref": "#/definitions/nonNegativeNumber" },
+        "conditional": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["condition"],
+            "properties": {
+              "condition": { "$ref": "#/definitions/condition" },
+              "priority": { "type": "integer", "default": 0 },
+              "style": {
+                "type": "object",
+                "properties": {
+                  "listType": { "type": "string", "enum": ["bullet", "ordered"] },
+                  "bulletChar": { "type": "string" },
+                  "numberFormat": {
+                    "type": "string",
+                    "enum": ["decimal", "lowerLetter", "upperLetter", "lowerRoman", "upperRoman"]
+                  },
+                  "start": { "type": "integer", "minimum": 1 },
+                  "fontFamily": { "type": "string" },
+                  "fontSize": { "$ref": "#/definitions/positiveNumber" },
+                  "color": { "$ref": "#/definitions/hexColor" },
+                  "fontWeight": { "type": "string", "enum": ["normal", "bold"] },
+                  "fontStyle": { "type": "string", "enum": ["normal", "italic"] },
+                  "textDecoration": { "type": "string", "enum": ["none", "underline", "line-through"] },
+                  "alignment": { "type": "string", "enum": ["left", "center", "right", "justify"] },
+                  "indent": { "type": "number" },
+                  "spaceBefore": { "$ref": "#/definitions/nonNegativeNumber" },
+                  "spaceAfter": { "$ref": "#/definitions/nonNegativeNumber" }
+                },
+                "additionalProperties": false
+              }
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "hook": {
+      "type": "object",
+      "required": ["trigger"],
+      "properties": {
+        "trigger": {
+          "type": "string",
+          "enum": [
+            "onMount",
+            "onSubmit",
+            "onChange",
+            "onBeforeSave",
+            "onAfterSave",
+            "onValidate",
+            "onBeforePrint",
+            "onAfterPrint",
+            "custom"
+          ],
+          "description": "Lifecycle event that fires the hook."
+        },
+        "type": {
+          "type": "string",
+          "enum": ["api", "function", "dispatch"],
+          "description": "Action type. 'api' calls an HTTP endpoint, 'function' invokes a registered function, 'dispatch' triggers an internal event."
+        },
+        "config": {
+          "type": "object",
+          "description": "Configuration for the action. Validation is left to the business logic layer.",
+          "additionalProperties": true
+        },
+        "condition": { "$ref": "#/definitions/condition" },
+        "debounce": { "type": "number", "minimum": 0 },
+        "description": { "type": "string" }
+      },
+      "additionalProperties": false
+    }
+  }
+}

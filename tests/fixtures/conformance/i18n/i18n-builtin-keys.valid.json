@@ -1,0 +1,59 @@
+{
+  "kind": "workbook",
+  "schemaVersion": "4.1.1",
+  "data": {},
+  "i18n": {
+    "zh-CN": {
+      "fields.username.label": "用户名称",
+      "validations.required": "此项必填",
+      "steps.basic.title": "基础信息",
+      "steps.advanced.title": "高级设置",
+      "workbook.form.submit": "保存",
+      "workbook.form.reset": "清空",
+      "workbook.steps.previous": "前一页",
+      "workbook.steps.next": "后一页"
+    },
+    "en": {
+      "fields.username.label": "Username",
+      "validations.required": "This field is required",
+      "steps.basic.title": "Basic Info",
+      "steps.advanced.title": "Advanced",
+      "workbook.form.submit": "Save",
+      "workbook.form.reset": "Clear",
+      "workbook.steps.previous": "Previous",
+      "workbook.steps.next": "Next"
+    }
+  },
+  "views": [
+    {
+      "type": "form",
+      "id": "main",
+      "fields": [
+        {
+          "name": "username",
+          "type": "string",
+          "label": "@:fields.username.label",
+          "bind": { "path": "username" },
+          "validations": [{ "type": "required", "message": "@:validations.required" }]
+        }
+      ],
+      "layout": [
+        {
+          "type": "steps",
+          "steps": [
+            {
+              "key": "step1",
+              "title": "@:steps.basic.title",
+              "children": [{ "type": "field", "name": "username" }]
+            },
+            {
+              "key": "step2",
+              "title": "@:steps.advanced.title",
+              "children": [{ "type": "field", "name": "username" }]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

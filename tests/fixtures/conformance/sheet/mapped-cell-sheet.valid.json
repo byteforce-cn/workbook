@@ -1,0 +1,38 @@
+{
+  "kind": "workbook",
+  "schemaVersion": "4.1.1",
+  "data": {
+    "items": [{ "name": "服务器", "qty": 2, "price": 1500 }, { "name": "交换机", "qty": 5, "price": 800 }]
+  },
+  "views": [
+    {
+      "type": "sheet",
+      "id": "mapped-cell-sheet",
+      "label": "CellMapping 表格 conformance",
+      "name": "物料清单",
+      "columns": [{ "width": 120 }, { "width": 80 }, { "width": 100 }],
+      "rowBind": {
+        "path": "items",
+        "mode": "oneWay",
+        "rowTemplate": {
+          "height": 32,
+          "style": "dataRow",
+          "hidden": false,
+          "cellMapping": {
+            "0": {
+              "bind": { "path": "name", "mode": "oneWay" }
+            },
+            "1": {
+              "bind": { "path": "qty", "mode": "oneWay" },
+              "style": "numberCell"
+            },
+            "2": {
+              "formula": "=2*3",
+              "format": "#,##0.00"
+            }
+          }
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,98 @@
+{
+  "kind": "workbook",
+  "schemaVersion": "4.1.1",
+  "locale": "zh-CN",
+  "data": {},
+  "views": [
+    {
+      "type": "page",
+      "id": "header-footer-page-rules",
+      "label": "页眉页脚分页规则",
+      "pageSettings": {
+        "width": 595,
+        "height": 842,
+        "marginTop": 72,
+        "marginLeft": 72,
+        "marginRight": 72,
+        "marginBottom": 72
+      },
+      "content": [
+        {
+          "type": "header",
+          "alignment": "right",
+          "showOnFirstPage": true,
+          "content": [
+            {
+              "type": "paragraph",
+              "runs": [{ "type": "text", "text": "首页页眉" }]
+            }
+          ]
+        },
+        {
+          "type": "header",
+          "alignment": "left",
+          "showOnEvenPages": true,
+          "content": [
+            {
+              "type": "paragraph",
+              "runs": [{ "type": "text", "text": "偶数页页眉" }]
+            }
+          ]
+        },
+        {
+          "type": "footer",
+          "alignment": "center",
+          "showOnOddPages": true,
+          "content": [
+            {
+              "type": "paragraph",
+              "runs": [{ "type": "text", "text": "奇数页页脚" }]
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "type": "text", "text": "第一页正文" }]
+        },
+        { "type": "page-break" },
+        {
+          "type": "header",
+          "alignment": "right",
+          "showOnFirstPage": true,
+          "content": [
+            {
+              "type": "paragraph",
+              "runs": [{ "type": "text", "text": "首页页眉" }]
+            }
+          ]
+        },
+        {
+          "type": "header",
+          "alignment": "left",
+          "showOnEvenPages": true,
+          "content": [
+            {
+              "type": "paragraph",
+              "runs": [{ "type": "text", "text": "偶数页页眉" }]
+            }
+          ]
+        },
+        {
+          "type": "footer",
+          "alignment": "center",
+          "showOnOddPages": true,
+          "content": [
+            {
+              "type": "paragraph",
+              "runs": [{ "type": "text", "text": "奇数页页脚" }]
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "type": "text", "text": "第二页正文" }]
+        }
+      ]
+    }
+  ]
+}

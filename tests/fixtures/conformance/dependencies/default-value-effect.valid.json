@@ -1,0 +1,80 @@
+{
+  "kind": "workbook",
+  "schemaVersion": "4.1.1",
+  "locale": "zh-CN",
+  "data": {
+    "role": "admin",
+    "permissions": ""
+  },
+  "views": [
+    {
+      "type": "form",
+      "id": "default-value-form",
+      "label": "默认值依赖",
+      "config": {
+        "validateMode": "onBlur"
+      },
+      "fields": [
+        {
+          "name": "role",
+          "type": "select",
+          "label": "角色",
+          "bind": {
+            "path": "role",
+            "mode": "twoWay"
+          },
+          "options": [
+            { "value": "admin", "label": "管理员" },
+            { "value": "user", "label": "用户" },
+            { "value": "viewer", "label": "访客" }
+          ]
+        },
+        {
+          "name": "permissions",
+          "type": "string",
+          "label": "权限",
+          "bind": {
+            "path": "permissions",
+            "mode": "twoWay"
+          },
+          "dependencies": [
+            {
+              "targetField": "role",
+              "condition": {
+                "op": "eq",
+                "path": "role",
+                "value": "admin"
+              },
+              "effect": {
+                "defaultValue": "full-access",
+                "disabled": false
+              },
+              "otherwise": {
+                "defaultValue": "read-only"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "page",
+      "id": "default-value-page",
+      "pageSettings": {
+        "width": 595,
+        "height": 842
+      },
+      "content": [
+        {
+          "type": "paragraph",
+          "runs": [
+            {
+              "type": "text",
+              "text": "Default value test page"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

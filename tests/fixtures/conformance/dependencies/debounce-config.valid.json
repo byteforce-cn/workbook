@@ -1,0 +1,55 @@
+{
+  "kind": "workbook",
+  "schemaVersion": "4.1.1",
+  "data": {
+    "region": "east",
+    "category": "premium"
+  },
+  "views": [
+    {
+      "type": "form",
+      "id": "main",
+      "fields": [
+        {
+          "name": "region",
+          "type": "string",
+          "label": "区域",
+          "bind": { "path": "region" }
+        },
+        {
+          "name": "category",
+          "type": "string",
+          "label": "类别",
+          "bind": { "path": "category" }
+        },
+        {
+          "name": "discount",
+          "type": "number",
+          "label": "折扣率",
+          "bind": { "path": "discount" },
+          "dependencies": [
+            {
+              "targetField": "discount",
+              "condition": {
+                "op": "and",
+                "conditions": [
+                  { "op": "eq", "path": "region", "value": "east" },
+                  { "op": "eq", "path": "category", "value": "premium" }
+                ]
+              },
+              "debounce": 300,
+              "effect": {
+                "visible": true,
+                "required": true,
+                "defaultValue": 0.85
+              },
+              "otherwise": {
+                "visible": false
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

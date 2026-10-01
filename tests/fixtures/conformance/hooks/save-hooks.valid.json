@@ -1,0 +1,53 @@
+{
+  "kind": "workbook",
+  "schemaVersion": "4.1.1",
+  "locale": "zh-CN",
+  "data": {
+    "name": "",
+    "email": ""
+  },
+  "hooks": [
+    {
+      "trigger": "onBeforeSave",
+      "type": "api",
+      "description": "pre-save-validation",
+      "config": {
+        "endpoint": "https://hooks.example/pre-save",
+        "method": "POST"
+      }
+    },
+    {
+      "trigger": "onAfterSave",
+      "type": "api",
+      "description": "post-save-notify",
+      "config": {
+        "endpoint": "https://hooks.example/post-save",
+        "method": "POST"
+      }
+    }
+  ],
+  "views": [
+    {
+      "type": "form",
+      "id": "save-hooks",
+      "label": "保存钩子测试",
+      "config": {
+        "submitLabel": "保存"
+      },
+      "fields": [
+        {
+          "name": "name",
+          "type": "string",
+          "label": "姓名",
+          "bind": { "path": "name", "mode": "twoWay" }
+        },
+        {
+          "name": "email",
+          "type": "string",
+          "label": "邮箱",
+          "bind": { "path": "email", "mode": "twoWay" }
+        }
+      ]
+    }
+  ]
+}

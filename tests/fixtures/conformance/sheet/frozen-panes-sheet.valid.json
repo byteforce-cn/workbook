@@ -1,0 +1,57 @@
+{
+  "kind": "workbook",
+  "schemaVersion": "4.1.1",
+  "data": {},
+  "views": [
+    {
+      "type": "sheet",
+      "id": "frozen-panes-sheet",
+      "label": "冻结窗格 conformance",
+      "name": "冻结窗格",
+      "frozenRows": 1,
+      "frozenCols": 1,
+      "defaultColumnWidth": 120,
+      "defaultRowHeight": 36,
+      "columns": [
+        { "width": 40, "minWidth": 80 },
+        { "width": 220, "maxWidth": 160 },
+        { "width": 120, "hidden": true },
+        { "width": 120 }
+      ],
+      "rows": [
+        {
+          "cells": [
+            { "column": 0, "value": "R0C0" },
+            { "column": 1, "value": "R0C1" },
+            { "column": 2, "value": "R0C2" },
+            { "column": 3, "value": "R0C3" }
+          ]
+        },
+        {
+          "cells": [
+            { "column": 0, "value": "R1C0" },
+            { "column": 1, "value": "R1C1" },
+            { "column": 2, "value": "R1C2" },
+            { "column": 3, "value": "R1C3" }
+          ]
+        },
+        {
+          "cells": [
+            { "column": 0, "value": "R2C0" },
+            { "column": 1, "value": "R2C1" },
+            { "column": 2, "value": "R2C2" },
+            { "column": 3, "value": "R2C3" }
+          ]
+        },
+        {
+          "cells": [
+            { "column": 0, "value": "R3C0" },
+            { "column": 1, "value": "R3C1" },
+            { "column": 2, "value": "R3C2" },
+            { "column": 3, "value": "R3C3" }
+          ]
+        }
+      ]
+    }
+  ]
+}

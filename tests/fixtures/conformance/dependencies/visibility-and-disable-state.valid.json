@@ -1,0 +1,115 @@
+{
+  "kind": "workbook",
+  "schemaVersion": "4.1.1",
+  "locale": "zh-CN",
+  "data": {
+    "allowBudgetEdit": false,
+    "approvalRequested": false,
+    "budget": 120,
+    "approvalReason": ""
+  },
+  "views": [
+    {
+      "type": "form",
+      "id": "dependency-visibility",
+      "label": "依赖能力",
+      "config": {
+        "validateMode": "onChange"
+      },
+      "fields": [
+        {
+          "name": "allowBudgetEdit",
+          "type": "boolean",
+          "label": "允许编辑预算",
+          "bind": {
+            "path": "allowBudgetEdit",
+            "mode": "twoWay"
+          }
+        },
+        {
+          "name": "approvalRequested",
+          "type": "boolean",
+          "label": "需要升级审批",
+          "bind": {
+            "path": "approvalRequested",
+            "mode": "twoWay"
+          }
+        },
+        {
+          "name": "budget",
+          "type": "number",
+          "label": "预算额度",
+          "bind": {
+            "path": "budget",
+            "mode": "twoWay"
+          },
+          "dependencies": [
+            {
+              "targetField": "allowBudgetEdit",
+              "condition": {
+                "op": "eq",
+                "path": "allowBudgetEdit",
+                "value": false
+              },
+              "effect": {
+                "disabled": true
+              },
+              "otherwise": {
+                "disabled": false
+              }
+            }
+          ]
+        },
+        {
+          "name": "approvalReason",
+          "type": "textarea",
+          "label": "审批原因",
+          "bind": {
+            "path": "approvalReason",
+            "mode": "twoWay"
+          },
+          "dependencies": [
+            {
+              "targetField": "approvalRequested",
+              "condition": {
+                "op": "eq",
+                "path": "approvalRequested",
+                "value": true
+              },
+              "effect": {
+                "visible": true
+              },
+              "otherwise": {
+                "visible": false
+              }
+            }
+          ]
+        }
+      ],
+      "layout": [
+        {
+          "type": "row",
+          "gutter": 16,
+          "children": [
+            {
+              "type": "field",
+              "name": "allowBudgetEdit"
+            },
+            {
+              "type": "field",
+              "name": "approvalRequested"
+            }
+          ]
+        },
+        {
+          "type": "field",
+          "name": "budget"
+        },
+        {
+          "type": "field",
+          "name": "approvalReason"
+        }
+      ]
+    }
+  ]
+}

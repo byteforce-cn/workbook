@@ -1,0 +1,16 @@
+# Normalize line endings
+* text=auto eol=lf
+
+# Binary files
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.woff binary
+*.woff2 binary
+
+# Generated/minified files in diffs
+pnpm-lock.yaml -diff
+dist/** linguist-generated=true
+src/schema/generated-types.ts linguist-generated=true

@@ -1,0 +1,61 @@
+{
+  "kind": "workbook",
+  "schemaVersion": "4.1.1",
+  "locale": "zh-CN",
+  "data": {
+    "name": "",
+    "email": ""
+  },
+  "hooks": [
+    {
+      "trigger": "onSubmit",
+      "type": "api",
+      "description": "log-submit",
+      "config": {
+        "endpoint": "https://hooks.example/log-submit",
+        "method": "POST"
+      }
+    },
+    {
+      "trigger": "onSubmit",
+      "type": "function",
+      "description": "audit-submit",
+      "config": {
+        "name": "submitAuditor"
+      }
+    }
+  ],
+  "views": [
+    {
+      "type": "form",
+      "id": "onsubmit-form",
+      "label": "onSubmit 测试",
+      "fields": [
+        {
+          "name": "name",
+          "type": "string",
+          "label": "姓名",
+          "bind": {
+            "path": "name",
+            "mode": "twoWay"
+          },
+          "validations": [
+            {
+              "type": "required",
+              "message": "姓名不能为空"
+            }
+          ]
+        },
+        {
+          "name": "email",
+          "type": "string",
+          "label": "邮箱",
+          "bind": {
+            "path": "email",
+            "mode": "twoWay"
+          }
+        }
+      ]
+    }
+  ]
+}

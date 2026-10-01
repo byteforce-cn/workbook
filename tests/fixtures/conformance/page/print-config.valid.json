@@ -1,0 +1,36 @@
+{
+  "kind": "workbook",
+  "schemaVersion": "4.1.1",
+  "locale": "zh-CN",
+  "printConfig": {
+    "duplex": "duplexLong",
+    "copies": 2,
+    "collate": true,
+    "orientation": "landscape",
+    "scale": "fitToWidth",
+    "paperSource": "tray-2"
+  },
+  "data": {},
+  "views": [
+    {
+      "type": "page",
+      "id": "print-config",
+      "label": "打印配置 conformance",
+      "pageSettings": {
+        "width": 842,
+        "height": 595,
+        "marginTop": 72,
+        "marginLeft": 72,
+        "marginRight": 72,
+        "marginBottom": 72
+      },
+      "content": [
+        {
+          "type": "paragraph",
+          "alignment": "center",
+          "runs": [{ "type": "text", "text": "打印配置测试文档" }]
+        }
+      ]
+    }
+  ]
+}

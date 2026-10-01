@@ -1,0 +1,55 @@
+{
+  "kind": "workbook",
+  "schemaVersion": "4.1.1",
+  "data": {
+    "region": "east",
+    "city": ""
+  },
+  "views": [
+    {
+      "type": "form",
+      "id": "effect-options",
+      "label": "依赖联动选项",
+      "fields": [
+        {
+          "name": "region",
+          "type": "select",
+          "label": "区域",
+          "bind": { "path": "region", "mode": "twoWay" },
+          "options": [
+            { "value": "east", "label": "华东" },
+            { "value": "west", "label": "华西" },
+            { "value": "north", "label": "华北" }
+          ]
+        },
+        {
+          "name": "city",
+          "type": "select",
+          "label": "城市",
+          "bind": { "path": "city", "mode": "twoWay" },
+          "dependencies": [
+            {
+              "targetField": "city",
+              "condition": {
+                "op": "eq",
+                "path": "region",
+                "value": "east"
+              },
+              "effect": {
+                "visible": true,
+                "required": true,
+                "options": [{ "value": "sh", "label": "上海" }, { "value": "hz", "label": "杭州" }],
+                "validations": [{ "type": "required", "message": "请选择城市" }]
+              },
+              "otherwise": {
+                "visible": true,
+                "required": false,
+                "options": [{ "value": "cd", "label": "成都" }, { "value": "bj", "label": "北京" }]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

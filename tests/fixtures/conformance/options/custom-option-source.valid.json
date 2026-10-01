@@ -1,0 +1,93 @@
+{
+  "kind": "workbook",
+  "schemaVersion": "4.1.1",
+  "locale": "zh-CN",
+  "data": {
+    "deliveryMode": "standard",
+    "region": "east",
+    "city": "sh"
+  },
+  "views": [
+    {
+      "type": "form",
+      "id": "custom-option-source",
+      "label": "选项源能力",
+      "fields": [
+        {
+          "name": "deliveryMode",
+          "type": "select",
+          "label": "交付模式",
+          "bind": {
+            "path": "deliveryMode",
+            "mode": "twoWay"
+          },
+          "options": [
+            {
+              "label": "标准",
+              "value": "standard"
+            },
+            {
+              "label": "加急",
+              "value": "rush"
+            }
+          ]
+        },
+        {
+          "name": "region",
+          "type": "select",
+          "label": "区域",
+          "bind": {
+            "path": "region",
+            "mode": "twoWay"
+          },
+          "options": [
+            {
+              "label": "华东",
+              "value": "east"
+            },
+            {
+              "label": "华西",
+              "value": "west"
+            }
+          ]
+        },
+        {
+          "name": "city",
+          "type": "select",
+          "label": "城市",
+          "bind": {
+            "path": "city",
+            "mode": "twoWay"
+          },
+          "options": {
+            "type": "custom",
+            "cache": "memory",
+            "params": {
+              "name": "storybook:cities"
+            }
+          }
+        }
+      ],
+      "layout": [
+        {
+          "type": "row",
+          "gutter": 16,
+          "children": [
+            {
+              "type": "field",
+              "name": "deliveryMode"
+            },
+            {
+              "type": "field",
+              "name": "region"
+            },
+            {
+              "type": "field",
+              "name": "city"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

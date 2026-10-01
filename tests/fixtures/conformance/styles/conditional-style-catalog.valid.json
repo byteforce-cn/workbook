@@ -1,0 +1,164 @@
+{
+  "kind": "workbook",
+  "schemaVersion": "4.1.1",
+  "data": {
+    "priority": "high"
+  },
+  "styles": {
+    "paragraphStyles": {
+      "bodyBase": {
+        "fontFamily": "Georgia",
+        "fontSize": 16,
+        "color": "#334155",
+        "fontWeight": "bold",
+        "fontStyle": "italic",
+        "textDecoration": "underline",
+        "lineHeight": 1.4,
+        "alignment": "right",
+        "spaceBefore": 8,
+        "spaceAfter": 10,
+        "indent": 32
+      },
+      "headline": {
+        "inherit": "bodyBase",
+        "fontSize": 18,
+        "conditional": [
+          {
+            "condition": {
+              "op": "eq",
+              "path": "priority",
+              "value": "high"
+            },
+            "priority": 10,
+            "style": {
+              "color": "#dc2626"
+            }
+          }
+        ]
+      }
+    },
+    "characterStyles": {
+      "linkRun": {
+        "fontFamily": "Verdana",
+        "fontSize": 15,
+        "color": "#2563eb",
+        "fontWeight": "bold",
+        "fontStyle": "italic",
+        "textDecoration": "underline"
+      }
+    },
+    "tableStyles": {
+      "compactTable": {
+        "fontFamily": "Arial",
+        "fontSize": 13,
+        "color": "#111827",
+        "fontWeight": "bold",
+        "fontStyle": "italic",
+        "textDecoration": "underline",
+        "borderWidth": 2,
+        "borderColor": "#0f766e",
+        "backgroundColor": "#ecfdf5",
+        "cellPadding": 12,
+        "hAlign": "center",
+        "vAlign": "middle"
+      }
+    },
+    "cellStyles": {
+      "alertCell": {
+        "fontFamily": "Courier New",
+        "fontSize": 12,
+        "color": "#991b1b",
+        "fontWeight": "bold",
+        "fontStyle": "italic",
+        "textDecoration": "line-through",
+        "backgroundColor": "#fee2e2",
+        "hAlign": "right",
+        "vAlign": "bottom",
+        "borderTop": { "style": "medium", "color": "#ef4444" },
+        "borderRight": { "style": "dashed", "color": "#f59e0b" },
+        "borderBottom": { "style": "dotted", "color": "#10b981" },
+        "borderLeft": { "style": "thick", "color": "#7c3aed" },
+        "wrapText": false,
+        "textRotation": 12
+      }
+    },
+    "listStyles": {
+      "bulletList": {
+        "listType": "ordered",
+        "numberFormat": "lowerLetter",
+        "start": 4,
+        "fontFamily": "Georgia",
+        "fontSize": 15,
+        "color": "#0f766e",
+        "fontWeight": "bold",
+        "fontStyle": "italic",
+        "textDecoration": "underline",
+        "alignment": "center",
+        "indent": 40,
+        "spaceBefore": 6,
+        "spaceAfter": 9
+      }
+    }
+  },
+  "views": [
+    {
+      "type": "page",
+      "id": "style-preview",
+      "label": "样式 conformance",
+      "pageSettings": {
+        "width": 595,
+        "height": 842
+      },
+      "content": [
+        {
+          "type": "paragraph",
+          "style": "headline",
+          "runs": [
+            {
+              "type": "text",
+              "text": "样式标题",
+              "style": "linkRun",
+              "link": {
+                "href": "https://workbook.example/style-title",
+                "tooltip": "打开样式标题"
+              }
+            }
+          ]
+        },
+        {
+          "type": "list",
+          "style": "bulletList",
+          "items": [
+            [
+              {
+                "type": "paragraph",
+                "runs": [{ "type": "text", "text": "样式清单项" }]
+              }
+            ]
+          ]
+        },
+        {
+          "type": "table",
+          "style": "compactTable",
+          "columns": [180, 180],
+          "rows": [
+            {
+              "cells": [
+                {
+                  "style": "alertCell",
+                  "colSpan": 2,
+                  "content": [
+                    {
+                      "type": "paragraph",
+                      "runs": [{ "type": "text", "text": "样式单元格" }]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
