@@ -1,8 +1,8 @@
 name: Release
 
+# Manual dispatch for now — push-triggered releases can be enabled
+# once the first release has been verified.
 on:
-  push:
-    branches: [main]
   workflow_dispatch:
 
 concurrency:
