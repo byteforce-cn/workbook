@@ -383,7 +383,7 @@ export interface WorkbookValidationResult {
 
 // Warnings were encountered during analysis:
 //
-// dist/PluginProvider-TKi-Vo3x.d.ts:13:5 - (ae-forgotten-export) The symbol "WorkbookHookTrigger" needs to be exported by the entry point index.d.ts
+// dist/PluginProvider-BaaczhLY.d.ts:13:5 - (ae-forgotten-export) The symbol "WorkbookHookTrigger" needs to be exported by the entry point index.d.ts
 
 // (No @packageDocumentation comment for this package)
 

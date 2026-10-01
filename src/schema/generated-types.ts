@@ -28,8 +28,6 @@ export type NonNegativeNumber = number;
  * via the `definition` "condition".
  */
 export type Condition = {
-  [k: string]: unknown | undefined;
-} & {
   op: "eq" | "neq" | "gt" | "gte" | "lt" | "lte" | "in" | "contains" | "isEmpty" | "and" | "or" | "not" | "custom";
   path?: string;
   value?: unknown;
@@ -152,7 +150,30 @@ export type OptionSource =
       [k: string]: unknown | undefined;
     }[]
   | {
-      [k: string]: unknown | undefined;
+      type: "url" | "graphql" | "custom";
+      endpoint?: string;
+      method?: "GET" | "POST";
+      headers?: {
+        [k: string]: string | undefined;
+      };
+      params?: {
+        [k: string]: unknown | undefined;
+      };
+      query?: string;
+      operationName?: string;
+      dataPath?: string;
+      valueKey?: string;
+      labelKey?: string;
+      pagination?: {
+        enabled: boolean;
+        pageSize: number;
+        totalPath: string;
+        pageParam: string;
+      };
+      dependsOn?: string[];
+      fetchOnMount?: boolean;
+      cache?: "none" | "memory" | "session";
+      searchDebounce?: number;
     };
 /**
  * This interface was referenced by `BFDocumentSchemaV411`'s JSON-Schema
@@ -918,16 +939,7 @@ export interface Config {
 export interface FieldDefinition {
   name: NonEmptyString;
   type:
-    | "string"
-    | "number"
-    | "boolean"
-    | "date"
-    | "select"
-    | "multiselect"
-    | "textarea"
-    | "array"
-    | "object"
-    | "custom";
+    "string" | "number" | "boolean" | "date" | "select" | "multiselect" | "textarea" | "array" | "object" | "custom";
   label?: string;
   bind?: Bind1;
   validations?: Validation[];
