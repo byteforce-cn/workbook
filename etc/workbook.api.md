@@ -8,7 +8,7 @@ import { ComponentProps } from 'react';
 import { ComponentType } from 'react';
 import { ErrorObject } from 'ajv';
 import { PropsWithChildren } from 'react';
-import * as react_jsx_runtime from 'react/jsx-runtime';
+import * as react from 'react';
 import { ReactNode } from 'react';
 import { ValidateFunction } from 'ajv';
 
@@ -82,7 +82,7 @@ export function createWorkbookPrintStyles(config?: PrintConfig): string;
 // Warning: (ae-forgotten-export) The symbol "DataProviderProps" needs to be exported by the entry point index.d.ts
 //
 // @public (undocumented)
-export function DataProvider(input: DataProviderProps): react_jsx_runtime.JSX.Element;
+export function DataProvider(input: DataProviderProps): react.JSX.Element;
 
 // @public (undocumented)
 export type DependencyDefinition = NonNullable<FieldDefinition["dependencies"]>[number];
@@ -90,7 +90,7 @@ export type DependencyDefinition = NonNullable<FieldDefinition["dependencies"]>[
 // Warning: (ae-forgotten-export) The symbol "ResponsiveRendererProps" needs to be exported by the entry point index.d.ts
 //
 // @public
-export function DesktopRenderer(props: Omit<ResponsiveRendererProps, "device">): react_jsx_runtime.JSX.Element;
+export function DesktopRenderer(props: Omit<ResponsiveRendererProps, "device">): react.JSX.Element;
 
 // @public
 export function detectDeviceFromWidth(width: number, breakpoints?: DeviceBreakpoints): DeviceType;
@@ -121,7 +121,7 @@ export type DeviceMode = DeviceType | "auto";
 // Warning: (ae-forgotten-export) The symbol "DeviceProviderProps" needs to be exported by the entry point index.d.ts
 //
 // @public
-export function DeviceProvider(input: DeviceProviderProps): react_jsx_runtime.JSX.Element;
+export function DeviceProvider(input: DeviceProviderProps): react.JSX.Element;
 
 // @public
 export type DeviceType = "desktop" | "tablet" | "mobile";
@@ -129,7 +129,7 @@ export type DeviceType = "desktop" | "tablet" | "mobile";
 // Warning: (ae-forgotten-export) The symbol "DocumentRendererProps" needs to be exported by the entry point index.d.ts
 //
 // @public (undocumented)
-export function DocumentRenderer(input: DocumentRendererProps): react_jsx_runtime.JSX.Element;
+export function DocumentRenderer(input: DocumentRendererProps): react.JSX.Element;
 
 // Warning: (ae-forgotten-export) The symbol "CorePluginSlots" needs to be exported by the entry point index.d.ts
 //
@@ -206,7 +206,7 @@ export interface LayoutPluginProps {
 }
 
 // @public
-export function MobileRenderer(props: Omit<ResponsiveRendererProps, "device">): react_jsx_runtime.JSX.Element;
+export function MobileRenderer(props: Omit<ResponsiveRendererProps, "device">): react.JSX.Element;
 
 // @public (undocumented)
 export type OptionSourceDefinition = Exclude<FieldDefinition["options"], undefined>;
@@ -234,7 +234,7 @@ export interface PdfFontLoader {
 // Warning: (ae-forgotten-export) The symbol "PluginProviderProps" needs to be exported by the entry point index.d.ts
 //
 // @public
-export function PluginProvider(input: PluginProviderProps): react_jsx_runtime.JSX.Element;
+export function PluginProvider(input: PluginProviderProps): react.JSX.Element;
 
 // @public
 export const pluginRegistry: WorkbookPluginRegistry;
@@ -249,7 +249,7 @@ export type PrintConfig = NonNullable<WorkbookDefinition["printConfig"]>;
 export function printWorkbookElement(root: ParentNode, config?: PrintConfig): Window | null;
 
 // @public
-export function ResponsiveRenderer(input: ResponsiveRendererProps): react_jsx_runtime.JSX.Element;
+export function ResponsiveRenderer(input: ResponsiveRendererProps): react.JSX.Element;
 
 // @public
 export function sanitizeHtml(html: string): string;
@@ -272,7 +272,7 @@ export type SheetViewDefinition = Extract<ViewDefinition, {
 export type StyleCatalog = NonNullable<WorkbookDefinition["styles"]>;
 
 // @public
-export function TabletRenderer(props: Omit<ResponsiveRendererProps, "device">): react_jsx_runtime.JSX.Element;
+export function TabletRenderer(props: Omit<ResponsiveRendererProps, "device">): react.JSX.Element;
 
 // @public (undocumented)
 export function useDataValue(path: string, rowContext?: WorkbookRowContext): unknown;
@@ -318,12 +318,12 @@ export type WorkbookDefinition = BFDocumentSchemaV411;
 // Warning: (ae-forgotten-export) The symbol "FormViewProps" needs to be exported by the entry point index.d.ts
 //
 // @public (undocumented)
-export function WorkbookFormView(input: FormViewProps): react_jsx_runtime.JSX.Element;
+export function WorkbookFormView(input: FormViewProps): react.JSX.Element;
 
 // Warning: (ae-forgotten-export) The symbol "PageViewProps" needs to be exported by the entry point index.d.ts
 //
 // @public (undocumented)
-export function WorkbookPageView(input: PageViewProps): react_jsx_runtime.JSX.Element;
+export function WorkbookPageView(input: PageViewProps): react.JSX.Element;
 
 // @public (undocumented)
 export interface WorkbookPdfResult {
@@ -348,7 +348,7 @@ export interface WorkbookRowContext {
 // Warning: (ae-forgotten-export) The symbol "WorkbookRuntimeProviderProps" needs to be exported by the entry point index.d.ts
 //
 // @public (undocumented)
-export function WorkbookRuntimeProvider(input: WorkbookRuntimeProviderProps): react_jsx_runtime.JSX.Element;
+export function WorkbookRuntimeProvider(input: WorkbookRuntimeProviderProps): react.JSX.Element;
 
 // @public (undocumented)
 export var bfSchemaV4_1_1 = {
@@ -366,7 +366,7 @@ export var bfSchemaV4_1_1 = {
 // Warning: (ae-forgotten-export) The symbol "SheetViewProps" needs to be exported by the entry point index.d.ts
 //
 // @public (undocumented)
-export function WorkbookSheetView(input: SheetViewProps): react_jsx_runtime.JSX.Element;
+export function WorkbookSheetView(input: SheetViewProps): react.JSX.Element;
 
 // Warning: (ae-forgotten-export) The symbol "SupportMatrixEntry" needs to be exported by the entry point index.d.ts
 //
@@ -383,7 +383,7 @@ export interface WorkbookValidationResult {
 
 // Warnings were encountered during analysis:
 //
-// dist/PluginProvider-DFbUZ4AR.d.ts:13:5 - (ae-forgotten-export) The symbol "WorkbookHookTrigger" needs to be exported by the entry point index.d.ts
+// dist/PluginProvider-TKi-Vo3x.d.ts:13:5 - (ae-forgotten-export) The symbol "WorkbookHookTrigger" needs to be exported by the entry point index.d.ts
 
 // (No @packageDocumentation comment for this package)
 
