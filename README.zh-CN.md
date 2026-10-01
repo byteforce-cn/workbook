@@ -108,9 +108,9 @@ import "@byteforce/workbook/styles.css";
 
 ## 文档
 
-- **在线文档** —— <https://byteforce-cn.github.io/workbook/> <!-- TODO(4E-05): confirm after first deploy -->
-- **Storybook 交互示例** —— <https://byteforce-cn.github.io/workbook/storybook/> <!-- TODO(4E-05) -->
-- **API 参考** —— <https://byteforce-cn.github.io/workbook/api-reference/> <!-- TODO(4E-05) -->
+- **在线文档** —— <https://byteforce-cn.github.io/workbook/>
+- **Storybook 交互示例** —— <https://byteforce-cn.github.io/workbook/storybook/>
+- **API 参考** —— <https://byteforce-cn.github.io/workbook/api-reference/>
 - **本地文档** —— `docs-site/`（运行 `pnpm docs:dev`）；Schema 参考见 `docs-site/schema/schema-reference.md`
 - **i18n 与默认文案** —— 内置 UI 文案默认回退为中文（zh-CN）；详见 `docs-site/guides/i18n.md`
 - **参与贡献** —— 见 [CONTRIBUTING.md](./CONTRIBUTING.md)

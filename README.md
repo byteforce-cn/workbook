@@ -110,9 +110,9 @@ import "@byteforce/workbook/styles.css";
 
 ## Documentation
 
-- **Online docs** — <https://byteforce-cn.github.io/workbook/> <!-- TODO(4E-05): confirm after first deploy -->
-- **Storybook examples** — <https://byteforce-cn.github.io/workbook/storybook/> <!-- TODO(4E-05) -->
-- **API Reference** — <https://byteforce-cn.github.io/workbook/api-reference/> <!-- TODO(4E-05) -->
+- **Online docs** — <https://byteforce-cn.github.io/workbook/>
+- **Storybook examples** — <https://byteforce-cn.github.io/workbook/storybook/>
+- **API Reference** — <https://byteforce-cn.github.io/workbook/api-reference/>
 - **Local docs** — `docs-site/` (run `pnpm docs:dev`); schema reference in `docs-site/schema/schema-reference.md`
 - **i18n & default text** — built-in UI copy falls back to Chinese (zh-CN); see `docs-site/guides/i18n.md`
 - **Contributing** — see [CONTRIBUTING.md](./CONTRIBUTING.md)
