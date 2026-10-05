@@ -30,6 +30,8 @@ export function SpreadsheetBlockSvg({ block, x, y, width }: SpreadsheetBlockSvgP
             frozenCols: block.sheet.frozenCols,
           }}
           embedded
+          maxWidth={width}
+          maxHeight={height}
         />
       </div>
     </foreignObject>

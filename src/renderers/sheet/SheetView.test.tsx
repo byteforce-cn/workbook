@@ -354,6 +354,62 @@ const stretchSheetFixture: WorkbookDefinition = {
   ],
 };
 
+function createEmbeddedSheetWorkbook(pageWidth: number, blockHeight = 130): WorkbookDefinition {
+  return {
+    kind: "workbook",
+    schemaVersion: "4.1.1",
+    locale: "zh-CN",
+    data: {},
+    views: [
+      {
+        type: "page",
+        pageSettings: { width: pageWidth, height: 320, marginTop: 0, marginRight: 0, marginBottom: 0, marginLeft: 0 },
+        content: [
+          {
+            type: "spreadsheet",
+            renderHints: { height: blockHeight },
+            sheet: {
+              name: "验收台账摘要",
+              frozenRows: 1,
+              frozenCols: 1,
+              columns: [{ width: 180 }, { width: 92 }, { width: 82 }, { width: 82 }],
+              rows: [
+                {
+                  height: 30,
+                  cells: [
+                    { column: 0, value: "任务" },
+                    { column: 1, value: "进度" },
+                    { column: 2, value: "风险" },
+                    { column: 3, value: "状态" },
+                  ],
+                },
+                {
+                  height: 28,
+                  cells: [
+                    { column: 0, value: "打印模板验收" },
+                    { column: 1, value: 82 },
+                    { column: 2, value: "中" },
+                    { column: 3, value: "复核中" },
+                  ],
+                },
+                {
+                  height: 28,
+                  cells: [
+                    { column: 0, value: "PDF 二进制导出" },
+                    { column: 1, value: 68 },
+                    { column: 2, value: "高" },
+                    { column: 3, value: "待确认" },
+                  ],
+                },
+              ],
+            },
+          },
+        ],
+      },
+    ],
+  };
+}
+
 function installImmediateResizeObserver(width: number) {
   const originalResizeObserver = window.ResizeObserver;
   class ImmediateResizeObserver implements ResizeObserver {
@@ -549,5 +605,48 @@ describe("SheetView", () => {
     } finally {
       restoreResizeObserver();
     }
+  });
+
+  it("fits embedded sheet viewports to the host block and drops the horizontal scrollbar", () => {
+    render(<DocumentRenderer workbook={createEmbeddedSheetWorkbook(650)} />);
+
+    const viewport = screen.getByTestId("bf-sheet-viewport");
+    const bodyPane = screen.getByTestId("bf-sheet-pane-body");
+
+    // 宿主块宽 650 ≥ 内容宽 436：按内容尺寸渲染，不产生多余横向滚动条
+    expect(viewport.style.width).toBe("436px");
+    expect(viewport.style.height).toBe("86px");
+    expect(bodyPane.style.overflowX).toBe("hidden");
+    // 无纵向溢出时不保留滚动条槽位，避免最后一列被幽灵宽度裁掉
+    expect(bodyPane.style.scrollbarGutter).toBe("");
+  });
+
+  it("reserves viewport height for the horizontal scrollbar of a narrow embedded sheet", () => {
+    render(<DocumentRenderer workbook={createEmbeddedSheetWorkbook(300)} />);
+
+    const viewport = screen.getByTestId("bf-sheet-viewport");
+    const bodyPane = screen.getByTestId("bf-sheet-pane-body");
+
+    // 宿主仅 300 宽：视口约束为 300，横向滚动条出现
+    expect(viewport.style.width).toBe("300px");
+    expect(bodyPane.style.overflowX).toBe("auto");
+    expect(bodyPane.style.scrollbarGutter).toBe("");
+    // 视口高度 = 内容 86 + 横向滚动条预留 15，最后一行不会被滚动条裁掉
+    expect(viewport.style.height).toBe("101px");
+    expect(bodyPane.style.height).toBe("71px");
+  });
+
+  it("caps the embedded viewport at the host block height and scrolls vertically", () => {
+    render(<DocumentRenderer workbook={createEmbeddedSheetWorkbook(650, 80)} />);
+
+    const viewport = screen.getByTestId("bf-sheet-viewport");
+    const bodyPane = screen.getByTestId("bf-sheet-pane-body");
+
+    // 块高 80 < 内容 86：视口以块高为上限，出现纵向滚动
+    expect(viewport.style.height).toBe("80px");
+    expect(bodyPane.style.overflowY).toBe("auto");
+    expect(bodyPane.style.scrollbarGutter).toBe("stable");
+    // 纵向滚动条占宽 15，在视口宽度中预留，最后一列不被裁掉
+    expect(viewport.style.width).toBe("451px");
   });
 });

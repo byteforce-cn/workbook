@@ -14,6 +14,12 @@ import { WorkbookSheetView } from "@byteforce/workbook";
 interface SheetViewProps {
   /** A BF Workbook Schema sheet view definition */
   view: SheetViewDefinition;
+  /** Max viewport width in px. Embedded hosts pass their block width; otherwise the container width is measured. */
+  maxWidth?: number;
+  /** Max viewport height in px (the viewport scrolls beyond it). Embedded hosts pass their block height. */
+  maxHeight?: number;
+  /** Embedded rendering mode used by spreadsheet blocks inside page views (no title, no container measurement). */
+  embedded?: boolean;
 }
 ```
 
