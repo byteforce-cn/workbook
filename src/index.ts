@@ -114,6 +114,20 @@ export {
 export { useWorkbookRuntime, WorkbookRuntimeProvider } from "./react/RuntimeProvider";
 // ---- Plugin Registry ----
 export { createPluginRegistry, pluginRegistry } from "./react/registry";
+export type {
+  CreateWorkbookPluginRegistryOptions,
+  PluginRegistryHelpers,
+  WorkbookConditionContext,
+  WorkbookConditionPlugin,
+  WorkbookHookContext,
+  WorkbookHookPlugin,
+  WorkbookOption,
+  WorkbookOptionSourceContext,
+  WorkbookOptionSourcePlugin,
+  WorkbookPluginRegistryWithHelpers,
+  WorkbookValidationContext,
+  WorkbookValidationPlugin,
+} from "./react/registry";
 // ---- Rendering Views (low-level, for custom composition) ----
 export { FormView as WorkbookFormView } from "./renderers/form/FormView";
 export { PageView as WorkbookPageView } from "./renderers/page/PageView";
