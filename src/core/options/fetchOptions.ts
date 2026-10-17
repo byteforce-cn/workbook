@@ -61,6 +61,32 @@ function isDynamicOptionSource(source: OptionSourceDefinition): source is Dynami
   );
 }
 
+/** Shapes already reported, so a repeated fetch does not flood the console. */
+const warnedOptionSourceShapes = new Set<string>();
+
+/**
+ * Report an unusable dynamic option source instead of silently resolving to an
+ * empty option list. Repeated occurrences of the same shape warn once.
+ */
+function warnMalformedOptionSource(source: DynamicOptionSource, reason: string): void {
+  const legacyUrl = (source as { url?: unknown }).url;
+  const hint =
+    typeof legacyUrl === "string" && legacyUrl !== ""
+      ? `Found \`url: "${legacyUrl}"\`, which is ignored — the request URL key is \`endpoint\`.`
+      : "See the Option Source Types section of the schema reference for the expected shape.";
+  const key = `${source.type}:${reason}`;
+
+  if (warnedOptionSourceShapes.has(key)) {
+    return;
+  }
+  warnedOptionSourceShapes.add(key);
+
+  console.warn(
+    `[workbook] Invalid option source (type: "${source.type}"): ${reason}. ${hint} ` +
+      "The option list will stay empty; validate the document against the workbook schema to catch this earlier.",
+  );
+}
+
 function readRequestMethod(source: DynamicOptionSource): "GET" | "POST" {
   if (source.type === "graphql") {
     return source.method ?? "POST";
@@ -231,6 +257,14 @@ export async function fetchOptionPage(
 
   const method = readRequestMethod(source);
   const endpoint = source.endpoint ?? "";
+
+  if (endpoint.trim() === "") {
+    warnMalformedOptionSource(source, 'missing "endpoint"');
+    // Fail fast: without an endpoint `new URL("")` would resolve to the host
+    // page itself and fetch (and then fail to parse) the application HTML.
+    return createPageResult([], page, source.pagination?.pageSize);
+  }
+
   const requestInit: RequestInit = {
     method,
     headers: source.headers,

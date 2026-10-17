@@ -168,12 +168,63 @@ Dependencies define how fields affect each other:
 
 ## Option Source Types
 
+A field's `optionsSource` is either an inline option array or an object with a
+`type` discriminator:
+
 | Type | Description |
 |------|-------------|
-| `static` | Inline option array |
-| `url` | HTTP GET with mapping |
-| `graphql` | GraphQL query |
+| `static` | Inline option array: `[{ "value": "a", "label": "A" }]` |
+| `url` | HTTP request returning records, mapped onto options |
+| `graphql` | GraphQL query returning records |
 | `custom` | Plugin-registered loader |
+
+### Remote options (`url` / `graphql`)
+
+The request URL is carried by **`endpoint`**, and the records are read through
+**`dataPath`**. A `url` key at the top level of the source does not exist in the
+schema: it is rejected by validation, and at runtime a source without `endpoint`
+logs a warning and renders an empty option list.
+
+```json
+{
+  "name": "positionId",
+  "type": "select",
+  "label": "职位",
+  "optionsSource": {
+    "type": "url",
+    "endpoint": "/api/hr/positions",
+    "method": "GET",
+    "params": { "orgUnitId": { "$field": "orgUnitId" } },
+    "dependsOn": ["orgUnitId"],
+    "dataPath": "items",
+    "valueKey": "id",
+    "labelKey": "name",
+    "cache": "memory",
+    "searchDebounce": 300
+  }
+}
+```
+
+| Property | Required | Meaning |
+|----------|----------|---------|
+| `type` | yes | `url` or `graphql` |
+| `endpoint` | yes | Request URL; relative paths resolve against the page origin |
+| `dataPath` | yes | Path to the records array inside the response body |
+| `method` | no | `GET` (default) or `POST`; GraphQL defaults to `POST` |
+| `params` | no | Query parameters (`GET`) or request body (`POST`); `{ "$field": "path" }` binds a value from the form data |
+| `query` / `operationName` | GraphQL | Query document and optional operation name |
+| `valueKey` / `labelKey` | no | Response keys mapped to `value` / `label` (defaults: `value` / `label`) |
+| `dependsOn` | no | Field paths that trigger a refetch when they change |
+| `cache` | no | `none` (default), `memory`, or `session` |
+| `headers`, `pagination`, `fetchOnMount`, `searchDebounce` | no | See below |
+
+`dataPath` uses the same dot/bracket path syntax as bind expressions —
+`items`, `payload.records`, `data.assignees.nodes`, `result[0].items`. It is
+**not** a JSON Pointer: a leading slash is part of the key name, so `"/items"`
+looks up a property literally named `"/items"` and finds nothing.
+
+`pagination` (`{ enabled, pageSize, totalPath, pageParam }`) adds a page
+parameter to each request and reads the total count from `totalPath`.
 
 ## Hook Triggers
 
