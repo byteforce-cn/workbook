@@ -97,6 +97,38 @@ contains no `input`, `select` or `textarea`:
 | array | items joined with `, ` |
 | nested object | compact JSON |
 
+### Host-owned action bar (`config.hideActions`)
+
+Screens with a page-level sticky action bar (cancel on the left, primary CTA on
+the right) can hide workbook's own submit/reset row and still keep the submit
+pipeline — validation, `onValidate` hooks, `onSubmit`, save hooks — by calling
+the imperative handle on `DocumentRenderer`:
+
+```tsx
+const ref = useRef<DocumentRendererHandle>(null);
+
+<>
+  <DocumentRenderer ref={ref} workbook={workbook} onSubmit={save} />
+  <footer className="sticky-actions">
+    <button type="button" onClick={cancel}>取消</button>
+    <button
+      type="button"
+      onClick={async () => {
+        // true = submitted, false = validation failed (errors are shown inline)
+        if (!(await ref.current?.submit())) return;
+        navigate("/list");
+      }}
+    >
+      保存并提交审批
+    </button>
+  </footer>
+</>
+```
+
+The document is not rendered twice and no `!important` is needed: pass
+`{ "config": { "hideActions": true } }` in the form view. `config.readOnly`
+still hides the row unconditionally.
+
 `config.readOnly` keeps its meaning in both modes (no submit bar, no writes);
 `readOnlyDisplay` only changes how fields are presented, so the default stays
 `"disabled"` and existing documents are unaffected. The placeholder and boolean

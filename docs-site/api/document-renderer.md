@@ -100,6 +100,23 @@ function App() {
 }
 ```
 
+## Imperative handle (`ref`)
+
+`DocumentRenderer` exposes `submit()` for hosts that render their own action bar
+(`config.hideActions`):
+
+```tsx
+const ref = useRef<DocumentRendererHandle>(null);
+
+<DocumentRenderer ref={ref} workbook={workbook} onSubmit={save} />;
+// later
+const submitted = await ref.current?.submit(); // false when validation fails
+```
+
+`submit()` runs exactly what the built-in button runs: field validation,
+`onValidate` hooks, `onSubmit` and the save hooks. It resolves `false` when
+validation fails, the form is read-only, or no form view is currently mounted.
+
 ## With Plugin Registry
 
 Pass a scoped registry via the `registry` prop:

@@ -1,8 +1,9 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { createRef } from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { basicWorkbookFixture } from "../tests/fixtures/integration/basicWorkbook";
-import { DocumentRenderer } from "./DocumentRenderer";
+import { DocumentRenderer, type DocumentRendererHandle } from "./DocumentRenderer";
 import { PluginProvider } from "./react/PluginProvider";
 import { createPluginRegistry } from "./react/registry";
 import type { WorkbookValidationResult } from "./schema";
@@ -91,6 +92,55 @@ describe("DocumentRenderer", () => {
       />,
     );
     expect(screen.getAllByText("韩梅梅").length).toBeGreaterThan(0);
+  });
+
+  it("hides the built-in action row with config.hideActions (#34)", () => {
+    const workbook = {
+      ...basicWorkbookFixture,
+      views: (basicWorkbookFixture.views as unknown as Record<string, unknown>[]).map((view) =>
+        view.type === "form" ? { ...view, config: { ...(view.config as object), hideActions: true } } : view,
+      ),
+    } as unknown as WorkbookDefinition;
+
+    render(<DocumentRenderer workbook={workbook} activeViewId="editor" />);
+
+    expect(screen.queryByRole("button", { name: "保存" })).toBeNull();
+    expect(screen.queryByRole("button", { name: "重置" })).toBeNull();
+    expect(document.querySelector(".bf-workbook-form-actions")).toBeNull();
+  });
+
+  it("submits through the imperative handle with the built-in pipeline (#34)", async () => {
+    const onSubmit = vi.fn();
+    const ref = createRef<DocumentRendererHandle>();
+
+    render(<DocumentRenderer ref={ref} workbook={basicWorkbookFixture} activeViewId="editor" onSubmit={onSubmit} />);
+
+    await expect(ref.current?.submit()).resolves.toBe(true);
+    expect(onSubmit).toHaveBeenCalledTimes(1);
+    expect(onSubmit.mock.calls[0][0]).toEqual({ customer: { name: "Alice" }, items: [{ name: "设备 A", qty: 2 }] });
+  });
+
+  it("blocks the imperative submit when validation fails (#34)", async () => {
+    const onSubmit = vi.fn();
+    const ref = createRef<DocumentRendererHandle>();
+    // Same document with the required 客户姓名 left empty.
+    const emptyWorkbook = { ...basicWorkbookFixture, data: { items: [] } } as unknown as WorkbookDefinition;
+
+    render(<DocumentRenderer ref={ref} workbook={emptyWorkbook} activeViewId="editor" onSubmit={onSubmit} />);
+
+    await expect(ref.current?.submit()).resolves.toBe(false);
+    expect(onSubmit).not.toHaveBeenCalled();
+    await waitFor(() => {
+      expect(screen.getByText("客户姓名不能为空")).toBeTruthy();
+    });
+  });
+
+  it("reports false from the imperative handle when no form view is mounted (#34)", async () => {
+    const ref = createRef<DocumentRendererHandle>();
+
+    render(<DocumentRenderer ref={ref} workbook={basicWorkbookFixture} activeViewId="preview" />);
+
+    await expect(ref.current?.submit()).resolves.toBe(false);
   });
 
   it("renders sheet canvas for sheet views", () => {

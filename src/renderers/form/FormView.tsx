@@ -13,6 +13,7 @@ import type {
 import { runValidations } from "../../core/validation/validator";
 import { useDevice } from "../../device/DeviceContext";
 import { useWorkbookData } from "../../react/DataProvider";
+import { useRegisterSubmitHandler } from "../../react/submitChannel";
 import { runWorkbookHooks } from "../../react/hooks/useWorkbookHooks";
 import { useWorkbookRuntime } from "../../react/RuntimeProvider";
 import { LayoutRenderer } from "./LayoutRenderer";
@@ -142,12 +143,15 @@ export function FormView({ view, onSubmit }: FormViewProps) {
 
   const title = resolveI18nText(("label" in view ? view.label : undefined) ?? undefined, locale, i18n, fallbackLocale);
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-
+  /**
+   * Run the full submit pipeline and report whether it went through.
+   * Shared by the built-in submit button and by `DocumentRenderer.submit()` for
+   * hosts that render their own action bar (`config.hideActions`).
+   */
+  const submitForm = async (): Promise<boolean> => {
     // 只读表单不允许提交（防御：即便外部触发表单 submit 事件也拦截）
     if (readOnly) {
-      return;
+      return false;
     }
 
     const instances = buildFieldInstances(view.fields, data);
@@ -159,10 +163,19 @@ export function FormView({ view, onSubmit }: FormViewProps) {
     await runWorkbookHooks({ hooks, trigger: "onValidate", data, registry });
 
     if (validationResults.some((errors) => errors.length > 0)) {
-      return;
+      return false;
     }
 
     await form.handleSubmit();
+    return true;
+  };
+
+  // 宿主自绘操作栏（config.hideActions）通过 DocumentRenderer 的命令式 submit() 触发同一条链路
+  useRegisterSubmitHandler(submitForm);
+
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    void submitForm();
   };
 
   const handleReset = () => {
@@ -187,7 +200,7 @@ export function FormView({ view, onSubmit }: FormViewProps) {
           onFieldChange={handleFieldChange}
           onFieldBlur={handleFieldBlur}
         />
-        {!readOnly ? (
+        {!readOnly && view.config?.hideActions !== true ? (
           <div className={`bf-workbook-form-actions${device === "mobile" ? " bf-workbook-form-actions--mobile" : ""}`}>
             <button type="submit">
               {view.config?.submitLabel ??
