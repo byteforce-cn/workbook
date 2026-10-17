@@ -61,9 +61,9 @@ export type {
   // View Definitions
   WorkbookViewDefinition as ViewDefinition,
 } from "./core/types";
+export type { DocumentRendererHandle, DocumentRendererProps } from "./DocumentRenderer";
 // ---- Main Component ----
 export { DocumentRenderer } from "./DocumentRenderer";
-export type { DocumentRendererHandle, DocumentRendererProps } from "./DocumentRenderer";
 export {
   DeviceProvider,
   useDevice as useWorkbookDevice,
