@@ -17,13 +17,15 @@ import {
   type WorkbookOptionSourcePlugin,
   type WorkbookValidationPlugin,
 } from "../core/registry/registry";
-import type { WorkbookFieldPluginProps, WorkbookLayoutPluginProps } from "../core/types";
+import type { WorkbookFieldPluginProps, WorkbookLayoutPluginProps, WorkbookPageBlockPluginProps } from "../core/types";
 
 export * from "../core/registry/registry";
+export type { WorkbookPageBlockPluginComponent, WorkbookPageBlockPluginProps } from "../core/types";
 
 export type WorkbookPluginRegistry = PluginRegistry<
   ComponentType<WorkbookFieldPluginProps>,
-  ComponentType<WorkbookLayoutPluginProps>
+  ComponentType<WorkbookLayoutPluginProps>,
+  ComponentType<WorkbookPageBlockPluginProps>
 >;
 
 /**
@@ -37,6 +39,8 @@ export type WorkbookPluginRegistry = PluginRegistry<
 export interface PluginRegistryHelpers {
   registerField(id: string, component: ComponentType<WorkbookFieldPluginProps>): void;
   registerLayout(id: string, component: ComponentType<WorkbookLayoutPluginProps>): void;
+  /** Register a page-view block renderer (schema: `{ type: "custom", component: id }`). */
+  registerPageBlock(id: string, component: ComponentType<WorkbookPageBlockPluginProps>): void;
   registerCondition(id: string, plugin: WorkbookConditionPlugin): void;
   registerOptionSource(id: string, plugin: WorkbookOptionSourcePlugin): void;
   registerValidation(id: string, plugin: WorkbookValidationPlugin): void;
@@ -60,6 +64,9 @@ export function attachPluginRegistryHelpers(
     },
     registerLayout(id: string, component: ComponentType<WorkbookLayoutPluginProps>): void {
       registry.layout.set(ns(id), component);
+    },
+    registerPageBlock(id: string, component: ComponentType<WorkbookPageBlockPluginProps>): void {
+      registry.pageBlock.set(ns(id), component);
     },
     registerCondition(id: string, plugin: WorkbookConditionPlugin): void {
       registry.condition.set(ns(id), plugin);
@@ -87,7 +94,8 @@ export function createPluginRegistry(
   const { namespace } = options;
   const registry = createCorePluginRegistry<
     ComponentType<WorkbookFieldPluginProps>,
-    ComponentType<WorkbookLayoutPluginProps>
+    ComponentType<WorkbookLayoutPluginProps>,
+    ComponentType<WorkbookPageBlockPluginProps>
   >();
 
   return attachPluginRegistryHelpers(registry, namespace ? (id) => `${namespace}:${id}` : undefined);

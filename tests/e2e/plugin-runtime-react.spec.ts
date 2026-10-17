@@ -20,6 +20,24 @@ test.describe("插件系统", () => {
     );
   });
 
+  test("自定义 page block 插件按 component id 渲染并参与分页", async ({ page }) => {
+    await openStory(page, workbookStoryIds.pluginCustomPageBlock);
+
+    const story = page.locator('[data-testid="workbook-story-plugin-page-block"]');
+    await expect(story).toBeVisible({ timeout: 15_000 });
+
+    // 注册的组件渲染了流程进度条（业务视图），并由 schema 的 props / data 驱动
+    const stepper = story.getByTestId("storybook-flow-stepper");
+    await expect(stepper).toBeVisible();
+    await expect(stepper).toContainText("提交申请");
+    await expect(stepper).toContainText("直属主管");
+    await expect(stepper).toContainText("申请人：李雷");
+
+    // 与内建 block 混排：自定义 block 只占声明的 renderHints.height
+    await expect(story.getByText("加班费报销申请")).toBeVisible();
+    await expect(story.getByText("正文与内建 block 混排")).toBeVisible();
+  });
+
   test("自定义布局插件渲染卡片容器", async ({ page }) => {
     await openStory(page, workbookStoryIds.pluginCustomLayout);
 

@@ -8,7 +8,12 @@ import { type ComponentType, type PropsWithChildren, useContext } from "react";
 import { createPluginRegistry as createCorePluginRegistry } from "../core/registry/registry";
 import { PluginRegistryContext } from "./pluginRegistryContext";
 import { attachPluginRegistryHelpers, type WorkbookPluginRegistryWithHelpers } from "./registry";
-import type { WorkbookFieldPluginProps, WorkbookLayoutPluginProps, WorkbookPluginRegistry } from "./types";
+import type {
+  WorkbookFieldPluginProps,
+  WorkbookLayoutPluginProps,
+  WorkbookPageBlockPluginProps,
+  WorkbookPluginRegistry,
+} from "./types";
 
 // Re-export the shared core hook (single source of truth for registry scoping).
 export { useOptionalPluginRegistry } from "./pluginRegistryContext";
@@ -36,7 +41,8 @@ export function createPluginRegistry(options: CreatePluginRegistryOptions = {}):
   // Base registry (core) — carries the standard plugin slots + management API.
   const registry = createCorePluginRegistry<
     ComponentType<WorkbookFieldPluginProps>,
-    ComponentType<WorkbookLayoutPluginProps>
+    ComponentType<WorkbookLayoutPluginProps>,
+    ComponentType<WorkbookPageBlockPluginProps>
   >();
 
   // Attach the documented `register*` helpers (single implementation lives in

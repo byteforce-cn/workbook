@@ -13,9 +13,9 @@ import type {
 import { runValidations } from "../../core/validation/validator";
 import { useDevice } from "../../device/DeviceContext";
 import { useWorkbookData } from "../../react/DataProvider";
-import { useRegisterSubmitHandler } from "../../react/submitChannel";
 import { runWorkbookHooks } from "../../react/hooks/useWorkbookHooks";
 import { useWorkbookRuntime } from "../../react/RuntimeProvider";
+import { useRegisterSubmitHandler } from "../../react/submitChannel";
 import { LayoutRenderer } from "./LayoutRenderer";
 import type { FormApiLike } from "./types";
 

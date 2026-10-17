@@ -5,6 +5,7 @@ import {
   createCustomConditionWorkbook,
   createCustomFieldWorkbook,
   createCustomLayoutWorkbook,
+  createCustomPageBlockWorkbook,
   createCustomValidationWorkbook,
   createPluginSystemRegistry,
 } from "./workbookPluginSystemFixtures";
@@ -156,6 +157,32 @@ registry.condition.set("storybook/is-workday", isWorkday);
 
 // 3. schema 中引用
 // visible: { op: "custom", name: "storybook/is-workday", params: { path: "meetingDate" } }`}
+    >
+      <WorkbookStoryHarness {...args} />
+    </StoryShell>
+  ),
+};
+
+export const CustomPageBlock: Story = {
+  args: {
+    testId: "workbook-story-plugin-page-block",
+    workbook: createCustomPageBlockWorkbook(),
+    registry: createPluginSystemRegistry(),
+  },
+  render: (args) => (
+    <StoryShell
+      testId="workbook-story-plugin-page-block-shell"
+      title="自定义 page block 插件"
+      caption="page 视图里的 { type: 'custom' } block 按 component id 命中 registerPageBlock 注册的组件；renderHints.height 参与分页测量，未注册时该 block 不渲染。"
+      capabilities={["pageBlock 插件", "renderHints.height 分页", "业务视图（流程进度条）"]}
+      code={`import { createPluginRegistry } from "@byteforce/workbook";
+
+const registry = createPluginRegistry({ namespace: "app" });
+registry.registerPageBlock("app:flowStepper", FlowStepper);
+
+// schema
+// { "type": "custom", "component": "app:flowStepper",
+//   "renderHints": { "height": 120 }, "props": { "currentStep": 1 } }`}
     >
       <WorkbookStoryHarness {...args} />
     </StoryShell>

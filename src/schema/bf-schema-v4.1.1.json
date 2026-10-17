@@ -614,6 +614,7 @@
         { "$ref": "#/definitions/image" },
         { "$ref": "#/definitions/list" },
         { "$ref": "#/definitions/pageBreak" },
+        { "$ref": "#/definitions/customPageBlock" },
         { "$ref": "#/definitions/floatingBlock" },
         { "$ref": "#/definitions/spreadsheetBlock" },
         { "$ref": "#/definitions/headerBlock" },
@@ -883,6 +884,26 @@
         },
         "comment": { "type": "string" },
         "renderHints": { "type": "object", "additionalProperties": true }
+      },
+      "additionalProperties": false
+    },
+    "customPageBlock": {
+      "type": "object",
+      "required": ["type", "component"],
+      "properties": {
+        "type": { "const": "custom" },
+        "component": {
+          "type": "string",
+          "description": "ID of a pageBlock plugin registered on the workbook plugin registry (e.g. 'app:flowStepper'). Renders nothing when unregistered."
+        },
+        "visible": { "oneOf": [{ "type": "boolean" }, { "$ref": "#/definitions/condition" }] },
+        "props": { "type": "object", "additionalProperties": true },
+        "comment": { "type": "string" },
+        "renderHints": {
+          "type": "object",
+          "additionalProperties": true,
+          "description": "Use { \"height\": <px> } so pagination reserves room for the plugin block."
+        }
       },
       "additionalProperties": false
     },

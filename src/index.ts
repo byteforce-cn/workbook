@@ -63,6 +63,7 @@ export type {
 } from "./core/types";
 // ---- Main Component ----
 export { DocumentRenderer } from "./DocumentRenderer";
+export type { DocumentRendererHandle, DocumentRendererProps } from "./DocumentRenderer";
 export {
   DeviceProvider,
   useDevice as useWorkbookDevice,
@@ -122,6 +123,8 @@ export type {
   WorkbookOption,
   WorkbookOptionSourceContext,
   WorkbookOptionSourcePlugin,
+  WorkbookPageBlockPluginComponent,
+  WorkbookPageBlockPluginProps,
   WorkbookPluginRegistryWithHelpers,
   WorkbookValidationContext,
   WorkbookValidationPlugin,

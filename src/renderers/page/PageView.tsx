@@ -54,6 +54,7 @@ export function PageView({ view }: PageViewProps) {
                 pageWidth={pageWidth}
                 pageHeight={pageHeight}
                 textDefaults={textDefaults}
+                data={data}
               />
             ))}
             {page.headerBlocks.map(({ block, x, y, width, height }, index) => (
@@ -67,6 +68,7 @@ export function PageView({ view }: PageViewProps) {
                 pageWidth={pageWidth}
                 pageHeight={pageHeight}
                 textDefaults={textDefaults}
+                data={data}
               />
             ))}
             {page.flowBlocks.map(({ block, x, y, width, height }, index) => {
@@ -84,6 +86,7 @@ export function PageView({ view }: PageViewProps) {
                   pageWidth={pageWidth}
                   pageHeight={pageHeight}
                   textDefaults={textDefaults}
+                  data={data}
                 />
               );
             })}
@@ -98,6 +101,7 @@ export function PageView({ view }: PageViewProps) {
                 pageWidth={pageWidth}
                 pageHeight={pageHeight}
                 textDefaults={textDefaults}
+                data={data}
               />
             ))}
             {page.footerBlocks.map(({ block, x, y, width, height }, index) => (
@@ -111,6 +115,7 @@ export function PageView({ view }: PageViewProps) {
                 pageWidth={pageWidth}
                 pageHeight={pageHeight}
                 textDefaults={textDefaults}
+                data={data}
               />
             ))}
           </svg>

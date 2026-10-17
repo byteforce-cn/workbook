@@ -40,6 +40,8 @@ export type {
   WorkbookOption,
   WorkbookOptionSourceContext,
   WorkbookOptionSourcePlugin,
+  WorkbookPageBlockPluginComponent,
+  WorkbookPageBlockPluginProps,
   WorkbookPluginRegistry,
   WorkbookPluginRegistryWithHelpers,
   WorkbookValidationContext,

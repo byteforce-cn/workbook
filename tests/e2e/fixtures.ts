@@ -18,6 +18,7 @@ export const workbookStoryIds = {
   pluginCustomLayout: "workbook-plugin-system--custom-layout",
   pluginCustomValidation: "workbook-plugin-system--custom-validation",
   pluginCustomCondition: "workbook-plugin-system--custom-condition",
+  pluginCustomPageBlock: "workbook-plugin-system--custom-page-block",
   runtimeI18n: "workbook-runtime--i-18-n",
   runtimeConditionEngine: "workbook-runtime--condition-engine",
   runtimeHookLifecycle: "workbook-runtime--hook-lifecycle",

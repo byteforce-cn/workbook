@@ -51,6 +51,7 @@ export type PageContentBlock =
   | Image
   | List
   | PageBreak
+  | CustomPageBlock
   | FloatingBlock
   | SpreadsheetBlock
   | HeaderBlock
@@ -687,6 +688,28 @@ export interface List {
 export interface PageBreak {
   type: "page-break";
   comment?: string;
+}
+/**
+ * This interface was referenced by `BFDocumentSchemaV411`'s JSON-Schema
+ * via the `definition` "customPageBlock".
+ */
+export interface CustomPageBlock {
+  type: "custom";
+  /**
+   * ID of a pageBlock plugin registered on the workbook plugin registry (e.g. 'app:flowStepper'). Renders nothing when unregistered.
+   */
+  component: string;
+  visible?: boolean | Condition;
+  props?: {
+    [k: string]: unknown | undefined;
+  };
+  comment?: string;
+  /**
+   * Use { "height": <px> } so pagination reserves room for the plugin block.
+   */
+  renderHints?: {
+    [k: string]: unknown | undefined;
+  };
 }
 /**
  * This interface was referenced by `BFDocumentSchemaV411`'s JSON-Schema

@@ -329,6 +329,12 @@ function renderBlock(
     ];
   }
 
+  // Custom page blocks are a screen-only extension point (host components cannot
+  // be rasterised here); they contribute their allocated space, nothing else.
+  if (source.type === "custom") {
+    return [pdfRect(x, y, width, height, pageHeight)];
+  }
+
   return [pdfRect(x, y, width, height, pageHeight), pdfText(x + 4, y + 16, pageHeight, source.sheet.name, 9, embedded)];
 }
 
