@@ -57,6 +57,28 @@ function MyDocument() {
 | `pageBreak` | Manual page breaks |
 | `spreadsheet` | Embedded sheet view |
 
+### Table column widths
+
+A `table` block declares its column widths as either a number (px) or a
+percentage string; the two can be mixed in one table:
+
+```json
+{
+  "type": "table",
+  "columns": [180, "20%", "30%"],
+  "rows": [ /* … */ ]
+}
+```
+
+- **number** — fixed width in px for that column.
+- **`"NN%"`** — percentage of the *table's* content width (not of the page),
+  resolved the same way the browser resolves `<col style="width: NN%">`.
+
+When the declared widths do not fill the table, the browser distributes the
+surplus across the columns; the pagination measurement applies the same
+proportional scaling, so measured row heights match the rendered output for px,
+percentage and mixed declarations alike.
+
 ## Pagination Engine
 
 The page renderer includes a measurement-based automatic pagination engine:

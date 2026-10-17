@@ -341,6 +341,23 @@ function measurePageCellBlocks(
   }, 0);
 }
 
+/**
+ * Resolve a declared column width to pixels.
+ *
+ * The schema allows either a positive number (px) or a percentage string.
+ * Percentages resolve against the table's content width, matching how the
+ * browser lays out the `colgroup` — measuring them as 0 made every cell of
+ * such a column ~1px wide, which inflated the row height (issue #29).
+ */
+function resolveColumnWidth(declared: TableBlockDefinition["columns"][number], width: number): number {
+  if (typeof declared === "number") {
+    return declared > 0 ? declared : 0;
+  }
+
+  const percent = /^([0-9]+(?:\.[0-9]+)?)%$/.exec(declared.trim());
+  return percent ? (Number.parseFloat(percent[1]) / 100) * width : 0;
+}
+
 function measureTableRowHeight(
   view: PageViewDefinition,
   table: TableBlockDefinition,
@@ -350,7 +367,7 @@ function measureTableRowHeight(
 ): number {
   const tableStyle = options.styleResolver?.resolveTableStyle(table.style, options.data) ?? {};
   const cellPadding = readNumericStyleValue(tableStyle.cellPadding, 8);
-  const declaredWidths = table.columns.map((w) => (typeof w === "number" && w > 0 ? w : 0));
+  const declaredWidths = table.columns.map((columnWidth) => resolveColumnWidth(columnWidth, width));
   const totalDeclared = declaredWidths.reduce((sum, w) => sum + w, 0) || width;
   // 单元格实际渲染宽度 ≈ 声明列宽 ×（内容宽 / 声明列宽总和）：浏览器按该比例缩放列。
   // 按等分列宽（baseCellWidth）测量会让宽列（如 176px 明细描述列）被当成 ~60px，
