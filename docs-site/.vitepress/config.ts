@@ -79,6 +79,7 @@ export default defineConfig({
                   { text: "Print & Export", link: "/guides/print-and-export" },
                   { text: "Internationalization", link: "/guides/i18n" },
                   { text: "Theming", link: "/guides/theming" },
+                  { text: "Content Security Policy", link: "/guides/content-security-policy" },
                   { text: "Performance", link: "/guides/performance" },
                 ],
               },

@@ -264,3 +264,8 @@ if (!result.valid) {
   result.errors.forEach((e) => console.error(e));
 }
 ```
+
+> This validator is compiled from the schema by AJV at runtime, which requires
+> `'unsafe-eval'` in `script-src`. Under a strict CSP, precompile a validator and
+> pass it to `<DocumentRenderer validate={…} />` instead — see the
+> [Content Security Policy guide](../guides/content-security-policy.md).

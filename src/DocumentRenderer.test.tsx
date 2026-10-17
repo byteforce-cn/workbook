@@ -5,6 +5,7 @@ import { basicWorkbookFixture } from "../tests/fixtures/integration/basicWorkboo
 import { DocumentRenderer } from "./DocumentRenderer";
 import { PluginProvider } from "./react/PluginProvider";
 import { createPluginRegistry } from "./react/registry";
+import type { WorkbookValidationResult } from "./schema";
 import type { WorkbookDefinition } from "./schema/generated-types";
 
 function createJsonResponse(payload: unknown) {
@@ -30,6 +31,23 @@ describe("DocumentRenderer", () => {
     await waitFor(() => {
       expect(screen.getAllByText("Bob").length).toBeGreaterThan(0);
     });
+  });
+
+  it("uses an injected validator instead of the runtime-compiling default", () => {
+    const validate = vi.fn((_document: unknown) => ({ valid: true, errors: [] }));
+
+    render(<DocumentRenderer workbook={basicWorkbookFixture} validate={validate} />);
+
+    expect(validate).toHaveBeenCalledTimes(1);
+    expect(validate.mock.calls[0][0]).toBe(basicWorkbookFixture);
+  });
+
+  it("rejects the document through an injected validator", () => {
+    const validate = (): WorkbookValidationResult => ({ valid: false, errors: [] });
+
+    expect(() => render(<DocumentRenderer workbook={basicWorkbookFixture} validate={validate} />)).toThrow(
+      /Invalid workbook document/,
+    );
   });
 
   it("renders sheet canvas for sheet views", () => {

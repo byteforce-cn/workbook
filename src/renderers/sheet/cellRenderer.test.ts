@@ -32,4 +32,25 @@ describe("resolveSheetCellDisplayValue", () => {
       resolveSheetCellDisplayValue({ column: 3, formula: "=AVG(A1:C1)" }, {}, undefined, undefined, formulaContext),
     ).toBe("3");
   });
+
+  // Regression for #23: formulas used to be evaluated with `new Function`, which
+  // a strict `script-src 'self'` CSP blocks (the cell then showed its raw text).
+  it("evaluates arithmetic without runtime code generation", () => {
+    const value = (formula: string) => resolveSheetCellDisplayValue({ column: 0, formula }, {});
+
+    expect(value("=1+2*3")).toBe("7");
+    expect(value("=(1+2)*3")).toBe("9");
+    expect(value("=10/4")).toBe("2.5");
+    expect(value("=10-2-3")).toBe("5");
+    expect(value("=2**3**2")).toBe("512");
+    expect(value("=." + "5*4")).toBe("2");
+    expect(value("=1 +\n 2")).toBe("3");
+    // JS semantics are preserved for the interesting corner cases.
+    expect(value("=1/0")).toBe("Infinity");
+    expect(value("=0/0")).toBe("NaN");
+    // Malformed or non-arithmetic input still falls back to the raw formula.
+    expect(value("=1+")).toBe("=1+");
+    expect(value("=1//2")).toBe("=1//2");
+    expect(value("=A1")).toBe("=A1");
+  });
 });
