@@ -31,6 +31,8 @@ export {
 } from "./RuntimeProvider";
 // Types
 export type {
+  CreateWorkbookPluginRegistryOptions,
+  PluginRegistryHelpers,
   WorkbookConditionContext,
   WorkbookConditionPlugin,
   WorkbookHookContext,
@@ -39,6 +41,7 @@ export type {
   WorkbookOptionSourceContext,
   WorkbookOptionSourcePlugin,
   WorkbookPluginRegistry,
+  WorkbookPluginRegistryWithHelpers,
   WorkbookValidationContext,
   WorkbookValidationPlugin,
 } from "./types";
