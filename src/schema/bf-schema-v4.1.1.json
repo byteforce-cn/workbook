@@ -461,6 +461,17 @@
               "default": false,
               "description": "Render the form in read-only mode: all fields are disabled and submit/reset actions are hidden. Intended for reviewing documents under approval (审核中表单只读)."
             },
+            "readOnlyDisplay": {
+              "type": "string",
+              "enum": ["disabled", "text"],
+              "default": "disabled",
+              "description": "How readOnly renders fields: 'disabled' (default) keeps the inputs visible but disabled; 'text' renders each field as label + value instead, without input controls. Requires readOnly: true."
+            },
+            "hideActions": {
+              "type": "boolean",
+              "default": false,
+              "description": "Hide the built-in submit/reset row so the host can render its own action bar (submit through DocumentRenderer's ref handle)."
+            },
             "submitLabel": { "type": "string" },
             "resetLabel": { "type": "string" },
             "autoSave": {
@@ -603,6 +614,7 @@
         { "$ref": "#/definitions/image" },
         { "$ref": "#/definitions/list" },
         { "$ref": "#/definitions/pageBreak" },
+        { "$ref": "#/definitions/customPageBlock" },
         { "$ref": "#/definitions/floatingBlock" },
         { "$ref": "#/definitions/spreadsheetBlock" },
         { "$ref": "#/definitions/headerBlock" },
@@ -872,6 +884,26 @@
         },
         "comment": { "type": "string" },
         "renderHints": { "type": "object", "additionalProperties": true }
+      },
+      "additionalProperties": false
+    },
+    "customPageBlock": {
+      "type": "object",
+      "required": ["type", "component"],
+      "properties": {
+        "type": { "const": "custom" },
+        "component": {
+          "type": "string",
+          "description": "ID of a pageBlock plugin registered on the workbook plugin registry (e.g. 'app:flowStepper'). Renders nothing when unregistered."
+        },
+        "visible": { "oneOf": [{ "type": "boolean" }, { "$ref": "#/definitions/condition" }] },
+        "props": { "type": "object", "additionalProperties": true },
+        "comment": { "type": "string" },
+        "renderHints": {
+          "type": "object",
+          "additionalProperties": true,
+          "description": "Use { \"height\": <px> } so pagination reserves room for the plugin block."
+        }
       },
       "additionalProperties": false
     },

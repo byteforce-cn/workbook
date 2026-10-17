@@ -42,6 +42,19 @@ Register a custom layout component:
 registry.registerLayout("my:card", CardLayout);
 ```
 
+### Page Block Plugin
+
+Register a component that renders a page view block
+(`{ "type": "custom", "component": "my:flowStepper" }`):
+
+```tsx
+registry.registerPageBlock("my:flowStepper", FlowStepper);
+```
+
+The component receives `{ block, width, height, data }`; declare
+`renderHints.height` in the schema so pagination reserves room for it. See
+[Custom page blocks](./page-renderer.md#custom-page-blocks-type-custom).
+
 ### Condition Plugin
 
 Register a custom condition evaluator:

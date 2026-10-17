@@ -1,10 +1,11 @@
-import { Fragment, useCallback, useEffect, useRef } from "react";
+import { Fragment, forwardRef, useCallback, useEffect, useImperativeHandle, useRef } from "react";
 import { evaluateBooleanLike } from "./core/condition/evaluate";
 import type { WorkbookData, WorkbookViewDefinition } from "./core/types";
 import { DataProvider, useWorkbookData } from "./react/DataProvider";
 import { runWorkbookHooks } from "./react/hooks/useWorkbookHooks";
 import { useWorkbookRuntime, WorkbookRuntimeProvider } from "./react/RuntimeProvider";
 import type { WorkbookPluginRegistry } from "./react/registry";
+import { createSubmitChannel, SubmitChannelProvider } from "./react/submitChannel";
 import { FormView } from "./renderers/form/FormView";
 import { PageView } from "./renderers/page/PageView";
 import { SheetView } from "./renderers/sheet/SheetView";
@@ -121,7 +122,20 @@ export interface DocumentRendererProps {
   locale?: string;
   fallbackLocale?: string;
   activeViewId?: string;
+  /** Data for an uncontrolled document (snapshot taken on mount). */
   initialData?: WorkbookData;
+  /**
+   * Controlled data tree. When set, the document renders exactly this value and
+   * every edit is reported through `onDataChange` — use it to fill a document
+   * from an async request without remounting. `initialData` is ignored while
+   * `data` is set. See `docs-site/api/document-renderer.md`.
+   */
+  data?: WorkbookData;
+  /**
+   * Uncontrolled: called with the data tree whenever it changes (including the
+   * initial render). Controlled (`data` set): called with the next tree for
+   * every edit, and not on mount.
+   */
   onDataChange?: (data: WorkbookData) => void;
   onSubmit?: (data: WorkbookData) => void | Promise<void>;
   /**
@@ -135,35 +149,61 @@ export interface DocumentRendererProps {
   validate?: (document: unknown) => WorkbookValidationResult;
 }
 
-export function DocumentRenderer({
-  workbook,
-  registry,
-  locale,
-  fallbackLocale,
-  activeViewId,
-  initialData,
-  onDataChange,
-  onSubmit,
-  validate,
-}: DocumentRendererProps) {
+/** Imperative handle exposed by `DocumentRenderer` (see `ref`). */
+export interface DocumentRendererHandle {
+  /**
+   * Submit the active form view: field validation, `onValidate` hooks,
+   * `onSubmit` and the save hooks — the same pipeline as the built-in button.
+   *
+   * Resolves `true` when the submit went through, `false` when validation failed,
+   * the form is read-only, or no form view is mounted. Use it when the host
+   * renders its own action bar (`config.hideActions`).
+   */
+  submit(): Promise<boolean>;
+}
+
+export const DocumentRenderer = forwardRef<DocumentRendererHandle, DocumentRendererProps>(function DocumentRenderer(
+  { workbook, registry, locale, fallbackLocale, activeViewId, initialData, data, onDataChange, onSubmit, validate },
+  ref,
+) {
   const validation = (validate ?? validateWorkbookDocument)(workbook);
   if (!validation.valid) {
     throw new Error(`Invalid workbook document: ${validation.errors.map((error) => error.message).join(", ")}`);
   }
 
+  // Controlled mode owns the notification through DataProvider (edits), so the
+  // uncontrolled observer must not report the same change twice.
+  const isControlled = data !== undefined;
+
+  const submitChannel = useRef(createSubmitChannel()).current;
+
+  useImperativeHandle(
+    ref,
+    () => ({
+      submit: async () => (await submitChannel.current?.()) ?? false,
+    }),
+    [submitChannel],
+  );
+
   return (
     <WorkbookRuntimeProvider workbook={workbook} registry={registry} locale={locale} fallbackLocale={fallbackLocale}>
-      <DataProvider initialData={initialData ?? (workbook.data as WorkbookData)}>
-        <WorkbookSurface
-          workbook={workbook}
-          activeViewId={activeViewId}
-          onDataChange={onDataChange}
-          onSubmit={onSubmit}
-        />
-      </DataProvider>
+      <SubmitChannelProvider value={submitChannel}>
+        <DataProvider
+          initialData={initialData ?? (workbook.data as WorkbookData)}
+          data={data}
+          onDataChange={isControlled ? onDataChange : undefined}
+        >
+          <WorkbookSurface
+            workbook={workbook}
+            activeViewId={activeViewId}
+            onDataChange={isControlled ? undefined : onDataChange}
+            onSubmit={onSubmit}
+          />
+        </DataProvider>
+      </SubmitChannelProvider>
     </WorkbookRuntimeProvider>
   );
-}
+});
 
 export function renderWorkbookView(view: WorkbookViewDefinition) {
   switch (view.type) {

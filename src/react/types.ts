@@ -7,6 +7,8 @@
 export type {
   WorkbookFieldPluginProps,
   WorkbookLayoutPluginProps,
+  WorkbookPageBlockPluginComponent,
+  WorkbookPageBlockPluginProps,
 } from "../core/types";
 // Re-export core context types
 // Re-export plugin types

@@ -90,6 +90,28 @@ export interface WorkbookLayoutPluginProps {
 export type WorkbookFieldPluginComponent = ComponentType<WorkbookFieldPluginProps>;
 export type WorkbookLayoutPluginComponent = ComponentType<WorkbookLayoutPluginProps>;
 
+/**
+ * Props passed to a `pageBlock` plugin — the rendering extension point for page
+ * views (`{ type: "custom", component: "app:flowStepper" }` in the schema).
+ */
+export interface WorkbookPageBlockPluginProps {
+  /** The custom block from the document, including `component` and `props`. */
+  block: Extract<PageBlockDefinition, { type: "custom" }>;
+  /** Width allocated by the page layout, in px (page width minus margins). */
+  width: number;
+  /**
+   * Height reserved by pagination, in px.
+   *
+   * Taken from the block's `renderHints.height`; declare it in the schema or the
+   * layout reserves no room for the block.
+   */
+  height: number;
+  /** Current data tree, so the block can render bound values. */
+  data: WorkbookData;
+}
+
+export type WorkbookPageBlockPluginComponent = ComponentType<WorkbookPageBlockPluginProps>;
+
 // ---- Canonical style types (single source: JSON schema) ----
 
 export type {

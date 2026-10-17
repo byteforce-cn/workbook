@@ -56,6 +56,56 @@ function MyDocument() {
 | `floating` | Absolutely positioned blocks |
 | `pageBreak` | Manual page breaks |
 | `spreadsheet` | Embedded sheet view |
+| `custom` | Host component registered through `registry.registerPageBlock()` |
+
+### Custom page blocks (`type: "custom"`)
+
+A page view can host host-rendered blocks — a flow progress bar, a KPI strip, a
+business table — by extending the plugin registry instead of forking the
+renderer:
+
+```tsx
+import { createPluginRegistry, DocumentRenderer } from "@byteforce/workbook";
+import { FlowStepper } from "./FlowStepper"; // your component
+
+const registry = createPluginRegistry({ namespace: "app" });
+registry.registerPageBlock("app:flowStepper", FlowStepper);
+
+<DocumentRenderer workbook={workbook} registry={registry} />;
+```
+
+```json
+{
+  "type": "page",
+  "content": [
+    {
+      "type": "custom",
+      "component": "app:flowStepper",
+      "renderHints": { "height": 120 },
+      "props": { "currentStep": 2 }
+    }
+  ]
+}
+```
+
+The component receives `{ block, width, height, data }`:
+
+- `block` — the schema block, including `component` and `props`
+- `width` / `height` — the space the pagination engine allocated, in px
+- `data` — the current data tree, so the block can render bound values
+
+Rules of thumb:
+
+- **Declare `renderHints.height`.** Pagination reserves exactly that height
+  (without it the block is measured as 0 and can overlap the next block). The
+  renderer falls back to 160px for drawing only.
+- Registration is namespaced like every other plugin slot, and `replace()` /
+  `has()` work the same way.
+- An unregistered `component` renders nothing (the pre-1.1 behaviour) and logs a
+  single warning naming the id.
+- **Screen only.** Print and PDF export render the built-in blocks; a custom
+  block contributes its reserved space but no content. Keep print-critical
+  content in the built-in blocks.
 
 ### Table column widths
 

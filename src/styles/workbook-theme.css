@@ -321,6 +321,26 @@
 }
 
 /* ------------------------------------------------------------------ */
+/* 只读文本模式（config.readOnlyDisplay: "text"）：标签 + 值，无输入控件   */
+/* ------------------------------------------------------------------ */
+.bf-workbook-field--readonly {
+  gap: 4px;
+}
+
+.bf-workbook-field-value {
+  color: var(--bf-text, #172033);
+  font-weight: 500;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}
+
+.bf-workbook-field-value--empty {
+  color: var(--bf-placeholder, #a6b0c3);
+  font-weight: 400;
+}
+
+/* ------------------------------------------------------------------ */
 /* 标签选择器（tags）                                                    */
 /* ------------------------------------------------------------------ */
 .bf-workbook-tag-selector__control {

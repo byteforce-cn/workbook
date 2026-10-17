@@ -51,6 +51,7 @@ export type PageContentBlock =
   | Image
   | List
   | PageBreak
+  | CustomPageBlock
   | FloatingBlock
   | SpreadsheetBlock
   | HeaderBlock
@@ -690,6 +691,28 @@ export interface PageBreak {
 }
 /**
  * This interface was referenced by `BFDocumentSchemaV411`'s JSON-Schema
+ * via the `definition` "customPageBlock".
+ */
+export interface CustomPageBlock {
+  type: "custom";
+  /**
+   * ID of a pageBlock plugin registered on the workbook plugin registry (e.g. 'app:flowStepper'). Renders nothing when unregistered.
+   */
+  component: string;
+  visible?: boolean | Condition;
+  props?: {
+    [k: string]: unknown | undefined;
+  };
+  comment?: string;
+  /**
+   * Use { "height": <px> } so pagination reserves room for the plugin block.
+   */
+  renderHints?: {
+    [k: string]: unknown | undefined;
+  };
+}
+/**
+ * This interface was referenced by `BFDocumentSchemaV411`'s JSON-Schema
  * via the `definition` "floatingBlock".
  */
 export interface FloatingBlock {
@@ -925,6 +948,14 @@ export interface Config {
    * Render the form in read-only mode: all fields are disabled and submit/reset actions are hidden. Intended for reviewing documents under approval (审核中表单只读).
    */
   readOnly?: boolean;
+  /**
+   * How readOnly renders fields: 'disabled' (default) keeps the inputs visible but disabled; 'text' renders each field as label + value instead, without input controls. Requires readOnly: true.
+   */
+  readOnlyDisplay?: "disabled" | "text";
+  /**
+   * Hide the built-in submit/reset row so the host can render its own action bar (submit through DocumentRenderer's ref handle).
+   */
+  hideActions?: boolean;
   submitLabel?: string;
   resetLabel?: string;
   autoSave?: {

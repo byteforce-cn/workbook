@@ -546,7 +546,9 @@ export function measurePageBlockHeight(
     case "spreadsheet":
       return readNumericRenderHint(block, "height") ?? 220;
     default:
-      return 0;
+      // 自定义 page block 没有内建测量；schema 里声明 renderHints.height 即按其分页。
+      // 未声明时仍为 0，保持「未注册 / 未知 block 不占位」的既有行为。
+      return readNumericRenderHint(block, "height") ?? 0;
   }
 }
 

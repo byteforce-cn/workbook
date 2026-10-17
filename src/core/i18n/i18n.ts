@@ -61,4 +61,9 @@ export const WORKBOOK_I18N_KEYS = {
   SELECT_PLACEHOLDER: "workbook.select.placeholder",
   TABS_LABEL: "workbook.tabs.label",
   STEPS_LABEL: "workbook.steps.label",
+  /** Placeholder for an empty value in read-only text mode (default `—`). */
+  READONLY_EMPTY: "workbook.readonly.empty",
+  /** Boolean rendering in read-only text mode (defaults `是` / `否`). */
+  BOOLEAN_TRUE: "workbook.boolean.true",
+  BOOLEAN_FALSE: "workbook.boolean.false",
 } as const;

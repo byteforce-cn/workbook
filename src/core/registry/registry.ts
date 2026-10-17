@@ -113,12 +113,16 @@ export interface PluginRegistryOptions {
 /**
  * Scoped plugin registry.
  *
- * `FieldPlugin` / `LayoutPlugin` stay generic so this module has zero React
- * dependency; the React layer specializes them with component types.
+ * `FieldPlugin` / `LayoutPlugin` / `PageBlockPlugin` stay generic so this module
+ * has zero React dependency; the React layer specializes them with component
+ * types.
  */
-export interface PluginRegistry<FieldPlugin = unknown, LayoutPlugin = unknown> extends CorePluginSlots {
+export interface PluginRegistry<FieldPlugin = unknown, LayoutPlugin = unknown, PageBlockPlugin = unknown>
+  extends CorePluginSlots {
   field: Map<string, FieldPlugin>;
   layout: Map<string, LayoutPlugin>;
+  /** Page-view block renderers, keyed by the schema's `component` id. */
+  pageBlock: Map<string, PageBlockPlugin>;
 
   /**
    * Register a plugin in a given slot.
@@ -167,9 +171,9 @@ export interface PluginRegistry<FieldPlugin = unknown, LayoutPlugin = unknown> e
  * Create a scoped plugin registry.
  * Each call returns an independent instance.
  */
-export function createPluginRegistry<FieldPlugin = unknown, LayoutPlugin = unknown>(
+export function createPluginRegistry<FieldPlugin = unknown, LayoutPlugin = unknown, PageBlockPlugin = unknown>(
   options: PluginRegistryOptions = {},
-): PluginRegistry<FieldPlugin, LayoutPlugin> {
+): PluginRegistry<FieldPlugin, LayoutPlugin, PageBlockPlugin> {
   const { namespace } = options;
 
   /** Apply namespace prefix to plugin IDs. */
@@ -177,13 +181,14 @@ export function createPluginRegistry<FieldPlugin = unknown, LayoutPlugin = unkno
     return namespace ? `${namespace}:${id}` : id;
   }
 
-  const registry: PluginRegistry<FieldPlugin, LayoutPlugin> = {
+  const registry: PluginRegistry<FieldPlugin, LayoutPlugin, PageBlockPlugin> = {
     condition: new Map(),
     optionSource: new Map(),
     validation: new Map(),
     hook: new Map(),
     field: new Map(),
     layout: new Map(),
+    pageBlock: new Map(),
 
     register(slot, id, plugin) {
       const key = ns(id);

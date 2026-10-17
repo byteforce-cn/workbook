@@ -14,6 +14,7 @@ import { createPluginRegistry } from "./registry";
 
 const DummyField = () => null;
 const DummyLayout = () => null;
+const DummyPageBlock = () => null;
 
 describe("plugin registry register* helpers", () => {
   it("exposes every documented helper on the main-entry registry", () => {
@@ -21,6 +22,7 @@ describe("plugin registry register* helpers", () => {
 
     expect(typeof registry.registerField).toBe("function");
     expect(typeof registry.registerLayout).toBe("function");
+    expect(typeof registry.registerPageBlock).toBe("function");
     expect(typeof registry.registerCondition).toBe("function");
     expect(typeof registry.registerOptionSource).toBe("function");
     expect(typeof registry.registerValidation).toBe("function");
@@ -43,6 +45,7 @@ describe("plugin registry register* helpers", () => {
 
     registry.registerField("richText", DummyField);
     registry.registerLayout("card", DummyLayout);
+    registry.registerPageBlock("flowStepper", DummyPageBlock);
     registry.registerCondition("isVIP", condition);
     registry.registerOptionSource("departments", optionSource);
     registry.registerValidation("strongPassword", validation);
@@ -50,6 +53,7 @@ describe("plugin registry register* helpers", () => {
 
     expect(registry.field.get("richText")).toBe(DummyField);
     expect(registry.layout.get("card")).toBe(DummyLayout);
+    expect(registry.pageBlock.get("flowStepper")).toBe(DummyPageBlock);
     expect(registry.condition.get("isVIP")).toBe(condition);
     expect(registry.optionSource.get("departments")).toBe(optionSource);
     expect(registry.validation.get("strongPassword")).toBe(validation);
@@ -62,10 +66,13 @@ describe("plugin registry register* helpers", () => {
 
       registry.registerField("richText", DummyField);
       registry.registerCondition("isVIP", () => true);
+      registry.registerPageBlock("flowStepper", DummyPageBlock);
 
       expect(registry.field.get("my-app:richText")).toBe(DummyField);
       expect(registry.field.has("richText")).toBe(false);
       expect(registry.condition.has("my-app:isVIP")).toBe(true);
+      expect(registry.pageBlock.get("my-app:flowStepper")).toBe(DummyPageBlock);
+      expect(registry.pageBlock.has("flowStepper")).toBe(false);
     }
   });
 

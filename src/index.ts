@@ -61,6 +61,7 @@ export type {
   // View Definitions
   WorkbookViewDefinition as ViewDefinition,
 } from "./core/types";
+export type { DocumentRendererHandle, DocumentRendererProps } from "./DocumentRenderer";
 // ---- Main Component ----
 export { DocumentRenderer } from "./DocumentRenderer";
 export {
@@ -122,6 +123,8 @@ export type {
   WorkbookOption,
   WorkbookOptionSourceContext,
   WorkbookOptionSourcePlugin,
+  WorkbookPageBlockPluginComponent,
+  WorkbookPageBlockPluginProps,
   WorkbookPluginRegistryWithHelpers,
   WorkbookValidationContext,
   WorkbookValidationPlugin,

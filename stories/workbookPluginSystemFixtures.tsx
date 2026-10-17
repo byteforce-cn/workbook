@@ -1,4 +1,9 @@
-import type { LayoutNodeDefinition, WorkbookConditionDefinition, WorkbookLayoutPluginProps } from "../src/core/types";
+import type {
+  LayoutNodeDefinition,
+  WorkbookConditionDefinition,
+  WorkbookLayoutPluginProps,
+  WorkbookPageBlockPluginProps,
+} from "../src/core/types";
 import { createPluginRegistry } from "../src/react/registry";
 import { validateWorkbookDocument } from "../src/schema";
 import type { WorkbookDefinition } from "../src/schema/generated-types";
@@ -233,6 +238,96 @@ function isWorkdayCondition({
   return day >= 1 && day <= 5; // 周一 ~ 周五
 }
 
+/* ------------------------------------------------------------------ */
+/* 5. Custom page block plugin — FlowStepper（流程进度条）               */
+/* ------------------------------------------------------------------ */
+
+const FLOW_STEPS = ["提交申请", "直属主管", "HR 复核", "归档"];
+
+function FlowStepper({ width, height, block, data }: WorkbookPageBlockPluginProps) {
+  const currentStep = typeof block.props?.currentStep === "number" ? block.props.currentStep : 0;
+
+  return (
+    <div
+      data-testid="storybook-flow-stepper"
+      style={{
+        alignItems: "center",
+        boxSizing: "border-box",
+        display: "flex",
+        gap: 0,
+        height,
+        padding: "12px 0",
+        width,
+      }}
+    >
+      {FLOW_STEPS.map((step, index) => {
+        const done = index <= currentStep;
+        return (
+          <div key={step} style={{ alignItems: "center", display: "flex", flex: 1, gap: 8, minWidth: 0 }}>
+            <span
+              style={{
+                alignItems: "center",
+                background: done ? "#1d4ed8" : "#e2e8f0",
+                borderRadius: "50%",
+                color: done ? "#ffffff" : "#64748b",
+                display: "inline-flex",
+                flex: "0 0 24px",
+                fontSize: 12,
+                fontWeight: 700,
+                height: 24,
+                justifyContent: "center",
+              }}
+            >
+              {index + 1}
+            </span>
+            <span style={{ color: done ? "#172033" : "#64748b", fontSize: 13, fontWeight: done ? 600 : 400 }}>
+              {step}
+            </span>
+            {index < FLOW_STEPS.length - 1 ? (
+              <span style={{ background: done ? "#1d4ed8" : "#e2e8f0", flex: 1, height: 2, minWidth: 16 }} />
+            ) : null}
+          </div>
+        );
+      })}
+      <span style={{ color: "#94a3b8", fontSize: 11, whiteSpace: "nowrap" }}>
+        申请人：{String(data.applicant ?? "—")}
+      </span>
+    </div>
+  );
+}
+
+export function createCustomPageBlockWorkbook(): WorkbookDefinition {
+  return loadValidated({
+    kind: "workbook",
+    schemaVersion: "4.1.1",
+    locale: "zh-CN",
+    data: { applicant: "李雷", amount: 12800 },
+    views: [
+      {
+        type: "page",
+        id: "page-block",
+        pageSettings: { width: 595, height: 842 },
+        content: [
+          {
+            type: "custom",
+            component: "storybook/flow-stepper",
+            renderHints: { height: 120 },
+            props: { currentStep: 1 },
+          },
+          {
+            type: "paragraph",
+            runs: [{ type: "text", text: "加班费报销申请" }],
+          },
+          {
+            type: "paragraph",
+            runs: [{ type: "text", text: "正文与内建 block 混排：自定义 page block 只占它声明的高度。" }],
+          },
+        ],
+      },
+    ],
+  });
+}
+
 export function createPluginSystemRegistry() {
   const registry = createPluginRegistry();
 
@@ -240,6 +335,7 @@ export function createPluginSystemRegistry() {
   registry.layout.set("storybook/card", CardLayout);
   registry.validation.set("storybook/id-card", idCardValidation);
   registry.condition.set("storybook/is-workday", isWorkdayCondition);
+  registry.registerPageBlock("storybook/flow-stepper", FlowStepper);
 
   return registry;
 }

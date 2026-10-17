@@ -76,6 +76,65 @@ that is passed straight through to the form view:
 <SimpleForm fields={fields} initialData={data} readOnly />
 ```
 
+### Read-only text (`config.readOnlyDisplay`)
+
+By default a read-only form still renders its controls, greyed out. Approval and
+archive screens usually want the opposite: key–value text, no boxes. Set
+`readOnlyDisplay: "text"` for that:
+
+```json
+{ "type": "form", "config": { "readOnly": true, "readOnlyDisplay": "text" }, "fields": [/* … */] }
+```
+
+In text mode each field renders as its label plus the formatted value — the DOM
+contains no `input`, `select` or `textarea`:
+
+| Value | Rendered |
+|-------|----------|
+| `null` / `""` / empty array | the empty placeholder (`—`) |
+| `boolean` | `是` / `否` |
+| value matching one of the field's `options` | that option's `label` (so `"a1"` shows as `管理员`) |
+| array | items joined with `, ` |
+| nested object | compact JSON |
+
+### Host-owned action bar (`config.hideActions`)
+
+Screens with a page-level sticky action bar (cancel on the left, primary CTA on
+the right) can hide workbook's own submit/reset row and still keep the submit
+pipeline — validation, `onValidate` hooks, `onSubmit`, save hooks — by calling
+the imperative handle on `DocumentRenderer`:
+
+```tsx
+const ref = useRef<DocumentRendererHandle>(null);
+
+<>
+  <DocumentRenderer ref={ref} workbook={workbook} onSubmit={save} />
+  <footer className="sticky-actions">
+    <button type="button" onClick={cancel}>取消</button>
+    <button
+      type="button"
+      onClick={async () => {
+        // true = submitted, false = validation failed (errors are shown inline)
+        if (!(await ref.current?.submit())) return;
+        navigate("/list");
+      }}
+    >
+      保存并提交审批
+    </button>
+  </footer>
+</>
+```
+
+The document is not rendered twice and no `!important` is needed: pass
+`{ "config": { "hideActions": true } }` in the form view. `config.readOnly`
+still hides the row unconditionally.
+
+`config.readOnly` keeps its meaning in both modes (no submit bar, no writes);
+`readOnlyDisplay` only changes how fields are presented, so the default stays
+`"disabled"` and existing documents are unaffected. The placeholder and boolean
+texts are localised through `workbook.readonly.empty` / `workbook.boolean.true`
+/ `workbook.boolean.false` — see the [i18n guide](../guides/i18n.md).
+
 ## Multi-column rows and field spans (`layoutField.span`)
 
 `row` layouts consume `layoutField.span` to mix columns of different widths —
@@ -134,6 +193,11 @@ const registry = createPluginRegistry();
   </WorkbookRuntimeProvider>
 </DataProvider>
 ```
+
+`DataProvider` is uncontrolled by default (`initialData` is a mount-time
+snapshot). Pass `data` (plus `onDataChange`) to drive it from your own state —
+that is what lets a form fill from an async request without remounting. See
+[Controlled data](./document-renderer.md#controlled-data).
 
 ## Features
 

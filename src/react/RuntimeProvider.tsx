@@ -7,7 +7,7 @@ import { createContext, type PropsWithChildren, useContext, useMemo } from "reac
 import { AssetLoader } from "../core/assets/assetLoader";
 import type { WorkbookDefinition } from "../schema/generated-types";
 import { createStyleCatalogResolver } from "../styles/catalog";
-import { useOptionalPluginRegistry } from "./pluginRegistryContext";
+import { PluginRegistryContext, useOptionalPluginRegistry } from "./pluginRegistryContext";
 import type { WorkbookPluginRegistry } from "./registry";
 import { pluginRegistry } from "./registry";
 
@@ -64,7 +64,14 @@ export function WorkbookRuntimeProvider({
     ],
   );
 
-  return <WorkbookRuntimeContext.Provider value={value}>{children}</WorkbookRuntimeContext.Provider>;
+  // Publish the resolved registry on the shared plugin context as well, so any
+  // consumer (e.g. the page renderer's custom blocks) finds the registry that
+  // this provider resolved — prop > parent <PluginProvider> > global singleton.
+  return (
+    <PluginRegistryContext.Provider value={registry}>
+      <WorkbookRuntimeContext.Provider value={value}>{children}</WorkbookRuntimeContext.Provider>
+    </PluginRegistryContext.Provider>
+  );
 }
 
 export function useWorkbookRuntime(): WorkbookRuntimeValue {

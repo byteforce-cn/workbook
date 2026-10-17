@@ -131,10 +131,33 @@ export function DeviceProvider(input: DeviceProviderProps): react.JSX.Element;
 // @public
 export type DeviceType = "desktop" | "tablet" | "mobile";
 
-// Warning: (ae-forgotten-export) The symbol "DocumentRendererProps" needs to be exported by the entry point index.d.ts
-//
 // @public (undocumented)
-export function DocumentRenderer(input: DocumentRendererProps): react.JSX.Element;
+export const DocumentRenderer: react.ForwardRefExoticComponent<DocumentRendererProps & react.RefAttributes<DocumentRendererHandle>>;
+
+// @public
+export interface DocumentRendererHandle {
+    submit(): Promise<boolean>;
+}
+
+// @public (undocumented)
+export interface DocumentRendererProps {
+    // (undocumented)
+    activeViewId?: string;
+    data?: WorkbookData;
+    // (undocumented)
+    fallbackLocale?: string;
+    initialData?: WorkbookData;
+    // (undocumented)
+    locale?: string;
+    onDataChange?: (data: WorkbookData) => void;
+    // (undocumented)
+    onSubmit?: (data: WorkbookData) => void | Promise<void>;
+    // (undocumented)
+    registry?: WorkbookPluginRegistry;
+    validate?: (document: unknown) => WorkbookValidationResult;
+    // (undocumented)
+    workbook: WorkbookDefinition;
+}
 
 // Warning: (ae-forgotten-export) The symbol "CorePluginSlots" needs to be exported by the entry point index.d.ts
 //
@@ -256,6 +279,7 @@ export interface PluginRegistryHelpers {
     registerLayout(id: string, component: ComponentType<LayoutPluginProps>): void;
     // (undocumented)
     registerOptionSource(id: string, plugin: WorkbookOptionSourcePlugin): void;
+    registerPageBlock(id: string, component: ComponentType<WorkbookPageBlockPluginProps>): void;
     // (undocumented)
     registerValidation(id: string, plugin: WorkbookValidationPlugin): void;
 }
@@ -402,6 +426,19 @@ export interface WorkbookOptionSourceContext {
 // @public (undocumented)
 export type WorkbookOptionSourcePlugin = (context: WorkbookOptionSourceContext) => Promise<WorkbookOption[]>;
 
+// @public (undocumented)
+export type WorkbookPageBlockPluginComponent = ComponentType<WorkbookPageBlockPluginProps>;
+
+// @public
+export interface WorkbookPageBlockPluginProps {
+    block: Extract<PageBlockDefinition, {
+        type: "custom";
+    }>;
+    data: WorkbookData;
+    height: number;
+    width: number;
+}
+
 // Warning: (ae-forgotten-export) The symbol "PageViewProps" needs to be exported by the entry point index.d.ts
 //
 // @public (undocumented)
@@ -483,7 +520,7 @@ export interface WorkbookValidationResult {
 
 // Warnings were encountered during analysis:
 //
-// dist/PluginProvider-BhxVD8fA.d.ts:13:5 - (ae-forgotten-export) The symbol "WorkbookHookTrigger" needs to be exported by the entry point index.d.ts
+// dist/PluginProvider-CvCGmp9F.d.ts:13:5 - (ae-forgotten-export) The symbol "WorkbookHookTrigger" needs to be exported by the entry point index.d.ts
 
 // (No @packageDocumentation comment for this package)
 

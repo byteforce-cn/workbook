@@ -33,6 +33,8 @@ interface LayoutRendererProps {
   fieldErrors: Record<string, string[]>;
   /** Form-level read-only flag (config.readOnly); forces every field disabled */
   readOnly?: boolean;
+  /** How read-only renders fields (config.readOnlyDisplay): disabled inputs or label + value text */
+  readOnlyDisplay?: "disabled" | "text";
   onFieldChange(field: FieldDefinition, fieldPath: string, nextValue: unknown, rowContext?: WorkbookRowContext): void;
   onFieldBlur(field: FieldDefinition, fieldPath: string, rowContext?: WorkbookRowContext): void;
   rowContext?: WorkbookRowContext;
@@ -322,6 +324,7 @@ export function LayoutRenderer(props: LayoutRendererProps) {
                 fieldErrors={props.fieldErrors}
                 rowContext={props.rowContext}
                 readOnly={props.readOnly}
+                readOnlyDisplay={props.readOnlyDisplay}
                 onFieldChange={props.onFieldChange}
                 onFieldBlur={props.onFieldBlur}
               />
