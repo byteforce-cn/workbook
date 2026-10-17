@@ -461,6 +461,17 @@
               "default": false,
               "description": "Render the form in read-only mode: all fields are disabled and submit/reset actions are hidden. Intended for reviewing documents under approval (审核中表单只读)."
             },
+            "readOnlyDisplay": {
+              "type": "string",
+              "enum": ["disabled", "text"],
+              "default": "disabled",
+              "description": "How readOnly renders fields: 'disabled' (default) keeps the inputs visible but disabled; 'text' renders each field as label + value instead, without input controls. Requires readOnly: true."
+            },
+            "hideActions": {
+              "type": "boolean",
+              "default": false,
+              "description": "Hide the built-in submit/reset row so the host can render its own action bar (submit through DocumentRenderer's ref handle)."
+            },
             "submitLabel": { "type": "string" },
             "resetLabel": { "type": "string" },
             "autoSave": {

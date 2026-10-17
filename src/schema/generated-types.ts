@@ -925,6 +925,14 @@ export interface Config {
    * Render the form in read-only mode: all fields are disabled and submit/reset actions are hidden. Intended for reviewing documents under approval (审核中表单只读).
    */
   readOnly?: boolean;
+  /**
+   * How readOnly renders fields: 'disabled' (default) keeps the inputs visible but disabled; 'text' renders each field as label + value instead, without input controls. Requires readOnly: true.
+   */
+  readOnlyDisplay?: "disabled" | "text";
+  /**
+   * Hide the built-in submit/reset row so the host can render its own action bar (submit through DocumentRenderer's ref handle).
+   */
+  hideActions?: boolean;
   submitLabel?: string;
   resetLabel?: string;
   autoSave?: {

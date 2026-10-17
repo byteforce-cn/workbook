@@ -2,17 +2,19 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { evaluateBooleanLike } from "../../core/condition/evaluate";
 import { getValueAtPath, materializePath } from "../../core/data/pathUtils";
 import { resolveFieldState } from "../../core/dependency/engine";
-import { resolveI18nText } from "../../core/i18n/i18n";
+import { resolveBuiltInText, resolveI18nText, WORKBOOK_I18N_KEYS } from "../../core/i18n/i18n";
 import { fetchOptions } from "../../core/options/fetchOptions";
 import type { FieldDefinition, OptionSourceDefinition, WorkbookData, WorkbookRowContext } from "../../core/types";
 import { useWorkbookData } from "../../react/DataProvider";
 import { useWorkbookRuntime } from "../../react/RuntimeProvider";
+import type { WorkbookOption } from "../../react/registry";
 import { ArrayField } from "./fields/ArrayField";
 import { BooleanField } from "./fields/BooleanField";
 import { CustomField } from "./fields/CustomField";
 import { DateField } from "./fields/DateField";
 import { NumberField } from "./fields/NumberField";
 import { ObjectField } from "./fields/ObjectField";
+import { ReadOnlyField } from "./fields/ReadOnlyField";
 import { SelectField } from "./fields/SelectField";
 import { TextareaField } from "./fields/TextareaField";
 import { TextField } from "./fields/TextField";
@@ -63,6 +65,12 @@ export interface FieldFactoryProps {
   rowContext?: WorkbookRowContext;
   /** Form-level read-only flag (config.readOnly); forces every field disabled */
   readOnly?: boolean;
+  /**
+   * How form-level read-only renders fields (config.readOnlyDisplay):
+   * `disabled` (default) keeps the controls but disables them, `text` renders
+   * label + value only.
+   */
+  readOnlyDisplay?: "disabled" | "text";
   onFieldChange(field: FieldDefinition, fieldPath: string, nextValue: unknown, rowContext?: WorkbookRowContext): void;
   onFieldBlur(field: FieldDefinition, fieldPath: string, rowContext?: WorkbookRowContext): void;
 }
@@ -73,6 +81,7 @@ export function FieldFactory({
   fieldErrors,
   rowContext,
   readOnly,
+  readOnlyDisplay,
   onFieldChange,
   onFieldBlur,
 }: FieldFactoryProps) {
@@ -170,6 +179,26 @@ export function FieldFactory({
   const disabled = runtimeState.disabled || readOnly === true;
   // 必填标记：字段 validations（含依赖 required 效果）任一 required 即渲染星号
   const required = runtimeState.required || runtimeState.validations.some((v) => v.type === "required");
+
+  // 只读文本模式（config.readOnlyDisplay === "text"）：不渲染输入控件，只呈现标签 + 值
+  if (readOnly === true && readOnlyDisplay === "text") {
+    // 静态 options 直接来自字段定义，动态 options 来自上面的 optionSource 拉取
+    const displayOptions: WorkbookOption[] =
+      options.length > 0 ? options : Array.isArray(field.options) ? field.options : [];
+
+    return (
+      <ReadOnlyField
+        field={field}
+        label={label}
+        required={required}
+        value={fieldValue}
+        options={displayOptions}
+        emptyText={resolveBuiltInText(WORKBOOK_I18N_KEYS.READONLY_EMPTY, locale, i18n, fallbackLocale, "—")}
+        trueText={resolveBuiltInText(WORKBOOK_I18N_KEYS.BOOLEAN_TRUE, locale, i18n, fallbackLocale, "是")}
+        falseText={resolveBuiltInText(WORKBOOK_I18N_KEYS.BOOLEAN_FALSE, locale, i18n, fallbackLocale, "否")}
+      />
+    );
+  }
   const commonProps = {
     form,
     fieldPath,

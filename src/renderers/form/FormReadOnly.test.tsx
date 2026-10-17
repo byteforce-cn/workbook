@@ -56,6 +56,61 @@ describe("FormView config.readOnly — 审核中表单只读", () => {
     expect((screen.getByLabelText("角色") as HTMLSelectElement).disabled).toBe(true);
   });
 
+  it('readOnlyDisplay: "text" 渲染标签 + 值，不产生任何输入控件', () => {
+    const { container } = render(
+      <DocumentRenderer
+        workbook={makeWorkbook({}, { readOnly: true, readOnlyDisplay: "text" })}
+        activeViewId="test-form"
+      />,
+    );
+
+    // 验收标准（#27）：DOM 中没有 input / select / textarea
+    expect(container.querySelectorAll("input, select, textarea")).toHaveLength(0);
+
+    // 值正确呈现：普通文本原样，select 显示选项 label（而非存储值 admin）
+    expect(screen.getByText("用户名").parentElement?.textContent).toContain("alice");
+    expect(screen.getByText("角色").parentElement?.textContent).toContain("管理员");
+    expect(screen.queryByText("admin")).toBeNull();
+  });
+
+  it('readOnlyDisplay: "text" 空值走占位', () => {
+    const workbook = makeWorkbook({}, { readOnly: true, readOnlyDisplay: "text" });
+    const view = workbook.views[0];
+    (view as { fields: unknown[] }).fields.push({ name: "remark", type: "string", label: "备注" });
+    (view as { layout: unknown[] }).layout.push({ type: "field", name: "remark" });
+
+    render(<DocumentRenderer workbook={workbook} activeViewId="test-form" />);
+
+    const remark = screen.getByText("备注").parentElement;
+    expect(remark?.querySelector(".bf-workbook-field-value--empty")?.textContent).toBe("—");
+  });
+
+  it('readOnlyDisplay: "text" 布尔与数组值有稳定呈现', () => {
+    const workbook = makeWorkbook({}, { readOnly: true, readOnlyDisplay: "text" });
+    const view = workbook.views[0] as { fields: unknown[]; layout: unknown[] };
+    view.fields.push(
+      { name: "approved", type: "boolean", label: "已审批" },
+      { name: "tags", type: "array", label: "标签" },
+    );
+    view.layout.push({ type: "field", name: "approved" }, { type: "field", name: "tags" });
+    (workbook.data as Record<string, unknown>).approved = true;
+    (workbook.data as Record<string, unknown>).tags = ["甲", "乙"];
+
+    render(<DocumentRenderer workbook={workbook} activeViewId="test-form" />);
+
+    expect(screen.getByText("已审批").parentElement?.textContent).toContain("是");
+    expect(screen.getByText("标签").parentElement?.textContent).toContain("甲, 乙");
+  });
+
+  it("未开启 text 模式时保持 1.0.0 行为（禁用输入框）", () => {
+    const { container } = render(
+      <DocumentRenderer workbook={makeWorkbook({}, { readOnly: true })} activeViewId="test-form" />,
+    );
+
+    expect(container.querySelectorAll(".bf-workbook-field--readonly")).toHaveLength(0);
+    expect((screen.getByLabelText("用户名") as HTMLInputElement).disabled).toBe(true);
+  });
+
   it("未配置 readOnly 时字段保持可编辑", () => {
     render(<DocumentRenderer workbook={makeWorkbook()} activeViewId="test-form" />);
 

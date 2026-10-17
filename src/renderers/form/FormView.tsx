@@ -62,6 +62,8 @@ export function FormView({ view, onSubmit }: FormViewProps) {
   const initialSnapshotRef = useRef(data);
   // 审核中只读：config.readOnly === true 时整表单只读（字段禁用 + 隐藏提交/重置 + 拦截提交/autoSave）
   const readOnly = view.config?.readOnly === true;
+  // 只读呈现：默认 disabled（1.0.0 行为，禁用输入框）；text = 标签 + 值
+  const readOnlyDisplay = view.config?.readOnlyDisplay === "text" ? "text" : "disabled";
   const form = useForm({
     defaultValues: data,
     onSubmit: async ({ value }) => {
@@ -181,6 +183,7 @@ export function FormView({ view, onSubmit }: FormViewProps) {
           view={view}
           fieldErrors={fieldErrors}
           readOnly={readOnly}
+          readOnlyDisplay={readOnlyDisplay}
           onFieldChange={handleFieldChange}
           onFieldBlur={handleFieldBlur}
         />
