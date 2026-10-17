@@ -11,10 +11,10 @@ import { computeVisibleRange } from "./virtualization";
 let cachedScrollbarWidth: number | undefined;
 
 /**
- * 经典滚动条宽度（px）。
+ * 经典滚动条占用宽度/高度（px）。
  *
- * body pane 启用了 `scrollbar-gutter: stable` 且纵向溢出时，浏览器会在内容区
- * 内预留该宽度，若不预留在视口宽度中，最后一列会被滚动条裁掉。
+ * 纵向滚动条会占用视口宽度、横向滚动条会占用视口高度；视口尺寸计算需要
+ * 预留相应空间，否则最后一列/最后一行会被滚动条裁掉。
  * overlay 滚动条（macOS 默认）返回 0，SSR/jsdom 无法测量时回退 15。
  */
 function getScrollbarWidth(): number {
@@ -95,12 +95,17 @@ function materializeDynamicRows(view: SheetViewDefinition, data: Record<string, 
 
 export interface SheetViewProps {
   view: SheetViewDefinition;
+  /** 视口最大宽度（px）。嵌入宿主时由宿主传入块宽；未传时嵌入回退 420，独立使用时按容器宽度测量。 */
+  maxWidth?: number;
+  /** 视口最大高度（px）。嵌入宿主时由宿主传入块高；未传时嵌入回退 180，独立使用回退 420。 */
+  maxHeight?: number;
+  /** 嵌入宿主容器（文档页 spreadsheet 块）渲染：不渲染标题、不测量容器宽度。 */
   embedded?: boolean;
 }
 
 type SheetPaneName = "full" | "corner" | "top" | "left" | "body";
 
-export function SheetView({ view, embedded = false }: SheetViewProps) {
+export function SheetView({ view, embedded = false, maxWidth, maxHeight }: SheetViewProps) {
   const rootRef = useRef<HTMLElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const cornerCanvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -129,12 +134,26 @@ export function SheetView({ view, embedded = false }: SheetViewProps) {
   const frozenCols = view.frozenCols ?? 0;
   const hasFrozenPanes = frozenRows > 0 || frozenCols > 0;
   const widthMode = view.widthMode ?? "fixed";
-  const viewportHeight = embedded ? Math.min(layout.totalHeight, 180) : Math.min(layout.totalHeight, 420);
-  const viewportMaxWidth = embedded ? 420 : (containerWidth ?? 960);
-  const hasVerticalOverflow = layout.totalHeight > viewportHeight;
+  const scrollbarWidth = getScrollbarWidth();
+  // 视口尺寸预算：嵌入宿主时由宿主块宽高决定；独立使用时按容器测量，
+  // 也允许调用方通过 maxWidth / maxHeight 显式约束。
+  const viewportMaxWidth = maxWidth ?? (embedded ? 420 : (containerWidth ?? 960));
+  const viewportMaxHeight = maxHeight ?? (embedded ? 180 : 420);
+
+  // 横向滚动条占用视口高度、纵向滚动条占用视口宽度，两者互为条件：
+  // 先按对方可能出现的情况判定，再互相修正一次，得到稳定的溢出边界。
+  let hasVerticalOverflow = layout.totalHeight > viewportMaxHeight;
+  let hasHorizontalOverflow = layout.totalWidth > viewportMaxWidth - (hasVerticalOverflow ? scrollbarWidth : 0);
+  hasVerticalOverflow = layout.totalHeight > viewportMaxHeight - (hasHorizontalOverflow ? scrollbarWidth : 0);
+  hasHorizontalOverflow = layout.totalWidth > viewportMaxWidth - (hasVerticalOverflow ? scrollbarWidth : 0);
+
   // 纵向滚动条会占据 body pane 的部分宽度（scrollbar-gutter: stable），
   // 需要在视口宽度中预留该空间，否则最后一列会被滚动条裁掉。
-  const scrollbarReserve = hasVerticalOverflow ? getScrollbarWidth() : 0;
+  const scrollbarReserve = hasVerticalOverflow ? scrollbarWidth : 0;
+  // 横向滚动条会占据 body pane 的部分高度，需要在视口高度中预留，
+  // 否则最后一行会被滚动条裁掉。
+  const horizontalScrollbarReserve = hasHorizontalOverflow ? scrollbarWidth : 0;
+  const viewportHeight = Math.min(layout.totalHeight + horizontalScrollbarReserve, viewportMaxHeight);
   // 实际可用于内容的宽度 = 容器宽度 - 纵向滚动条预留
   const usableViewportWidth = Math.max(0, viewportMaxWidth - scrollbarReserve);
   // widthMode: "stretch" 时，容器比自然宽度宽则把多余宽度分配给各列铺满容器；
@@ -147,7 +166,6 @@ export function SheetView({ view, embedded = false }: SheetViewProps) {
   const resolvedViewportWidth = Math.min(fittedLayout.totalWidth + scrollbarReserve, viewportMaxWidth);
   const bodyViewportWidth = Math.max(0, resolvedViewportWidth - fittedLayout.frozenWidth);
   const bodyViewportHeight = Math.max(0, viewportHeight - fittedLayout.frozenHeight);
-  const hasHorizontalOverflow = fittedLayout.totalWidth > usableViewportWidth;
   const isVirtualized = !hasFrozenPanes && (hasHorizontalOverflow || hasVerticalOverflow);
   const virtualColumnRange = useMemo(
     () => computeVisibleRange(fittedLayout.columnWidths, scrollState.left, resolvedViewportWidth),
@@ -415,7 +433,8 @@ export function SheetView({ view, embedded = false }: SheetViewProps) {
               margin: "0 auto",
               overflowX: hasHorizontalOverflow ? "auto" : "hidden",
               overflowY: hasVerticalOverflow ? "auto" : "hidden",
-              scrollbarGutter: "stable",
+              // 仅在确有纵向滚动条时保留槽位，避免无溢出时被浏览器预留幽灵宽度
+              scrollbarGutter: hasVerticalOverflow ? "stable" : undefined,
               border: "1px solid #d1d5db",
               background: "#ffffff",
             }}
@@ -551,7 +570,8 @@ export function SheetView({ view, embedded = false }: SheetViewProps) {
               height: bodyViewportHeight,
               overflowX: hasHorizontalOverflow ? "auto" : "hidden",
               overflowY: hasVerticalOverflow ? "auto" : "hidden",
-              scrollbarGutter: "stable",
+              // 仅在确有纵向滚动条时保留槽位，避免无溢出时被浏览器预留幽灵宽度
+              scrollbarGutter: hasVerticalOverflow ? "stable" : undefined,
             }}
             onScroll={handleBodyScroll}
           >

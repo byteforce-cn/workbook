@@ -314,6 +314,15 @@ export type SheetViewDefinition = Extract<ViewDefinition, {
 }>;
 
 // @public (undocumented)
+export interface SheetViewProps {
+    embedded?: boolean;
+    maxHeight?: number;
+    maxWidth?: number;
+    // (undocumented)
+    view: SheetViewDefinition;
+}
+
+// @public (undocumented)
 export type StyleCatalog = NonNullable<WorkbookDefinition["styles"]>;
 
 // @public
@@ -485,8 +494,6 @@ export var bfSchemaV4_1_1 = {
     	definitions: definitions
 };
 
-// Warning: (ae-forgotten-export) The symbol "SheetViewProps" needs to be exported by the entry point index.d.ts
-//
 // @public (undocumented)
 export function WorkbookSheetView(input: SheetViewProps): react.JSX.Element;
 

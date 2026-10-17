@@ -134,6 +134,7 @@ export { createPluginRegistry, pluginRegistry } from "./react/registry";
 // ---- Rendering Views (low-level, for custom composition) ----
 export { FormView as WorkbookFormView } from "./renderers/form/FormView";
 export { PageView as WorkbookPageView } from "./renderers/page/PageView";
+export type { SheetViewProps } from "./renderers/sheet/SheetView";
 export { SheetView as WorkbookSheetView } from "./renderers/sheet/SheetView";
 export type { WorkbookValidationResult } from "./schema";
 // ---- Schema ----

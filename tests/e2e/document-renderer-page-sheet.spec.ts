@@ -51,6 +51,12 @@ test.describe("DocumentRenderer 只读视图场景", () => {
     await expect(story.locator("svg").first()).toBeVisible();
     await expect(story.locator('[data-testid="production-showcase-pdf-bytes"]')).toContainText("PDF bytes:");
 
+    // 内嵌“Sheet 摘要”块按宿主块宽适配：436x86 内容完整可见，无横向滚动条
+    const embeddedSheet = story.locator('[data-testid="bf-sheet-viewport"]');
+    await expect(embeddedSheet).toHaveCSS("width", "436px");
+    await expect(embeddedSheet).toHaveCSS("height", "86px");
+    await expect(story.locator('[data-testid="bf-sheet-pane-body"]')).toHaveCSS("overflow-x", "hidden");
+
     await story.getByRole("button", { name: "Sheet 台账" }).click();
     // 内容宽度 752 + 纵向滚动条预留 15，视口自适应后最后一列不被滚动条裁掉
     await expect(story.locator('[data-testid="bf-sheet-viewport"]')).toHaveCSS("width", "767px");
