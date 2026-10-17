@@ -1,6 +1,6 @@
 {
   "name": "@byteforce/workbook",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "type": "module",
   "license": "MIT",
   "packageManager": "pnpm@12.8.1",
