@@ -135,6 +135,11 @@ const registry = createPluginRegistry();
 </DataProvider>
 ```
 
+`DataProvider` is uncontrolled by default (`initialData` is a mount-time
+snapshot). Pass `data` (plus `onDataChange`) to drive it from your own state —
+that is what lets a form fill from an async request without remounting. See
+[Controlled data](./document-renderer.md#controlled-data).
+
 ## Features
 
 - **Field Types**: string, number, boolean, date, textarea, select, multiselect, array

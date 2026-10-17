@@ -121,7 +121,20 @@ export interface DocumentRendererProps {
   locale?: string;
   fallbackLocale?: string;
   activeViewId?: string;
+  /** Data for an uncontrolled document (snapshot taken on mount). */
   initialData?: WorkbookData;
+  /**
+   * Controlled data tree. When set, the document renders exactly this value and
+   * every edit is reported through `onDataChange` — use it to fill a document
+   * from an async request without remounting. `initialData` is ignored while
+   * `data` is set. See `docs-site/api/document-renderer.md`.
+   */
+  data?: WorkbookData;
+  /**
+   * Uncontrolled: called with the data tree whenever it changes (including the
+   * initial render). Controlled (`data` set): called with the next tree for
+   * every edit, and not on mount.
+   */
   onDataChange?: (data: WorkbookData) => void;
   onSubmit?: (data: WorkbookData) => void | Promise<void>;
   /**
@@ -142,6 +155,7 @@ export function DocumentRenderer({
   fallbackLocale,
   activeViewId,
   initialData,
+  data,
   onDataChange,
   onSubmit,
   validate,
@@ -151,13 +165,21 @@ export function DocumentRenderer({
     throw new Error(`Invalid workbook document: ${validation.errors.map((error) => error.message).join(", ")}`);
   }
 
+  // Controlled mode owns the notification through DataProvider (edits), so the
+  // uncontrolled observer must not report the same change twice.
+  const isControlled = data !== undefined;
+
   return (
     <WorkbookRuntimeProvider workbook={workbook} registry={registry} locale={locale} fallbackLocale={fallbackLocale}>
-      <DataProvider initialData={initialData ?? (workbook.data as WorkbookData)}>
+      <DataProvider
+        initialData={initialData ?? (workbook.data as WorkbookData)}
+        data={data}
+        onDataChange={isControlled ? onDataChange : undefined}
+      >
         <WorkbookSurface
           workbook={workbook}
           activeViewId={activeViewId}
-          onDataChange={onDataChange}
+          onDataChange={isControlled ? undefined : onDataChange}
           onSubmit={onSubmit}
         />
       </DataProvider>

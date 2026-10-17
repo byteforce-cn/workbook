@@ -16,20 +16,73 @@ interface DocumentRendererProps {
   workbook: WorkbookDefinition;
   /** Optional plugin registry (scoped, not global singleton) */
   registry?: WorkbookPluginRegistry;
-  /** Optional initial data for the data tree */
-  initialData?: WorkbookData;
   /** Locale override (default: "zh-CN") */
   locale?: string;
+  /** Fallback locale (default: "en-US") */
+  fallbackLocale?: string;
   /** ID of the active view (when omitted, all visible views render) */
   activeViewId?: string;
+  /** Data for an uncontrolled document (snapshot taken on mount) */
+  initialData?: WorkbookData;
+  /** Controlled data tree — see "Controlled data" below */
+  data?: WorkbookData;
+  /**
+   * Uncontrolled: called whenever the data tree changes, including the initial
+   * render. Controlled (`data` set): called with the next tree for every edit,
+   * and not on mount.
+   */
+  onDataChange?: (data: WorkbookData) => void;
   /** Submit handler for form views */
   onSubmit?: (data: WorkbookData) => void | Promise<void>;
-  /** Data change callback */
-  onDataChange?: (data: WorkbookData) => void;
-  /** Error callback for rendering errors */
-  onError?: (error: Error, context: string) => void;
+  /** Replace the built-in schema validator (e.g. a precompiled one under strict CSP) */
+  validate?: (document: unknown) => WorkbookValidationResult;
 }
 ```
+
+## Controlled data
+
+`initialData` is a **mount-time snapshot**: later values are ignored, which is
+why documents filled from an async request used to need a remount (`key` on a
+data fingerprint) — losing whatever the user had typed.
+
+Pass `data` instead to drive the document from your own state. The document then
+renders exactly the value you pass, and every edit arrives through
+`onDataChange`; feed the next tree back to render it (the same contract as a
+controlled `<input>`).
+
+```tsx
+function EmployeeDocument({ employeeId }: { employeeId: string }) {
+  const [data, setData] = useState<WorkbookData>();
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    setLoading(true);
+    fetchEmployeeProjection(employeeId)
+      .then(setData)
+      .finally(() => setLoading(false));
+  }, [employeeId]);
+
+  if (loading) return <Skeleton />;
+
+  return (
+    <DocumentRenderer
+      workbook={documentDefinition}
+      data={data}
+      onDataChange={setData}
+      onSubmit={(next) => saveEmployeeProjection(employeeId, next)}
+    />
+  );
+}
+```
+
+Notes:
+
+- `initialData` is ignored while `data` is set.
+- In controlled mode a document cannot edit itself: if you pass `data` without
+  `onDataChange`, an edit is dropped and workbook logs a warning once.
+- Editors you don't want overwritten should stay uncontrolled (`initialData` +
+  `onDataChange`) or keep their own draft state per field.
+
 
 ## Basic Usage
 

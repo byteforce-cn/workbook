@@ -50,6 +50,49 @@ describe("DocumentRenderer", () => {
     );
   });
 
+  it("fills the form from asynchronously loaded controlled data (#33)", () => {
+    const { rerender } = render(<DocumentRenderer workbook={basicWorkbookFixture} data={{}} onDataChange={() => {}} />);
+
+    expect((screen.getByLabelText("客户姓名") as HTMLInputElement).value).toBe("");
+
+    // The projection arrives and the parent swaps the controlled value — no
+    // remount, no key hack.
+    rerender(
+      <DocumentRenderer
+        workbook={basicWorkbookFixture}
+        data={{ customer: { name: "李雷" } }}
+        onDataChange={() => {}}
+      />,
+    );
+
+    expect((screen.getByLabelText("客户姓名") as HTMLInputElement).value).toBe("李雷");
+  });
+
+  it("reports controlled edits to the parent instead of keeping them (#33)", () => {
+    const onDataChange = vi.fn();
+
+    const { rerender } = render(
+      <DocumentRenderer workbook={basicWorkbookFixture} data={{}} onDataChange={onDataChange} />,
+    );
+
+    fireEvent.change(screen.getByLabelText("客户姓名"), { target: { value: "韩梅梅" } });
+
+    expect(onDataChange.mock.calls.at(-1)?.[0]).toEqual({ customer: { name: "韩梅梅" } });
+    // The edit was reported, not stored: the page preview still reads the data
+    // tree it was given.
+    expect(screen.queryByText("韩梅梅")).toBeNull();
+
+    // Feeding the value back renders it everywhere.
+    rerender(
+      <DocumentRenderer
+        workbook={basicWorkbookFixture}
+        data={{ customer: { name: "韩梅梅" } }}
+        onDataChange={onDataChange}
+      />,
+    );
+    expect(screen.getAllByText("韩梅梅").length).toBeGreaterThan(0);
+  });
+
   it("renders sheet canvas for sheet views", () => {
     const { container } = render(<DocumentRenderer workbook={basicWorkbookFixture} />);
     expect(container.querySelector("canvas")).not.toBeNull();

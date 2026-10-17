@@ -18,35 +18,92 @@ export interface DataContextValue {
 const DataContext = createContext<DataContextValue | null>(null);
 
 export interface DataProviderProps extends PropsWithChildren {
+  /** Data tree for an uncontrolled provider (snapshot taken on mount). */
   initialData?: WorkbookData;
+  /**
+   * Controlled data tree.
+   *
+   * When set, the provider stores nothing internally: what you pass is what
+   * renders, and every edit is reported through `onDataChange` so you can feed
+   * the next tree back in. This is what makes "load the data asynchronously,
+   * then fill the form" a first-class flow — swap the object and the form
+   * follows. `initialData` is ignored while `data` is set.
+   */
+  data?: WorkbookData;
+  /**
+   * Called with the next data tree for every edit.
+   *
+   * Required in controlled mode (`data`): without it an edit has nowhere to go
+   * and is dropped with a warning. In uncontrolled mode the provider keeps the
+   * data itself and `DocumentRenderer` reports changes through its own
+   * `onDataChange` prop instead.
+   */
+  onDataChange?: (data: WorkbookData) => void;
 }
 
-export function DataProvider({ children, initialData = {} }: DataProviderProps) {
-  const [data, setData] = useState<WorkbookData>(initialData);
+let warnedDroppedControlledEdit = false;
 
-  const value = useMemo<DataContextValue>(
-    () => ({
+/** Warn once when a controlled provider has no way to report an edit. */
+function warnDroppedControlledEdit(): void {
+  if (warnedDroppedControlledEdit) {
+    return;
+  }
+  warnedDroppedControlledEdit = true;
+  console.warn(
+    "[workbook] <DataProvider data={…}> is controlled but received no onDataChange handler, so this edit was dropped. " +
+      "Pass onDataChange and feed the value back, or use initialData for an uncontrolled form.",
+  );
+}
+
+export function DataProvider({ children, initialData = {}, data: controlledData, onDataChange }: DataProviderProps) {
+  const [internalData, setInternalData] = useState<WorkbookData>(initialData);
+  const isControlled = controlledData !== undefined;
+  const data = isControlled ? controlledData : internalData;
+
+  const value = useMemo<DataContextValue>(() => {
+    const applyEdit = (mutate: (draft: WorkbookData) => void) => {
+      if (isControlled) {
+        if (onDataChange == null) {
+          warnDroppedControlledEdit();
+          return;
+        }
+
+        onDataChange(produce(data, mutate));
+        return;
+      }
+
+      // Uncontrolled: compose on the latest internal value so two edits in the
+      // same tick both land.
+      setInternalData((currentData: WorkbookData) => produce(currentData, mutate));
+    };
+
+    return {
       data,
       replaceData(nextData) {
-        setData(nextData);
+        if (isControlled) {
+          if (onDataChange == null) {
+            warnDroppedControlledEdit();
+            return;
+          }
+
+          onDataChange(nextData);
+          return;
+        }
+
+        setInternalData(nextData);
       },
       setValue(path, nextValue, rowContext) {
-        setData((currentData: WorkbookData) =>
-          produce(currentData, (draft: WorkbookData) => {
-            setValueAtPath(draft, path, nextValue, rowContext);
-          }),
-        );
+        applyEdit((draft: WorkbookData) => {
+          setValueAtPath(draft, path, nextValue, rowContext);
+        });
       },
       removeValue(path, rowContext) {
-        setData((currentData: WorkbookData) =>
-          produce(currentData, (draft: WorkbookData) => {
-            deleteValueAtPath(draft, path, rowContext);
-          }),
-        );
+        applyEdit((draft: WorkbookData) => {
+          deleteValueAtPath(draft, path, rowContext);
+        });
       },
-    }),
-    [data],
-  );
+    };
+  }, [data, isControlled, onDataChange]);
 
   return <DataContext.Provider value={value}>{children}</DataContext.Provider>;
 }
