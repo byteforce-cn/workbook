@@ -164,4 +164,58 @@ describe("page layout pagination", () => {
     expect(titleBlock.height).toBeGreaterThan(50);
     expect(nextBlock.y).toBeGreaterThanOrEqual(titleBlock.y + titleBlock.height + 16);
   });
+
+  // Regression for #29: percentage column widths were resolved to 0, so every
+  // cell of such a column was measured as ~1px wide and long text inflated the
+  // row height until the table spilled over several pages.
+  it("measures percentage column widths like their pixel equivalent", () => {
+    const rows = [
+      {
+        cells: [
+          {
+            content: [
+              {
+                type: "paragraph" as const,
+                runs: [{ type: "text" as const, text: "approved by the department manager on 2026-10-16" }],
+              },
+            ],
+          },
+          { content: [{ type: "paragraph" as const, runs: [{ type: "text" as const, text: "已完成" }] }] },
+        ],
+      },
+    ];
+
+    // Page content width is 240 - 16 - 16 = 208px.
+    const measure = (columns: (number | string)[]) => {
+      const layout = layoutPageView(
+        createBasePage([
+          {
+            type: "table",
+            columns,
+            rows,
+          },
+        ] as unknown as PageViewDefinition["content"]),
+      );
+      return {
+        pages: layout.pages.length,
+        height: layout.pages.reduce(
+          (total, page) => total + page.flowBlocks.reduce((sum, block) => sum + block.height, 0),
+          0,
+        ),
+      };
+    };
+
+    const allPercent = measure(["50%", "50%"]);
+    const allPixel = measure([104, 104]);
+    expect(allPercent.height).toBe(allPixel.height);
+    expect(allPercent.pages).toBe(allPixel.pages);
+
+    const mixedPercent = measure(["25%", 156]);
+    const mixedPixel = measure([52, 156]);
+    expect(mixedPercent.height).toBe(mixedPixel.height);
+    expect(mixedPercent.pages).toBe(mixedPixel.pages);
+
+    // The table fits on a single page instead of inflating across many.
+    expect(allPercent.pages).toBe(1);
+  });
 });

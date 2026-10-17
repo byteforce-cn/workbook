@@ -11,7 +11,10 @@ export type {
 // Re-export core context types
 // Re-export plugin types
 // Re-export the registry type
+// Registry helper surface (the `register*` methods documented in the plugin API)
 export type {
+  CreateWorkbookPluginRegistryOptions,
+  PluginRegistryHelpers,
   WorkbookConditionContext,
   WorkbookConditionPlugin,
   WorkbookHookContext,
@@ -20,6 +23,7 @@ export type {
   WorkbookOptionSourceContext,
   WorkbookOptionSourcePlugin,
   WorkbookPluginRegistry,
+  WorkbookPluginRegistryWithHelpers,
   WorkbookValidationContext,
   WorkbookValidationPlugin,
 } from "./registry";

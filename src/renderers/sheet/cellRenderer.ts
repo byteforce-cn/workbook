@@ -65,11 +65,138 @@ function substituteFormulaReferences(expression: string, formulaContext?: SheetF
  *
  * Security: The regex whitelist only permits digits, basic arithmetic operators,
  * parentheses, decimal points, and whitespace. No alphabetic characters are allowed,
- * which prevents function calls, variable access, or any code injection via `new Function`.
+ * which prevents function calls, variable access, or any code injection — and the
+ * expression is parsed directly instead of compiled with `new Function`, so
+ * formulas keep working under a strict `script-src 'self'` CSP.
  * A length limit prevents DoS via extremely long expressions.
  *
- * Supported: A1-style cell references (substituted before eval), +, -, *, /, (, ), decimals.
+ * Supported: A1-style cell references (substituted before evaluation), +, -, *, /, **, (, ), decimals.
  */
+/**
+ * Evaluate a whitelisted arithmetic expression without `new Function`.
+ *
+ * Strict CSP deployments (`script-src 'self'`, without 'unsafe-eval') forbid
+ * runtime code generation, which made every formula silently fall back to its
+ * raw source text. Only digits, `+ - * / **`, parentheses and decimal points can
+ * reach this function — the caller's whitelist rejects everything else — so a
+ * small recursive-descent parser is enough, and it keeps JS semantics for
+ * precedence, unary signs, `**` (right-associative), `Infinity` and `NaN`.
+ */
+function evaluateArithmetic(expression: string): number {
+  let index = 0;
+
+  const isDigit = (char: string) => char >= "0" && char <= "9";
+
+  const skipWhitespace = () => {
+    while (index < expression.length && /\s/.test(expression[index])) {
+      index++;
+    }
+  };
+
+  const parseNumber = (): number => {
+    skipWhitespace();
+    const start = index;
+    while (index < expression.length && (isDigit(expression[index]) || expression[index] === ".")) {
+      index++;
+    }
+
+    const text = expression.slice(start, index);
+    const value = Number(text);
+    if (text === "" || Number.isNaN(value)) {
+      throw new Error(`Invalid number: "${text}"`);
+    }
+
+    return value;
+  };
+
+  const parsePrimary = (): number => {
+    skipWhitespace();
+    if (expression[index] === "(") {
+      index++;
+      const value = parseExpression();
+      skipWhitespace();
+      if (expression[index] !== ")") {
+        throw new Error("Unbalanced parentheses");
+      }
+      index++;
+      return value;
+    }
+
+    return parseNumber();
+  };
+
+  const parseUnary = (): number => {
+    skipWhitespace();
+    if (expression[index] === "-") {
+      index++;
+      return -parseUnary();
+    }
+    if (expression[index] === "+") {
+      index++;
+      return parseUnary();
+    }
+
+    return parsePrimary();
+  };
+
+  const parsePower = (): number => {
+    const base = parseUnary();
+    skipWhitespace();
+    if (expression.slice(index, index + 2) === "**") {
+      index += 2;
+      return base ** parsePower();
+    }
+
+    return base;
+  };
+
+  const parseTerm = (): number => {
+    let value = parsePower();
+    for (;;) {
+      skipWhitespace();
+      const char = expression[index];
+      if (char === "*" && expression.slice(index, index + 2) !== "**") {
+        index++;
+        value *= parsePower();
+        continue;
+      }
+      if (char === "/") {
+        index++;
+        value /= parsePower();
+        continue;
+      }
+      return value;
+    }
+  };
+
+  const parseExpression = (): number => {
+    let value = parseTerm();
+    for (;;) {
+      skipWhitespace();
+      const char = expression[index];
+      if (char === "+") {
+        index++;
+        value += parseTerm();
+        continue;
+      }
+      if (char === "-") {
+        index++;
+        value -= parseTerm();
+        continue;
+      }
+      return value;
+    }
+  };
+
+  const value = parseExpression();
+  skipWhitespace();
+  if (index !== expression.length) {
+    throw new Error(`Unexpected token at position ${index}`);
+  }
+
+  return value;
+}
+
 function safeEvalFormula(formula: string, formulaContext?: SheetFormulaContext): string {
   const rawExpression = substituteFormulaReferences(formula.slice(1), formulaContext);
 
@@ -89,8 +216,7 @@ function safeEvalFormula(formula: string, formulaContext?: SheetFormulaContext):
   }
 
   try {
-    const result = new Function(`return (${rawExpression})`)() as number;
-    return String(result);
+    return String(evaluateArithmetic(rawExpression));
   } catch {
     return formula;
   }

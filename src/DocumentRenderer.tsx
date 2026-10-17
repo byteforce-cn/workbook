@@ -8,7 +8,7 @@ import type { WorkbookPluginRegistry } from "./react/registry";
 import { FormView } from "./renderers/form/FormView";
 import { PageView } from "./renderers/page/PageView";
 import { SheetView } from "./renderers/sheet/SheetView";
-import { validateWorkbookDocument } from "./schema";
+import { validateWorkbookDocument, type WorkbookValidationResult } from "./schema";
 import type { WorkbookDefinition } from "./schema/generated-types";
 
 function VisibleViews({
@@ -124,6 +124,15 @@ export interface DocumentRendererProps {
   initialData?: WorkbookData;
   onDataChange?: (data: WorkbookData) => void;
   onSubmit?: (data: WorkbookData) => void | Promise<void>;
+  /**
+   * Validator used to check the document before rendering.
+   *
+   * Defaults to the bundled AJV validator, which compiles the schema at runtime
+   * and therefore needs `'unsafe-eval'` in `script-src`. Hosts serving a strict
+   * CSP can precompile a validator and pass it here (see
+   * `docs-site/guides/content-security-policy.md`).
+   */
+  validate?: (document: unknown) => WorkbookValidationResult;
 }
 
 export function DocumentRenderer({
@@ -135,8 +144,9 @@ export function DocumentRenderer({
   initialData,
   onDataChange,
   onSubmit,
+  validate,
 }: DocumentRendererProps) {
-  const validation = validateWorkbookDocument(workbook);
+  const validation = (validate ?? validateWorkbookDocument)(workbook);
   if (!validation.valid) {
     throw new Error(`Invalid workbook document: ${validation.errors.map((error) => error.message).join(", ")}`);
   }

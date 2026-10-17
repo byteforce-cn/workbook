@@ -84,6 +84,47 @@ describe("fetchOptions", () => {
     expect(result).toEqual([]);
   });
 
+  it("warns instead of silently returning no options when the shape is wrong", async () => {
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+    const fetchSpy = vi.spyOn(globalThis, "fetch");
+
+    try {
+      // Documented-by-trap shape: `url` instead of `endpoint` + `dataPath`.
+      const result = await fetchOptions(
+        { type: "url", url: "https://api.example.com/depts" } as never,
+        {},
+        emptyRegistry(),
+      );
+
+      expect(result).toEqual([]);
+      expect(warn).toHaveBeenCalledTimes(1);
+      expect(warn.mock.calls[0][0]).toContain('missing "endpoint"');
+      expect(warn.mock.calls[0][0]).toContain("`endpoint`");
+    } finally {
+      warn.mockRestore();
+      fetchSpy.mockRestore();
+    }
+  });
+
+  it("warns once per malformed shape and does not issue a bogus request", async () => {
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+    const fetchSpy = vi.spyOn(globalThis, "fetch").mockImplementation(() => {
+      throw new Error("a malformed source must not reach the network");
+    });
+
+    try {
+      const source = { type: "graphql", url: "https://api.example.com/graphql" } as never;
+      await fetchOptions(source, {}, emptyRegistry());
+      await fetchOptions(source, {}, emptyRegistry());
+
+      expect(fetchSpy).not.toHaveBeenCalled();
+      expect(warn).toHaveBeenCalledTimes(1);
+    } finally {
+      warn.mockRestore();
+      fetchSpy.mockRestore();
+    }
+  });
+
   it("throws on non-ok response", async () => {
     vi.spyOn(globalThis, "fetch").mockResolvedValue(
       new Response(null, { status: 500, statusText: "Internal Server Error" }),

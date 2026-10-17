@@ -38,7 +38,7 @@ export type ConditionDefinition = Condition;
 export function createFetchFontLoader(url: string, id?: string): PdfFontLoader;
 
 // @public (undocumented)
-export function createPluginRegistry(): WorkbookPluginRegistry;
+export function createPluginRegistry(options?: CreateWorkbookPluginRegistryOptions): WorkbookPluginRegistryWithHelpers;
 
 // Warning: (ae-forgotten-export) The symbol "PageLayoutResult" needs to be exported by the entry point index.d.ts
 // Warning: (ae-forgotten-export) The symbol "PdfAssetCache" needs to be exported by the entry point index.d.ts
@@ -66,6 +66,11 @@ export interface CreateWorkbookPdfOptions {
     //
     // (undocumented)
     styleResolver?: PageLayoutStyleResolver;
+}
+
+// @public (undocumented)
+export interface CreateWorkbookPluginRegistryOptions {
+    namespace?: string;
 }
 
 // Warning: (ae-forgotten-export) The symbol "WorkbookPrintDocument" needs to be exported by the entry point index.d.ts
@@ -237,7 +242,23 @@ export interface PdfFontLoader {
 export function PluginProvider(input: PluginProviderProps): react.JSX.Element;
 
 // @public
-export const pluginRegistry: WorkbookPluginRegistry;
+export const pluginRegistry: WorkbookPluginRegistryWithHelpers;
+
+// @public
+export interface PluginRegistryHelpers {
+    // (undocumented)
+    registerCondition(id: string, plugin: WorkbookConditionPlugin): void;
+    // (undocumented)
+    registerField(id: string, component: ComponentType<FieldPluginProps>): void;
+    // (undocumented)
+    registerHook(id: string, plugin: WorkbookHookPlugin): void;
+    // (undocumented)
+    registerLayout(id: string, component: ComponentType<LayoutPluginProps>): void;
+    // (undocumented)
+    registerOptionSource(id: string, plugin: WorkbookOptionSourcePlugin): void;
+    // (undocumented)
+    registerValidation(id: string, plugin: WorkbookValidationPlugin): void;
+}
 
 // @public
 export function preloadPdfAssets(layouts: PageLayoutResult[], assetLoader?: AssetLoader): Promise<PdfAssetCache>;
@@ -307,6 +328,19 @@ export type ValidationDefinition = NonNullable<FieldDefinition["validations"]>[n
 // @public (undocumented)
 export type ViewDefinition = WorkbookDefinition["views"][number];
 
+// @public (undocumented)
+export interface WorkbookConditionContext {
+    // (undocumented)
+    condition: ConditionDefinition;
+    // (undocumented)
+    data: WorkbookData;
+    // (undocumented)
+    rowContext?: WorkbookRowContext;
+}
+
+// @public (undocumented)
+export type WorkbookConditionPlugin = (context: WorkbookConditionContext) => boolean;
+
 // @public
 export type WorkbookData = Record<string, unknown>;
 
@@ -319,6 +353,54 @@ export type WorkbookDefinition = BFDocumentSchemaV411;
 //
 // @public (undocumented)
 export function WorkbookFormView(input: FormViewProps): react.JSX.Element;
+
+// @public (undocumented)
+export interface WorkbookHookContext {
+    // (undocumented)
+    data: WorkbookData;
+    // (undocumented)
+    dispatch?: (eventName: string, payload?: unknown) => void;
+    // (undocumented)
+    hook: HookDefinition;
+    // (undocumented)
+    signal?: AbortSignal;
+}
+
+// @public (undocumented)
+export type WorkbookHookPlugin = (context: WorkbookHookContext) => unknown | Promise<unknown>;
+
+// @public
+export interface WorkbookOption {
+    // (undocumented)
+    [key: string]: unknown;
+    // (undocumented)
+    disabled?: boolean;
+    // (undocumented)
+    group?: string;
+    // (undocumented)
+    label: string;
+    // (undocumented)
+    value: unknown;
+}
+
+// @public (undocumented)
+export interface WorkbookOptionSourceContext {
+    // (undocumented)
+    data: WorkbookData;
+    // (undocumented)
+    page?: number;
+    // (undocumented)
+    rowContext?: WorkbookRowContext;
+    // (undocumented)
+    search?: string;
+    // (undocumented)
+    signal?: AbortSignal;
+    // (undocumented)
+    source: OptionSourceDefinition;
+}
+
+// @public (undocumented)
+export type WorkbookOptionSourcePlugin = (context: WorkbookOptionSourceContext) => Promise<WorkbookOption[]>;
 
 // Warning: (ae-forgotten-export) The symbol "PageViewProps" needs to be exported by the entry point index.d.ts
 //
@@ -334,6 +416,9 @@ export interface WorkbookPdfResult {
     // (undocumented)
     pageCount: number;
 }
+
+// @public
+export type WorkbookPluginRegistryWithHelpers = WorkbookPluginRegistry & PluginRegistryHelpers;
 
 // @public (undocumented)
 export interface WorkbookRowContext {
@@ -374,6 +459,21 @@ export function WorkbookSheetView(input: SheetViewProps): react.JSX.Element;
 export const workbookSupportMatrix: Record<string, SupportMatrixEntry>;
 
 // @public (undocumented)
+export interface WorkbookValidationContext {
+    // (undocumented)
+    data: WorkbookData;
+    // (undocumented)
+    rowContext?: WorkbookRowContext;
+    // (undocumented)
+    validation: ValidationDefinition;
+    // (undocumented)
+    value: unknown;
+}
+
+// @public (undocumented)
+export type WorkbookValidationPlugin = (context: WorkbookValidationContext) => string | undefined | Promise<string | undefined>;
+
+// @public (undocumented)
 export interface WorkbookValidationResult {
     // (undocumented)
     errors: ErrorObject<string, Record<string, unknown>, unknown>[];
@@ -383,7 +483,7 @@ export interface WorkbookValidationResult {
 
 // Warnings were encountered during analysis:
 //
-// dist/PluginProvider-BaaczhLY.d.ts:13:5 - (ae-forgotten-export) The symbol "WorkbookHookTrigger" needs to be exported by the entry point index.d.ts
+// dist/PluginProvider-BhxVD8fA.d.ts:13:5 - (ae-forgotten-export) The symbol "WorkbookHookTrigger" needs to be exported by the entry point index.d.ts
 
 // (No @packageDocumentation comment for this package)
 

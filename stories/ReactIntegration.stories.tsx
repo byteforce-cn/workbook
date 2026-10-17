@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { type ComponentType, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import type { WorkbookData, WorkbookFieldPluginProps } from "../src/core/types";
 import { BlockErrorBoundary, FieldErrorBoundary, WorkbookErrorBoundary } from "../src/react";
 import { DataProvider as SharedDataProvider, useWorkbookData } from "../src/react/DataProvider";
@@ -9,17 +9,10 @@ import {
   usePluginRegistry,
 } from "../src/react/PluginProvider";
 import { WorkbookRuntimeProvider } from "../src/react/RuntimeProvider";
-import type { WorkbookConditionPlugin } from "../src/react/registry";
 import { FormView as WorkbookFormView } from "../src/renderers/form/FormView";
 import { PageView as WorkbookPageView } from "../src/renderers/page/PageView";
 import type { WorkbookDefinition } from "../src/schema/generated-types";
 import { CodeBlock, StoryShell } from "./StoryShell";
-
-/** react-layer createPluginRegistry attaches register* helpers at runtime. */
-type ScopedRegistry = ReturnType<typeof createPluginRegistry> & {
-  registerField: (id: string, component: ComponentType<WorkbookFieldPluginProps>) => void;
-  registerCondition: (id: string, plugin: WorkbookConditionPlugin) => void;
-};
 
 const meta = {
   title: "Workbook/React Integration",
@@ -202,13 +195,13 @@ function ScopeProbe({ label }: { label: string }) {
 
 function PluginProviderDemo() {
   const [registryA] = useState(() => {
-    const registry = createPluginRegistry({ namespace: "scope-a" }) as ScopedRegistry;
+    const registry = createPluginRegistry({ namespace: "scope-a" });
     registry.registerField("status-segmented", () => <div>作用域 A 的字段实现</div>);
     return registry;
   });
 
   const [registryB] = useState(() => {
-    const registry = createPluginRegistry({ namespace: "scope-b" }) as ScopedRegistry;
+    const registry = createPluginRegistry({ namespace: "scope-b" });
     registry.registerField("status-segmented", () => <div>作用域 B 的字段实现</div>);
     registry.registerCondition("is-workday", () => true);
     return registry;
@@ -255,7 +248,7 @@ export const PluginProvider: Story = {
 /* 3. ErrorBoundary                                                    */
 /* ------------------------------------------------------------------ */
 
-const ExplodingField: ComponentType = () => {
+const ExplodingField: React.ComponentType = () => {
   throw new Error("字段组件崩溃：数据格式异常");
 };
 
@@ -299,7 +292,7 @@ function ErrorBoundaryDemo() {
   const [registry] = useState(() => createPluginRegistry());
   const errorFormView = errorWorkbook.views.find((view) => view.type === "form");
 
-  registry.field.set("exploding-field", ExplodingField as ComponentType<WorkbookFieldPluginProps>);
+  registry.field.set("exploding-field", ExplodingField as React.ComponentType<WorkbookFieldPluginProps>);
 
   return (
     <StoryShell

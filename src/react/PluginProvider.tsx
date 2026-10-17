@@ -7,15 +7,8 @@
 import { type ComponentType, type PropsWithChildren, useContext } from "react";
 import { createPluginRegistry as createCorePluginRegistry } from "../core/registry/registry";
 import { PluginRegistryContext } from "./pluginRegistryContext";
-import type {
-  WorkbookConditionPlugin,
-  WorkbookFieldPluginProps,
-  WorkbookHookPlugin,
-  WorkbookLayoutPluginProps,
-  WorkbookOptionSourcePlugin,
-  WorkbookPluginRegistry,
-  WorkbookValidationPlugin,
-} from "./types";
+import { attachPluginRegistryHelpers, type WorkbookPluginRegistryWithHelpers } from "./registry";
+import type { WorkbookFieldPluginProps, WorkbookLayoutPluginProps, WorkbookPluginRegistry } from "./types";
 
 // Re-export the shared core hook (single source of truth for registry scoping).
 export { useOptionalPluginRegistry } from "./pluginRegistryContext";
@@ -33,7 +26,7 @@ export interface CreatePluginRegistryOptions {
  * Create a new scoped plugin registry (no global singleton).
  * Each call returns an independent registry instance.
  */
-export function createPluginRegistry(options: CreatePluginRegistryOptions = {}): WorkbookPluginRegistry {
+export function createPluginRegistry(options: CreatePluginRegistryOptions = {}): WorkbookPluginRegistryWithHelpers {
   const { namespace } = options;
 
   function ns(id: string): string {
@@ -46,27 +39,9 @@ export function createPluginRegistry(options: CreatePluginRegistryOptions = {}):
     ComponentType<WorkbookLayoutPluginProps>
   >();
 
-  // Attach helper methods (convenience wrappers kept for compatibility).
-  return Object.assign(registry, {
-    registerCondition(id: string, plugin: WorkbookConditionPlugin): void {
-      registry.condition.set(ns(id), plugin);
-    },
-    registerOptionSource(id: string, plugin: WorkbookOptionSourcePlugin): void {
-      registry.optionSource.set(ns(id), plugin);
-    },
-    registerField(id: string, component: ComponentType<WorkbookFieldPluginProps>): void {
-      registry.field.set(ns(id), component);
-    },
-    registerLayout(id: string, component: ComponentType<WorkbookLayoutPluginProps>): void {
-      registry.layout.set(ns(id), component);
-    },
-    registerValidation(id: string, plugin: WorkbookValidationPlugin): void {
-      registry.validation.set(ns(id), plugin);
-    },
-    registerHook(id: string, plugin: WorkbookHookPlugin): void {
-      registry.hook.set(ns(id), plugin);
-    },
-  });
+  // Attach the documented `register*` helpers (single implementation lives in
+  // ./registry so every factory returns the same surface).
+  return attachPluginRegistryHelpers(registry, ns);
 }
 
 export interface PluginProviderProps extends PropsWithChildren {
