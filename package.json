@@ -141,7 +141,7 @@
     "react": "19.3.0",
     "react-dom": "19.3.0",
     "react-native": "0.87.1",
-    "storybook": "10.6.1",
+    "storybook": "10.6.2",
     "tsup": "8.5.1",
     "typedoc": "^0.28.20",
     "typescript": "5.9.3",
