@@ -907,11 +907,16 @@
   border-collapse: collapse;
   width: 100%;
   table-layout: fixed;
+  /* Kept in sync with TableSvg via resolveBorderParts (tableStyles/border). */
+  --bf-table-border-width: 1px;
+  --bf-table-border-style: solid;
+  --bf-table-border-color: #d1d5db;
+  --bf-table-cell-padding: 8px;
 }
 
 .bf-editor-content td {
-  border: 1px solid #cbd5e1;
-  padding: 6px 8px;
+  border: var(--bf-table-border-width) var(--bf-table-border-style) var(--bf-table-border-color);
+  padding: var(--bf-table-cell-padding);
   vertical-align: top;
 }
 

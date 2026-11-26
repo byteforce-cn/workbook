@@ -6,6 +6,7 @@ import { ReactNodeViewRenderer } from "@tiptap/react";
 import type { ConditionContext } from "../../core/condition/evaluate";
 import type { WorkbookData, WorkbookStyleCatalog } from "../../core/types";
 import type { WorkbookPluginRegistry } from "../../react/registry";
+import { createStyleCatalogResolver } from "../../styles/catalog";
 import {
   type ConditionalVisibilityContext,
   createConditionalVisibilityExtension,
@@ -21,6 +22,8 @@ export interface EditorExtensionContext {
   registry: WorkbookPluginRegistry;
   styles: WorkbookStyleCatalog | undefined;
   conditionContext?: ConditionContext;
+  /** Runtime style resolver; created from `styles` when the host omits it. */
+  styleResolver?: ReturnType<typeof createStyleCatalogResolver>;
 }
 
 const CoreKeymap = Extension.create({
@@ -33,7 +36,15 @@ const CoreKeymap = Extension.create({
 export function createEditorExtensions(getContext: () => EditorExtensionContext): Extensions {
   const Table = WbTable.extend({
     addNodeView() {
-      return createTableNodeView();
+      return createTableNodeView(() => {
+        const context = getContext();
+        return {
+          data: context.data,
+          styleResolver:
+            context.styleResolver ??
+            createStyleCatalogResolver(context.styles, context.registry, context.conditionContext),
+        };
+      });
     },
   });
   const TableColgroup = WbTableColgroup.extend({

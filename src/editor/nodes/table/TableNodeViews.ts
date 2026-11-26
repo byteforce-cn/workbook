@@ -8,8 +8,9 @@
 
 import type { Node as PMNode } from "@tiptap/pm/model";
 import type { NodeView } from "@tiptap/pm/view";
+import { applyEditorTableStyle, type EditorTableStyleContext } from "./tableStyle";
 
-function applyTableAttributes(dom: HTMLTableElement, node: PMNode): void {
+function applyTableAttributes(dom: HTMLTableElement, node: PMNode, context?: EditorTableStyleContext): void {
   dom.dataset.wbTable = "true";
   if (typeof node.attrs.style === "string") {
     dom.dataset.wbStyle = node.attrs.style;
@@ -19,12 +20,13 @@ function applyTableAttributes(dom: HTMLTableElement, node: PMNode): void {
 
   const width = node.attrs.width;
   dom.style.width = typeof width === "number" ? `${width}px` : typeof width === "string" ? width : "";
+  applyEditorTableStyle(dom, node, context);
 }
 
-export function createTableNodeView(): (props: { node: PMNode }) => NodeView {
+export function createTableNodeView(getContext?: () => EditorTableStyleContext): (props: { node: PMNode }) => NodeView {
   return ({ node }) => {
     const dom = document.createElement("table");
-    applyTableAttributes(dom, node);
+    applyTableAttributes(dom, node, getContext?.());
 
     return {
       dom,
@@ -33,7 +35,7 @@ export function createTableNodeView(): (props: { node: PMNode }) => NodeView {
         if (nextNode.type !== node.type) {
           return false;
         }
-        applyTableAttributes(dom, nextNode);
+        applyTableAttributes(dom, nextNode, getContext?.());
         return true;
       },
       ignoreMutation(mutation) {

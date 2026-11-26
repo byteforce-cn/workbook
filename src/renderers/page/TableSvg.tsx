@@ -4,6 +4,7 @@ import { useWorkbookRuntime } from "../../react/RuntimeProvider";
 import type { Border } from "../../schema/generated-types";
 import { PageCellBlockHtml } from "./PageCellBlockHtml";
 import type { PageTextDefaults } from "./pageDefaults";
+import { formatBorder, resolveBorderParts } from "./tableBorders";
 
 export interface TableSvgProps {
   block: Extract<PageBlockDefinition, { type: "table" }>;
@@ -20,27 +21,6 @@ function resolveMeasurement(value: number | string | undefined, fallback?: numbe
   }
 
   return typeof value === "number" ? `${value}px` : value;
-}
-
-function resolveBorderParts(
-  border: Border | undefined,
-  fallbackWidth: unknown,
-  fallbackColor: unknown,
-): { width: number; style: "none" | "solid" | "dashed" | "dotted"; color: string } {
-  const color = border?.color ?? fallbackColor ?? "#d1d5db";
-
-  if (border?.style === "none") {
-    return { width: 0, style: "none", color: String(color) };
-  }
-
-  const width = border?.style === "thick" ? 3 : border?.style === "medium" ? 2 : Number(fallbackWidth ?? 1);
-  const lineStyle = border?.style === "dashed" || border?.style === "dotted" ? border.style : "solid";
-
-  return { width, style: lineStyle, color: String(color) };
-}
-
-function formatBorder(parts: ReturnType<typeof resolveBorderParts>) {
-  return `${parts.width}px ${parts.style} ${parts.color}`;
 }
 
 function createCellTextDefaults(
