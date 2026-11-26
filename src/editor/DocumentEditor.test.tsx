@@ -1,4 +1,5 @@
-import { act, render, screen } from "@testing-library/react";
+import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { createRef } from "react";
 import { describe, expect, it, vi } from "vitest";
 import type { WorkbookDefinition } from "../schema/generated-types";
@@ -21,7 +22,6 @@ function makeWorkbook(): WorkbookDefinition {
           },
           {
             type: "paragraph",
-            id: undefined,
             runs: [{ type: "text", text: "Hello contract", style: "Body" }],
           } as never,
           { type: "watermark", text: "DRAFT" },
@@ -59,6 +59,28 @@ describe("DocumentEditor", () => {
       expect(JSON.stringify(paragraph)).toContain("Hello contract");
       expect(page.content.map((block) => block.type)).toEqual(["header", "paragraph", "watermark"]);
     }
+  });
+
+  it("keeps focus and zoom across the edit / preview switch", async () => {
+    const user = userEvent.setup();
+    const { container } = render(<DocumentEditor workbook={makeWorkbook()} />);
+    await waitFor(() => expect(container.querySelector(".bf-editor-content")).not.toBeNull());
+
+    const editable = container.querySelector<HTMLElement>(".bf-editor-content");
+    const zoom = screen.getByLabelText("缩放");
+    fireEvent.change(zoom, { target: { value: "1.5" } });
+    editable?.focus();
+    expect(document.activeElement).toBe(editable);
+
+    await user.click(screen.getByRole("button", { name: "打印预览" }));
+    const preview = container.querySelector<HTMLElement>("[data-bf-editor-preview]");
+    expect(preview).not.toBeNull();
+    await waitFor(() => expect(document.activeElement).toBe(preview));
+    expect(preview?.querySelector<HTMLElement>("div")?.style.transform).toBe("scale(1.5)");
+
+    await user.click(screen.getByRole("button", { name: "编辑" }));
+    await waitFor(() => expect(document.activeElement).toBe(editable));
+    expect(container.querySelector<HTMLElement>(".bf-editor-canvas")?.style.transform).toBe("scale(1.5)");
   });
 
   it("does not mark the document dirty when preview data changes", () => {

@@ -8,7 +8,16 @@
  */
 
 import { EditorContent, useEditor } from "@tiptap/react";
-import { forwardRef, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from "react";
+import {
+  forwardRef,
+  useCallback,
+  useEffect,
+  useImperativeHandle,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import type { PageBlockDefinition, PageViewDefinition, WorkbookData, WorkbookStyleCatalog } from "../core/types";
 import { DataProvider, useWorkbookData } from "../react/DataProvider";
 import { useWorkbookRuntime, WorkbookRuntimeProvider } from "../react/RuntimeProvider";
@@ -26,6 +35,7 @@ import { FloatingPanel } from "./panels/FloatingPanel";
 import { HeaderFooterPanel } from "./panels/HeaderFooterPanel";
 import { WatermarkPanel } from "./panels/WatermarkPanel";
 import { PreviewPane } from "./preview/PreviewPane";
+import { captureScroll, restoreScroll, type ScrollSnapshot } from "./preview/scrollState";
 import { createEditorExtensions } from "./schema/editorExtensions";
 
 type HeaderBlock = Extract<PageBlockDefinition, { type: "header" }>;
@@ -122,6 +132,13 @@ function DocumentEditorInner({
   const [dirty, setDirty] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
   const [liveFlow, setLiveFlow] = useState<PageBlockDefinition[]>(initialFlow);
+  const editorHostRef = useRef<HTMLDivElement | null>(null);
+  const previewRef = useRef<HTMLElement | null>(null);
+  const setPreviewElement = useCallback((element: HTMLElement | null) => {
+    previewRef.current = element;
+  }, []);
+  const scrollSnapshotRef = useRef<ScrollSnapshot | null>(null);
+  const hasSwitchedRef = useRef(false);
 
   const baseViewRef = useRef(baseView);
   baseViewRef.current = baseView;
@@ -262,12 +279,38 @@ function DocumentEditorInner({
   const dirtyLabel = useEditorText("EDITOR_DIRTY", "有未保存的修改");
   const savedLabel = useEditorText("EDITOR_SAVED", "已保存");
 
+  // Switching panes must not reset the reader's scroll position or lose the
+  // caret: capture first, restore after React has laid the other pane out.
   const switchMode = (nextMode: "edit" | "preview") => {
+    if (nextMode === mode) {
+      return;
+    }
+
+    hasSwitchedRef.current = true;
+    scrollSnapshotRef.current = captureScroll(editorHostRef.current);
     setMode(nextMode);
     if (nextMode === "preview") {
       setPreviewMounted(true);
     }
   };
+
+  useLayoutEffect(() => {
+    if (!hasSwitchedRef.current) {
+      return;
+    }
+
+    if (mode === "preview") {
+      previewRef.current?.focus({ preventScroll: true });
+    } else {
+      editor?.commands.focus(undefined, { scrollIntoView: false });
+    }
+
+    const snapshot = scrollSnapshotRef.current;
+    if (snapshot != null) {
+      scrollSnapshotRef.current = null;
+      restoreScroll(snapshot);
+    }
+  }, [editor, mode]);
 
   if (editor == null || initialDoc.doc == null) {
     return (
@@ -323,7 +366,7 @@ function DocumentEditorInner({
         ) : null}
 
         <div className="bf-editor-body">
-          <div className="bf-editor-main" hidden={mode === "preview"}>
+          <div className="bf-editor-main" ref={editorHostRef} hidden={mode === "preview"}>
             {!readOnly ? (
               <Toolbar
                 editor={editor}
@@ -348,6 +391,7 @@ function DocumentEditorInner({
               registry={registry}
               zoom={zoom}
               hidden={mode !== "preview"}
+              sectionRef={setPreviewElement}
             />
           ) : null}
 

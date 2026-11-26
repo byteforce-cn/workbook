@@ -11,10 +11,11 @@
  * These tests are sanity checks, not hard gates. CI may vary.
  */
 
-import { render } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
 import { DocumentRenderer } from "../../src/DocumentRenderer";
+import { DocumentEditor } from "../../src/editor";
 import type { View, WorkbookDefinition } from "../../src/schema/generated-types";
 
 // ---- helpers ----
@@ -97,6 +98,38 @@ function generate10PageDocument(): WorkbookDefinition {
   };
 }
 
+/** One page view that paginates into exactly 10 SVG pages via page breaks. */
+function generateTenPageEditorView(): WorkbookDefinition {
+  const content: Array<Record<string, unknown>> = [];
+  for (let page = 0; page < 10; page += 1) {
+    content.push({
+      type: "paragraph",
+      style: "Body",
+      runs: [{ type: "text", text: `Section ${page + 1}: contract body for the preview switch baseline.` }],
+    });
+    if (page < 9) {
+      content.push({ type: "page-break" });
+    }
+  }
+
+  return {
+    kind: "workbook",
+    schemaVersion: "4.1.1",
+    locale: "zh-CN",
+    data: {},
+    styles: { paragraphStyles: { Body: { fontSize: 13, lineHeight: 1.6 } } },
+    views: [
+      {
+        type: "page",
+        id: "perf-editor-preview",
+        label: "10 页编辑器文档",
+        pageSettings: { width: 595, height: 842, marginTop: 72, marginLeft: 72, marginRight: 72, marginBottom: 72 },
+        content,
+      },
+    ],
+  } as unknown as WorkbookDefinition;
+}
+
 function generate10000RowSheet(): WorkbookDefinition {
   const rows = Array.from({ length: 10000 }, (_, i) => {
     const cells = [
@@ -163,6 +196,27 @@ describe("D6: Performance baselines", () => {
       console.warn(`[perf] 10-page document rendered in ${Math.round(durationMs)}ms (threshold: 2000ms).`);
     }
     expect(durationMs).toBeLessThan(5000);
+  });
+
+  it("switches a 10-page editor document to preview within 1s", async () => {
+    const { container } = render(<DocumentEditor workbook={generateTenPageEditorView()} />);
+    await waitFor(() => expect(container.querySelector(".bf-editor-content")).not.toBeNull(), { timeout: 5000 });
+
+    const start = performance.now();
+    fireEvent.click(screen.getByRole("button", { name: "打印预览" }));
+    await waitFor(
+      () =>
+        expect(container.querySelectorAll('[data-bf-editor-preview] svg[data-workbook-page="true"]').length).toBe(10),
+      { timeout: 5000 },
+    );
+    const durationMs = performance.now() - start;
+
+    // Local baseline (Node 22 / jsdom): ~59 ms. Soft gate at 1 s; hard
+    // assertion at 2x to catch real regressions without CI flakiness.
+    if (durationMs > 1000) {
+      console.warn(`[perf] 10-page editor preview switch took ${Math.round(durationMs)}ms (threshold: 1000ms).`);
+    }
+    expect(durationMs).toBeLessThan(2000);
   });
 
   it("renders a 10000-row sheet within 3000ms", { timeout: 15000 }, () => {

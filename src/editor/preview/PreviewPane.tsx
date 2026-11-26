@@ -15,6 +15,8 @@ export interface PreviewPaneProps {
   registry?: WorkbookPluginRegistry;
   zoom: number;
   hidden?: boolean;
+  /** Focus target for the edit ↔ preview switch. */
+  sectionRef?: (element: HTMLElement | null) => void;
 }
 
 /**
@@ -34,6 +36,7 @@ export function PreviewPane({
   registry,
   zoom,
   hidden,
+  sectionRef,
 }: PreviewPaneProps) {
   const notice = useEditorText("EDITOR_PREVIEW_NOTICE", "编辑态与打印版式可能不同，预览使用 workbook 渲染器。");
 
@@ -51,7 +54,14 @@ export function PreviewPane({
   }, [view, viewId, workbook]);
 
   return (
-    <section className="bf-editor-preview" aria-label={notice} hidden={hidden} data-bf-editor-preview="true">
+    <section
+      ref={sectionRef}
+      className="bf-editor-preview"
+      aria-label={notice}
+      hidden={hidden}
+      data-bf-editor-preview="true"
+      tabIndex={-1}
+    >
       <p className="bf-editor-preview-notice">{notice}</p>
       <div style={{ transform: `scale(${zoom})`, transformOrigin: "top left" }}>
         <DocumentRenderer
