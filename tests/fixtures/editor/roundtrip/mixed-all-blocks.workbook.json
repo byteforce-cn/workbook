@@ -1,0 +1,128 @@
+{
+  "kind": "workbook",
+  "schemaVersion": "4.1.1",
+  "locale": "zh-CN",
+  "data": {
+    "customer": {
+      "name": "Alice"
+    }
+  },
+  "views": [
+    {
+      "type": "page",
+      "id": "mixed-all-blocks",
+      "label": "页面 conformance",
+      "pageSettings": {
+        "width": 595,
+        "height": 842,
+        "marginTop": 72,
+        "marginLeft": 72,
+        "marginRight": 72,
+        "marginBottom": 72
+      },
+      "content": [
+        {
+          "type": "paragraph",
+          "style": "Body",
+          "alignment": "center",
+          "indent": 12,
+          "spaceBefore": 4,
+          "spaceAfter": 8,
+          "lineHeight": 1.4,
+          "comment": "lead",
+          "renderHints": {
+            "note": "x"
+          },
+          "runs": [
+            {
+              "type": "text",
+              "text": "Lead",
+              "style": "Emphasis"
+            },
+            {
+              "type": "break"
+            },
+            {
+              "type": "text",
+              "text": "end"
+            }
+          ]
+        },
+        {
+          "type": "table",
+          "style": "Grid",
+          "border": {
+            "style": "thin",
+            "color": "#333333"
+          },
+          "fill": "#f8fafc",
+          "comment": "table",
+          "columns": ["25%", "25%", 50],
+          "rows": [
+            {
+              "height": 30,
+              "cells": [
+                {
+                  "style": "Total",
+                  "colSpan": 2,
+                  "content": [
+                    {
+                      "type": "paragraph",
+                      "runs": [
+                        {
+                          "type": "text",
+                          "text": "span"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "content": [
+                    {
+                      "type": "image",
+                      "src": "https://example.com/i.png",
+                      "width": 20
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "custom",
+          "component": "app:flowStepper",
+          "props": {
+            "step": 1
+          },
+          "renderHints": {
+            "height": 120
+          }
+        },
+        {
+          "type": "page-break"
+        },
+        {
+          "type": "list",
+          "style": "Bullets",
+          "listType": "ordered",
+          "start": 1,
+          "items": [
+            [
+              {
+                "type": "paragraph",
+                "runs": [
+                  {
+                    "type": "text",
+                    "text": "item"
+                  }
+                ]
+              }
+            ]
+          ]
+        }
+      ]
+    }
+  ]
+}

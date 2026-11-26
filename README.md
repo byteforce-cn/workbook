@@ -97,7 +97,28 @@ import "@byteforce/workbook/styles.css";
 | `@byteforce/workbook/quick` | Zero-config `SimpleForm` |
 | `@byteforce/workbook/react-native` | React Native renderers — **experimental** |
 | `@byteforce/workbook/adapters/zod` | Optional Zod validation adapter |
+| `@byteforce/workbook/editor` | Optional document editor (Tiptap/ProseMirror peers) |
 | `@byteforce/workbook/styles.css` | Default theme |
+
+## Document editor
+
+`@byteforce/workbook/editor` edits the flowing content of a page view while
+keeping `WorkbookDefinition` as the only persisted artifact. Tiptap/ProseMirror
+are optional, exactly pinned peers and never load from the renderer entries.
+
+```bash
+npm install @tiptap/core@3.35.0 @tiptap/pm@3.35.0 @tiptap/react@3.35.0 @tiptap/extension-text@3.35.0
+```
+
+```tsx
+import { DocumentEditor } from "@byteforce/workbook/editor";
+
+<DocumentEditor workbook={workbook} onSave={(next) => persist(next)} />;
+```
+
+Editing layout is not print output: preview and PDF use the workbook renderer.
+See [the document editor guide](./docs-site/guides/document-editor.md) and
+[integrity rules](./docs-site/guides/integrity.md).
 
 ## Compatibility
 

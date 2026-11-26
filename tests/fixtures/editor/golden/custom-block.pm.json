@@ -1,0 +1,20 @@
+{
+  "type": "doc",
+  "content": [
+    {
+      "type": "wbCustom",
+      "attrs": {
+        "component": "app:flowStepper",
+        "props": {
+          "step": 2
+        },
+        "visible": null,
+        "comment": null,
+        "renderHints": {
+          "height": 160
+        },
+        "rawBlock": null
+      }
+    }
+  ]
+}

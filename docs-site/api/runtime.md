@@ -57,6 +57,26 @@ Built-in condition types:
 - `and` / `or` / `not` — logical operators
 - Custom conditions via plugin registry
 
+### Host context
+
+Conditions may read a read-only host context (permissions, current user, tenant)
+with a `$context.` path prefix. It is delivered separately from the data tree, so
+data preview/fetching can never overwrite it:
+
+```ts
+evaluateCondition(
+  { op: "eq", path: "$context.user.role", value: "admin" },
+  data,
+  plugins,
+  undefined,
+  { user: { role: "admin" } },
+);
+```
+
+Pass `conditionContext` to `DocumentRenderer`, `DocumentEditor`, or
+`WorkbookRuntimeProvider`; page layout, styles, form visibility, dependencies, and
+validations all resolve against it.
+
 ## Validation Engine
 
 Run validation rules against field values.

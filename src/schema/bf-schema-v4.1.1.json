@@ -193,6 +193,10 @@
             "dependsOn": { "type": "array", "items": { "type": "string" } },
             "fetchOnMount": { "type": "boolean", "default": true },
             "cache": { "type": "string", "enum": ["none", "memory", "session"], "default": "none" },
+            "cacheKey": {
+              "type": "string",
+              "description": "Business key used by clearOptionCache to invalidate this source (e.g. 'departments')."
+            },
             "searchDebounce": { "type": "number", "minimum": 0, "default": 300 }
           },
           "allOf": [
@@ -283,6 +287,7 @@
           "oneOf": [{ "type": "boolean" }, { "$ref": "#/definitions/condition" }],
           "default": false
         },
+        "readOnly": { "type": "boolean", "default": false },
         "component": { "type": "string" },
         "props": { "type": "object", "additionalProperties": true },
         "arrayConfig": {

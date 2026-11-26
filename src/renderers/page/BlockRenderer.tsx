@@ -68,7 +68,16 @@ export function BlockRenderer({
     case "watermark":
       return <WatermarkSvg block={block} width={pageWidth} height={pageHeight} />;
     case "floating":
-      return <FloatingBlockSvg block={block} pageWidth={pageWidth} pageHeight={pageHeight} defaults={textDefaults} />;
+      return (
+        <FloatingBlockSvg
+          block={block}
+          x={x}
+          y={y}
+          width={width}
+          height={height ?? pageHeight}
+          defaults={textDefaults}
+        />
+      );
     case "custom": {
       // 应用侧扩展点：按 schema 的 component id 命中 registry.registerPageBlock 注册的组件。
       // 未注册时与既有的 default: return null 行为一致（仅提示一次）。

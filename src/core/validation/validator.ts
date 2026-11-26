@@ -5,7 +5,7 @@
  */
 
 import type { ValidationDefinition, WorkbookData, WorkbookRowContext } from "../../core/types";
-import { evaluateCondition } from "../condition/evaluate";
+import { type ConditionContext, evaluateCondition } from "../condition/evaluate";
 import type { CorePluginSlots } from "../registry/registry";
 
 const BUILT_IN_VALIDATION_TYPES = new Set(["required", "min", "max", "minLength", "maxLength", "pattern"]);
@@ -101,10 +101,11 @@ export function validateValue(
   data: WorkbookData,
   registry: CorePluginSlots,
   rowContext?: WorkbookRowContext,
+  conditionContext?: ConditionContext,
 ): string | undefined | Promise<string | undefined> {
   // Check condition first
   if (validation.condition != null) {
-    if (!evaluateCondition(validation.condition, data, registry, rowContext)) {
+    if (!evaluateCondition(validation.condition, data, registry, rowContext, conditionContext)) {
       return undefined;
     }
   }
@@ -133,6 +134,7 @@ export function runValidations(
   data: WorkbookData,
   registry: CorePluginSlots,
   rowContext?: WorkbookRowContext,
+  conditionContext?: ConditionContext,
 ): string[] | Promise<string[]> {
   const list = validations ?? [];
 
@@ -140,14 +142,14 @@ export function runValidations(
     // All sync — run synchronously
     const results: string[] = [];
     for (const v of list) {
-      const msg = validateValue(value, v, data, registry, rowContext) as string | undefined;
+      const msg = validateValue(value, v, data, registry, rowContext, conditionContext) as string | undefined;
       if (msg != null) results.push(msg);
     }
     return results;
   }
 
   // Has async validators or custom plugin types — run via Promise.all
-  return Promise.all(list.map((v) => validateValue(value, v, data, registry, rowContext))).then((results) =>
-    results.filter((msg): msg is string => msg != null),
+  return Promise.all(list.map((v) => validateValue(value, v, data, registry, rowContext, conditionContext))).then(
+    (results) => results.filter((msg): msg is string => msg != null),
   );
 }

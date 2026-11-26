@@ -49,6 +49,7 @@ interface DynamicOptionSource {
   dependsOn?: string[];
   fetchOnMount?: boolean;
   cache?: "none" | "memory" | "session";
+  cacheKey?: string;
   searchDebounce?: number;
 }
 
@@ -107,6 +108,7 @@ function cacheKeyForSource(source: DynamicOptionSource, resolvedParams: Record<s
     valueKey: source.valueKey,
     labelKey: source.labelKey,
     pagination: source.pagination,
+    cacheKey: source.cacheKey,
   });
 }
 
@@ -331,16 +333,83 @@ export async function fetchOptions(
   return (await fetchOptionPage(source, data, registry, rowContext, signal, request)).options;
 }
 
-/** Clear cached option data (memory cache; `session`/`all` also clears sessionStorage). */
-export function clearOptionCache(scope?: "memory" | "session" | "all"): void {
-  if (scope === "all" || scope == null) {
-    memoryCache.clear();
-    try {
-      sessionStorage.clear();
-    } catch {
-      // sessionStorage may not be available
-    }
-  } else if (scope === "memory") {
-    memoryCache.clear();
+/**
+ * Target entries for invalidation: a business `cacheKey` declared on the
+ * option source, or a prefix of it.
+ */
+export type OptionCacheInvalidation = string | { key?: string; prefix?: string };
+
+function matchesInvalidation(cacheKey: string, invalidation: OptionCacheInvalidation | undefined): boolean {
+  if (invalidation == null) {
+    return true;
   }
+
+  let sourceKey: unknown;
+  try {
+    sourceKey = (JSON.parse(cacheKey) as { cacheKey?: unknown }).cacheKey;
+  } catch {
+    sourceKey = undefined;
+  }
+
+  if (typeof invalidation === "string") {
+    return sourceKey === invalidation;
+  }
+
+  if (invalidation.key != null) {
+    return sourceKey === invalidation.key;
+  }
+
+  if (invalidation.prefix != null) {
+    return typeof sourceKey === "string" && sourceKey.startsWith(invalidation.prefix);
+  }
+
+  return true;
+}
+
+/**
+ * Clear cached option data.
+ *
+ * - `scope`: `"memory"` (default when a filter is supplied), `"session"`,
+ *   or `"all"` (memory + sessionStorage).
+ * - `invalidation`: a `cacheKey` declared on the option source, or
+ *   `{ key }` / `{ prefix }`. Without it every entry in scope is cleared.
+ *
+ * Returns the number of entries removed so hosts can assert that a business
+ * key actually existed.
+ *
+ * @example
+ * clearOptionCache("all", { key: "departments" });
+ */
+export function clearOptionCache(scope?: "memory" | "session" | "all", invalidation?: OptionCacheInvalidation): number {
+  const resolvedScope = scope ?? (invalidation == null ? "all" : "memory");
+  let removed = 0;
+
+  if (resolvedScope === "all" || resolvedScope === "memory") {
+    for (const cacheKey of [...memoryCache.keys()]) {
+      if (matchesInvalidation(cacheKey, invalidation)) {
+        memoryCache.delete(cacheKey);
+        removed += 1;
+      }
+    }
+  }
+
+  if ((resolvedScope === "all" || resolvedScope === "session") && typeof sessionStorage !== "undefined") {
+    try {
+      if (invalidation == null) {
+        sessionStorage.clear();
+      } else {
+        for (let index = sessionStorage.length - 1; index >= 0; index -= 1) {
+          const key = sessionStorage.key(index);
+          if (key != null && matchesInvalidation(key, invalidation)) {
+            sessionStorage.removeItem(key);
+            removed += 1;
+          }
+        }
+      }
+    } catch {
+      // sessionStorage may not be available or may be blocked by policy
+    }
+  }
+
+  return removed;
 }

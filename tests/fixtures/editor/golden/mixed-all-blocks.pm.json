@@ -1,0 +1,245 @@
+{
+  "type": "doc",
+  "content": [
+    {
+      "type": "wbParagraph",
+      "attrs": {
+        "style": "Body",
+        "visible": null,
+        "alignment": "center",
+        "indent": 12,
+        "spaceBefore": 4,
+        "spaceAfter": 8,
+        "lineHeight": 1.4,
+        "comment": "lead",
+        "renderHints": {
+          "note": "x"
+        }
+      },
+      "content": [
+        {
+          "type": "text",
+          "marks": [
+            {
+              "type": "wbText",
+              "attrs": {
+                "style": "Emphasis",
+                "fontWeight": null,
+                "fontStyle": null,
+                "textDecoration": null,
+                "fontFamily": null,
+                "fontSize": null,
+                "color": null,
+                "link": null
+              }
+            }
+          ],
+          "text": "Lead"
+        },
+        {
+          "type": "hardBreak"
+        },
+        {
+          "type": "text",
+          "marks": [
+            {
+              "type": "wbText",
+              "attrs": {
+                "style": null,
+                "fontWeight": null,
+                "fontStyle": null,
+                "textDecoration": null,
+                "fontFamily": null,
+                "fontSize": null,
+                "color": null,
+                "link": null
+              }
+            }
+          ],
+          "text": "end"
+        }
+      ]
+    },
+    {
+      "type": "wbTable",
+      "attrs": {
+        "style": "Grid",
+        "visible": null,
+        "width": null,
+        "border": {
+          "style": "thin",
+          "color": "#333333"
+        },
+        "fill": "#f8fafc",
+        "comment": "table",
+        "renderHints": null
+      },
+      "content": [
+        {
+          "type": "wbTableColgroup",
+          "attrs": {
+            "widths": ["25%", "25%", 50]
+          }
+        },
+        {
+          "type": "wbTableRow",
+          "attrs": {
+            "height": 30
+          },
+          "content": [
+            {
+              "type": "wbTableCell",
+              "attrs": {
+                "colSpan": 2,
+                "rowSpan": null,
+                "style": "Total",
+                "width": null,
+                "verticalAlign": null,
+                "comment": null
+              },
+              "content": [
+                {
+                  "type": "wbParagraph",
+                  "attrs": {
+                    "style": null,
+                    "visible": null,
+                    "alignment": null,
+                    "indent": null,
+                    "spaceBefore": null,
+                    "spaceAfter": null,
+                    "lineHeight": null,
+                    "comment": null,
+                    "renderHints": null
+                  },
+                  "content": [
+                    {
+                      "type": "text",
+                      "marks": [
+                        {
+                          "type": "wbText",
+                          "attrs": {
+                            "style": null,
+                            "fontWeight": null,
+                            "fontStyle": null,
+                            "textDecoration": null,
+                            "fontFamily": null,
+                            "fontSize": null,
+                            "color": null,
+                            "link": null
+                          }
+                        }
+                      ],
+                      "text": "span"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "wbTableCell",
+              "attrs": {
+                "colSpan": null,
+                "rowSpan": null,
+                "style": null,
+                "width": null,
+                "verticalAlign": null,
+                "comment": null
+              },
+              "content": [
+                {
+                  "type": "wbImage",
+                  "attrs": {
+                    "src": "https://example.com/i.png",
+                    "width": 20,
+                    "height": null,
+                    "lockAspectRatio": null,
+                    "alignment": null,
+                    "alt": null,
+                    "comment": null,
+                    "renderHints": null
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "wbCustom",
+      "attrs": {
+        "component": "app:flowStepper",
+        "props": {
+          "step": 1
+        },
+        "visible": null,
+        "comment": null,
+        "renderHints": {
+          "height": 120
+        },
+        "rawBlock": null
+      }
+    },
+    {
+      "type": "wbPageBreak",
+      "attrs": {
+        "comment": null
+      }
+    },
+    {
+      "type": "wbList",
+      "attrs": {
+        "style": "Bullets",
+        "visible": null,
+        "listType": "ordered",
+        "bulletChar": null,
+        "numberFormat": null,
+        "start": 1,
+        "comment": null,
+        "renderHints": null
+      },
+      "content": [
+        {
+          "type": "wbListItem",
+          "content": [
+            {
+              "type": "wbParagraph",
+              "attrs": {
+                "style": null,
+                "visible": null,
+                "alignment": null,
+                "indent": null,
+                "spaceBefore": null,
+                "spaceAfter": null,
+                "lineHeight": null,
+                "comment": null,
+                "renderHints": null
+              },
+              "content": [
+                {
+                  "type": "text",
+                  "marks": [
+                    {
+                      "type": "wbText",
+                      "attrs": {
+                        "style": null,
+                        "fontWeight": null,
+                        "fontStyle": null,
+                        "textDecoration": null,
+                        "fontFamily": null,
+                        "fontSize": null,
+                        "color": null,
+                        "link": null
+                      }
+                    }
+                  ],
+                  "text": "item"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -5,6 +5,7 @@ declare const process: {
 };
 
 const slowMo = process.env.SLOW_MO ? Number(process.env.SLOW_MO) : 0;
+const chromiumExecutable = process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE;
 
 export default defineConfig({
   testDir: "./tests/e2e",
@@ -17,7 +18,10 @@ export default defineConfig({
     baseURL: "http://localhost:6008",
     trace: "on-first-retry",
     screenshot: "only-on-failure",
-    launchOptions: slowMo > 0 ? { slowMo } : undefined,
+    launchOptions: {
+      ...(slowMo > 0 ? { slowMo } : {}),
+      ...(chromiumExecutable != null ? { executablePath: chromiumExecutable } : {}),
+    },
   },
   webServer: {
     command: "./node_modules/.bin/storybook dev --port 6008 --config-dir .storybook --ci",

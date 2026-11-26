@@ -1,5 +1,5 @@
 import { useForm } from "@tanstack/react-form";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { getValueAtPath } from "../../core/data/pathUtils";
 import { resolveFieldState } from "../../core/dependency/engine";
 import { resolveBuiltInText, resolveI18nText, WORKBOOK_I18N_KEYS } from "../../core/i18n/i18n";
@@ -13,6 +13,7 @@ import type {
 import { runValidations } from "../../core/validation/validator";
 import { useDevice } from "../../device/DeviceContext";
 import { useWorkbookData } from "../../react/DataProvider";
+import { type FieldErrorInput, useRegisterFieldErrorHandlers } from "../../react/fieldErrorChannel";
 import { runWorkbookHooks } from "../../react/hooks/useWorkbookHooks";
 import { useWorkbookRuntime } from "../../react/RuntimeProvider";
 import { useRegisterSubmitHandler } from "../../react/submitChannel";
@@ -57,10 +58,11 @@ export interface FormViewProps {
 
 export function FormView({ view, onSubmit }: FormViewProps) {
   const { data, replaceData, setValue } = useWorkbookData();
-  const { registry, locale, fallbackLocale, i18n, hooks } = useWorkbookRuntime();
+  const { registry, locale, fallbackLocale, i18n, hooks, conditionContext } = useWorkbookRuntime();
   const { device } = useDevice();
   const [fieldErrors, setFieldErrors] = useState<Record<string, string[]>>({});
   const initialSnapshotRef = useRef(data);
+  const sectionRef = useRef<HTMLElement>(null);
   // 审核中只读：config.readOnly === true 时整表单只读（字段禁用 + 隐藏提交/重置 + 拦截提交/autoSave）
   const readOnly = view.config?.readOnly === true;
   // 只读呈现：默认 disabled（1.0.0 行为，禁用输入框）；text = 标签 + 值
@@ -80,7 +82,7 @@ export function FormView({ view, onSubmit }: FormViewProps) {
     for (const field of view.fields) {
       const fieldPath = resolveFieldPath(field);
       const currentValue = getValueAtPath(data, fieldPath);
-      const runtimeState = resolveFieldState(field, data, registry);
+      const runtimeState = resolveFieldState(field, data, registry, undefined, conditionContext);
       const effectiveDefault = runtimeState.defaultValue ?? field.defaultValue;
 
       if (currentValue === undefined && effectiveDefault !== undefined) {
@@ -88,7 +90,7 @@ export function FormView({ view, onSubmit }: FormViewProps) {
         setValue(fieldPath, effectiveDefault);
       }
     }
-  }, [data, form, setValue, view.fields, registry]);
+  }, [conditionContext, data, form, setValue, view.fields, registry]);
 
   useEffect(() => {
     // 只读表单不应触发 autoSave（审核中不产生任何写操作）
@@ -111,10 +113,17 @@ export function FormView({ view, onSubmit }: FormViewProps) {
     nextValueOverride?: unknown,
   ) => {
     const fieldPath = resolveFieldPath(field, rowContext);
-    const runtimeState = resolveFieldState(field, data, registry, rowContext);
+    const runtimeState = resolveFieldState(field, data, registry, rowContext, conditionContext);
     // onChange 校验时 data 闭包尚未包含新值，直接使用新值避免校验旧数据
     const value = nextValueOverride !== undefined ? nextValueOverride : getValueAtPath(data, fieldPath, rowContext);
-    const nextErrors = await runValidations(value, runtimeState.validations, data, registry, rowContext);
+    const nextErrors = await runValidations(
+      value,
+      runtimeState.validations,
+      data,
+      registry,
+      rowContext,
+      conditionContext,
+    );
     setFieldErrors((currentErrors) => ({
       ...currentErrors,
       [fieldPath]: nextErrors,
@@ -142,6 +151,45 @@ export function FormView({ view, onSubmit }: FormViewProps) {
   };
 
   const title = resolveI18nText(("label" in view ? view.label : undefined) ?? undefined, locale, i18n, fallbackLocale);
+
+  const focusField = useCallback((fieldPath: string) => {
+    const section = sectionRef.current;
+    if (section == null) {
+      return;
+    }
+
+    const target = [...section.querySelectorAll<HTMLElement>("[data-field-name]")].find(
+      (element) => element.dataset.fieldName === fieldPath,
+    );
+    target?.scrollIntoView?.({ block: "center", behavior: "smooth" });
+    target?.querySelector<HTMLElement>("input, select, textarea, button")?.focus();
+  }, []);
+
+  // Host-driven errors (e.g. a server 409) enter through DocumentRenderer's handle.
+  const applyExternalFieldErrors = useCallback(
+    (fieldPath: string, message: FieldErrorInput) => {
+      setFieldErrors((currentErrors) => ({
+        ...currentErrors,
+        [fieldPath]: Array.isArray(message) ? message : [message],
+      }));
+      focusField(fieldPath);
+    },
+    [focusField],
+  );
+
+  const clearExternalFieldErrors = useCallback((fieldPath?: string) => {
+    setFieldErrors((currentErrors) => {
+      if (fieldPath == null) {
+        return {};
+      }
+
+      const nextErrors = { ...currentErrors };
+      delete nextErrors[fieldPath];
+      return nextErrors;
+    });
+  }, []);
+
+  useRegisterFieldErrorHandlers(applyExternalFieldErrors, clearExternalFieldErrors);
 
   /**
    * Run the full submit pipeline and report whether it went through.
@@ -188,7 +236,7 @@ export function FormView({ view, onSubmit }: FormViewProps) {
   };
 
   return (
-    <section className="bf-workbook-form-view" data-device={device}>
+    <section ref={sectionRef} className="bf-workbook-form-view" data-device={device}>
       {title != null ? <h2>{title}</h2> : null}
       <form onSubmit={(event) => void handleSubmit(event)}>
         <LayoutRenderer

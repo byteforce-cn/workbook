@@ -1,0 +1,60 @@
+{
+  "type": "doc",
+  "content": [
+    {
+      "type": "wbParagraph",
+      "attrs": {
+        "style": null,
+        "visible": null,
+        "alignment": null,
+        "indent": null,
+        "spaceBefore": null,
+        "spaceAfter": null,
+        "lineHeight": null,
+        "comment": null,
+        "renderHints": null
+      }
+    },
+    {
+      "type": "wbPageBreak",
+      "attrs": {
+        "comment": null
+      }
+    },
+    {
+      "type": "wbParagraph",
+      "attrs": {
+        "style": null,
+        "visible": null,
+        "alignment": null,
+        "indent": null,
+        "spaceBefore": null,
+        "spaceAfter": null,
+        "lineHeight": null,
+        "comment": null,
+        "renderHints": null
+      },
+      "content": [
+        {
+          "type": "text",
+          "marks": [
+            {
+              "type": "wbText",
+              "attrs": {
+                "style": null,
+                "fontWeight": null,
+                "fontStyle": null,
+                "textDecoration": null,
+                "fontFamily": null,
+                "fontSize": null,
+                "color": null,
+                "link": null
+              }
+            }
+          ],
+          "text": "after break"
+        }
+      ]
+    }
+  ]
+}

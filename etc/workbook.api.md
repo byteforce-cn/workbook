@@ -16,7 +16,7 @@ import { ValidateFunction } from 'ajv';
 // Warning: (ae-forgotten-export) The symbol "WorkbookPluginRegistry" needs to be exported by the entry point index.d.ts
 //
 // @public (undocumented)
-export function applyConditionalStyle(baseStyle: Record<string, unknown>, rules: ConditionalStyleRule[] | undefined, data: WorkbookData, registry: WorkbookPluginRegistry, rowContext?: WorkbookRowContext): Record<string, unknown>;
+export function applyConditionalStyle(baseStyle: Record<string, unknown>, rules: ConditionalStyleRule[] | undefined, data: WorkbookData, registry: WorkbookPluginRegistry, rowContext?: WorkbookRowContext, context?: ConditionContext): Record<string, unknown>;
 
 // @public (undocumented)
 export type AssetMap = NonNullable<WorkbookDefinition["assets"]>;
@@ -24,15 +24,44 @@ export type AssetMap = NonNullable<WorkbookDefinition["assets"]>;
 // @public (undocumented)
 export type BindDefinition = Exclude<FieldDefinition["bind"], undefined>;
 
+// @public
+export function canonicalBytes(value: unknown): Uint8Array;
+
+// @public
+export function canonicalize(value: unknown): string;
+
+// @public
+export function clearMigrations(): void;
+
+// @public
+export function clearOptionCache(scope?: "memory" | "session" | "all", invalidation?: OptionCacheInvalidation): number;
+
 // Warning: (ae-forgotten-export) The symbol "WorkbookPrintablePage" needs to be exported by the entry point index.d.ts
 //
 // @public (undocumented)
 export function collectWorkbookPrintablePages(root: ParentNode): WorkbookPrintablePage[];
 
+// @public
+export type ConditionContext = Record<string, unknown>;
+
 // Warning: (ae-forgotten-export) The symbol "Condition" needs to be exported by the entry point index.d.ts
 //
 // @public (undocumented)
 export type ConditionDefinition = Condition;
+
+// @public
+export function contentHash(workbook: WorkbookDefinition, options?: ContentHashOptions): Promise<string>;
+
+// @public (undocumented)
+export interface ContentHashOptions {
+    include?: readonly ContentKey[];
+}
+
+// @public (undocumented)
+export type ContentKey = (typeof DEFAULT_CONTENT_KEYS)[number] | "data" | "locale" | "i18n" | "hooks";
+
+// @public
+export function contentPayload(workbook: WorkbookDefinition, options?: ContentHashOptions): Uint8Array;
 
 // @public
 export function createFetchFontLoader(url: string, id?: string): PdfFontLoader;
@@ -84,10 +113,16 @@ export function createWorkbookPrintHtmlFromElement(root: ParentNode, config?: Pr
 // @public (undocumented)
 export function createWorkbookPrintStyles(config?: PrintConfig): string;
 
+// @public
+export const CURRENT_SCHEMA_VERSION = "4.1.1";
+
 // Warning: (ae-forgotten-export) The symbol "DataProviderProps" needs to be exported by the entry point index.d.ts
 //
 // @public (undocumented)
 export function DataProvider(input: DataProviderProps): react.JSX.Element;
+
+// @public
+export const DEFAULT_CONTENT_KEYS: readonly ["kind", "schemaVersion", "views", "styles", "printConfig", "assets"];
 
 // @public (undocumented)
 export type DependencyDefinition = NonNullable<FieldDefinition["dependencies"]>[number];
@@ -136,6 +171,9 @@ export const DocumentRenderer: react.ForwardRefExoticComponent<DocumentRendererP
 
 // @public
 export interface DocumentRendererHandle {
+    clearFieldErrors(fieldPath?: string): void;
+    // Warning: (ae-forgotten-export) The symbol "FieldErrorInput" needs to be exported by the entry point index.d.ts
+    setFieldErrors(fieldPath: string, message: FieldErrorInput): void;
     submit(): Promise<boolean>;
 }
 
@@ -143,6 +181,7 @@ export interface DocumentRendererHandle {
 export interface DocumentRendererProps {
     // (undocumented)
     activeViewId?: string;
+    conditionContext?: ConditionContext;
     data?: WorkbookData;
     // (undocumented)
     fallbackLocale?: string;
@@ -159,10 +198,31 @@ export interface DocumentRendererProps {
     workbook: WorkbookDefinition;
 }
 
+// @public
+export interface DocumentSignature {
+    alg: string;
+    contentHash: string;
+    kid?: string;
+    signedAt: string;
+    value: string;
+}
+
+// @public (undocumented)
+export interface DocumentSigner {
+    // (undocumented)
+    sign(payload: Uint8Array): Promise<DocumentSignature>;
+}
+
+// @public (undocumented)
+export interface DocumentVerifier {
+    // (undocumented)
+    verify(payload: Uint8Array, signature: DocumentSignature): Promise<boolean>;
+}
+
 // Warning: (ae-forgotten-export) The symbol "CorePluginSlots" needs to be exported by the entry point index.d.ts
 //
-// @public
-export function evaluateCondition(condition: ConditionDefinition, data: WorkbookData, registry: CorePluginSlots, rowContext?: WorkbookRowContext): boolean;
+// @public (undocumented)
+export function evaluateCondition(condition: ConditionDefinition, data: WorkbookData, registry: CorePluginSlots, rowContext?: WorkbookRowContext, context?: ConditionContext): boolean;
 
 // @public (undocumented)
 export function exportWorkbookPdf(input: ExportWorkbookPdfOptions): Promise<WorkbookPdfResult>;
@@ -234,7 +294,29 @@ export interface LayoutPluginProps {
 }
 
 // @public
+export function migrateWorkbook(workbook: WorkbookDefinition, options?: MigrateWorkbookOptions): MigrateWorkbookResult;
+
+// @public (undocumented)
+export interface MigrateWorkbookOptions {
+    to?: string;
+    validate?: (workbook: unknown) => WorkbookValidationResult;
+}
+
+// @public (undocumented)
+export interface MigrateWorkbookResult {
+    applied: string[];
+    // (undocumented)
+    workbook: WorkbookDefinition;
+}
+
+// @public
 export function MobileRenderer(props: Omit<ResponsiveRendererProps, "device">): react.JSX.Element;
+
+// @public
+export type OptionCacheInvalidation = string | {
+    key?: string;
+    prefix?: string;
+};
 
 // @public (undocumented)
 export type OptionSourceDefinition = Exclude<FieldDefinition["options"], undefined>;
@@ -294,10 +376,16 @@ export type PrintConfig = NonNullable<WorkbookDefinition["printConfig"]>;
 export function printWorkbookElement(root: ParentNode, config?: PrintConfig): Window | null;
 
 // @public
+export function registerMigration(from: string, to: string, migrate: WorkbookMigration): void;
+
+// @public
 export function ResponsiveRenderer(input: ResponsiveRendererProps): react.JSX.Element;
 
 // @public
 export function sanitizeHtml(html: string): string;
+
+// @public
+export function sha256Hex(bytes: Uint8Array): Promise<string>;
 
 // @public (undocumented)
 export type SheetCellDefinition = NonNullable<SheetRowDefinition["cells"]>[number];
@@ -322,8 +410,14 @@ export interface SheetViewProps {
     view: SheetViewDefinition;
 }
 
+// @public
+export function signDocument(workbook: WorkbookDefinition, signer: DocumentSigner, options?: ContentHashOptions): Promise<DocumentSignature>;
+
 // @public (undocumented)
 export type StyleCatalog = NonNullable<WorkbookDefinition["styles"]>;
+
+// @public
+export function supportedSchemaVersions(): string[];
 
 // @public
 export function TabletRenderer(props: Omit<ResponsiveRendererProps, "device">): react.JSX.Element;
@@ -358,6 +452,9 @@ export function validateWorkbookDocument(value: unknown): WorkbookValidationResu
 // @public (undocumented)
 export type ValidationDefinition = NonNullable<FieldDefinition["validations"]>[number];
 
+// @public
+export function verifyDocument(workbook: WorkbookDefinition, signature: DocumentSignature, verifier: DocumentVerifier, options?: ContentHashOptions): Promise<boolean>;
+
 // @public (undocumented)
 export type ViewDefinition = WorkbookDefinition["views"][number];
 
@@ -365,6 +462,7 @@ export type ViewDefinition = WorkbookDefinition["views"][number];
 export interface WorkbookConditionContext {
     // (undocumented)
     condition: ConditionDefinition;
+    context?: Record<string, unknown>;
     // (undocumented)
     data: WorkbookData;
     // (undocumented)
@@ -401,6 +499,9 @@ export interface WorkbookHookContext {
 
 // @public (undocumented)
 export type WorkbookHookPlugin = (context: WorkbookHookContext) => unknown | Promise<unknown>;
+
+// @public
+export type WorkbookMigration = (workbook: WorkbookDefinition) => WorkbookDefinition;
 
 // @public
 export interface WorkbookOption {
@@ -527,7 +628,7 @@ export interface WorkbookValidationResult {
 
 // Warnings were encountered during analysis:
 //
-// dist/PluginProvider-CvCGmp9F.d.ts:13:5 - (ae-forgotten-export) The symbol "WorkbookHookTrigger" needs to be exported by the entry point index.d.ts
+// dist/PluginProvider-BPFA-7UJ.d.ts:13:5 - (ae-forgotten-export) The symbol "WorkbookHookTrigger" needs to be exported by the entry point index.d.ts
 
 // (No @packageDocumentation comment for this package)
 

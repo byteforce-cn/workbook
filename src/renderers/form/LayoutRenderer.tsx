@@ -45,12 +45,12 @@ function TabsLayout({
   ...props
 }: LayoutRendererProps & { node: Extract<LayoutNodeDefinition, { type: "tabs" }> }) {
   const { data } = useWorkbookData();
-  const { registry, locale, fallbackLocale, i18n } = useWorkbookRuntime();
+  const { registry, locale, fallbackLocale, i18n, conditionContext } = useWorkbookRuntime();
   const [activeKey, setActiveKey] = useState(node.defaultActiveKey ?? node.tabs[0]?.key);
   const tabRefs = useRef<Map<string, HTMLButtonElement>>(new Map());
 
   const visibleTabs = node.tabs.filter(
-    (tab) => tab.visible == null || evaluateCondition(tab.visible, data, registry, props.rowContext),
+    (tab) => tab.visible == null || evaluateCondition(tab.visible, data, registry, props.rowContext, conditionContext),
   );
   const activeTab = visibleTabs.find((tab) => tab.key === activeKey) ?? visibleTabs[0];
   const activeIndex = visibleTabs.findIndex((tab) => tab.key === activeTab?.key);
@@ -289,7 +289,7 @@ function RepeatLayout({
 
 export function LayoutRenderer(props: LayoutRendererProps) {
   const { data } = useWorkbookData();
-  const { registry } = useWorkbookRuntime();
+  const { registry, conditionContext } = useWorkbookRuntime();
   const { device } = useDevice();
   const fieldMap = useMemo(() => new Map(props.view.fields.map((field) => [field.name, field])), [props.view.fields]);
   const layout =
@@ -370,7 +370,7 @@ export function LayoutRenderer(props: LayoutRendererProps) {
           case "steps":
             return <StepsLayout key={`${node.type}-${index}`} {...props} node={node} />;
           case "conditional":
-            return evaluateCondition(node.condition, data, registry, props.rowContext) ? (
+            return evaluateCondition(node.condition, data, registry, props.rowContext, conditionContext) ? (
               <LayoutRenderer
                 key={`${node.type}-${index}`}
                 {...props}

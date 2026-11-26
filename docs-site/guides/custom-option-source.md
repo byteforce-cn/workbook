@@ -139,6 +139,22 @@ clearOptionCache("memory");
 clearOptionCache("all");
 ```
 
+Declare a business `cacheKey` on the source so a domain event can invalidate only
+the affected entries:
+
+```ts
+{
+  type: "url",
+  endpoint: "/api/departments",
+  dataPath: "items",
+  cache: "memory",
+  cacheKey: "departments",
+}
+
+clearOptionCache("memory", { key: "departments" }); // returns entries removed
+clearOptionCache("all", { prefix: "hr:" });
+```
+
 ## Best Practices
 
 1. **Support `signal`** — respect AbortSignal for cancellation during unmount or re-fetch

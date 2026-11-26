@@ -14,12 +14,12 @@ export interface PageViewProps {
 
 export function PageView({ view }: PageViewProps) {
   const { data } = useWorkbookData();
-  const { registry, styleResolver } = useWorkbookRuntime();
+  const { registry, styleResolver, conditionContext } = useWorkbookRuntime();
   const { device } = useDevice();
 
   const layout = useMemo(
-    () => layoutPageView(view, { data, registry, styleResolver }),
-    [data, registry, styleResolver, view],
+    () => layoutPageView(view, { data, registry, styleResolver, conditionContext }),
+    [conditionContext, data, registry, styleResolver, view],
   );
   const pageWidth = view.pageSettings.width;
   const pageHeight = view.pageSettings.height;
@@ -72,7 +72,16 @@ export function PageView({ view }: PageViewProps) {
               />
             ))}
             {page.flowBlocks.map(({ block, x, y, width, height }, index) => {
-              if (!evaluateBooleanLike("visible" in block ? block.visible : undefined, data, registry, true)) {
+              if (
+                !evaluateBooleanLike(
+                  "visible" in block ? block.visible : undefined,
+                  data,
+                  registry,
+                  true,
+                  undefined,
+                  conditionContext,
+                )
+              ) {
                 return null;
               }
               return (
