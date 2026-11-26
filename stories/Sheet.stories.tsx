@@ -65,7 +65,7 @@ export const FrozenPanes: Story = {
   render: () => (
     <StoryShell
       testId="workbook-story-sheet-frozen-panes"
-      title="冻结窗格"
+      title="冻结窗格（frozenRows / frozenCols）"
       caption="冻结首行 + 首列：滚动时冻结区保持不动，corner / top / left / body 四窗格独立 Canvas 绘制。"
       capabilities={["冻结行", "冻结列", "四窗格", "单元格样式"]}
       code={`// schema 声明即可，无需业务代码
@@ -215,7 +215,7 @@ export const Formulas: Story = {
   render: () => (
     <StoryShell
       testId="workbook-story-sheet-formulas"
-      title="公式计算"
+      title="公式计算（SUM / AVG）"
       caption="单元格引用（=B2*C2）与聚合函数（SUM / AVG / MAX）在 Canvas 上实时求值，支持 currency 格式化。"
       capabilities={["A1 引用", "SUM/AVG/MIN/MAX", "格式：currency"]}
       code={`// 单元格引用与算术运算
@@ -271,7 +271,7 @@ export const VirtualScroll: Story = {
   render: () => (
     <StoryShell
       testId="workbook-story-sheet-virtual-scroll"
-      title="虚拟滚动"
+      title="虚拟滚动（300 行）"
       caption="300 行台账由 rowBind 从数据树动态生成，Canvas 仅绘制可见区域，滚动保持流畅。"
       capabilities={["rowBind", "虚拟化渲染", "大数据量"]}
       code={`// 数据树中的数组驱动行生成

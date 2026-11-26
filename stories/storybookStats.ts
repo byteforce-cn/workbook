@@ -9,5 +9,5 @@
  * `testCount` counts top-level `test(...)` calls inside them.
  */
 export const storyCount = 48;
-export const specCount = 13;
-export const testCount = 48;
+export const specCount = 14;
+export const testCount = 50;

@@ -41,7 +41,8 @@ export function WorkbookStoryHarness({
       }}
     >
       <header style={{ marginBottom: "20px" }}>
-        <h2 style={{ margin: 0, fontSize: "24px", color: "#0f172a" }}>{title}</h2>
+        {/* h3: docs 页已用 h2 承载 story 名，这里再写 h2 会造成重复标题（issue #73 P0-4）。 */}
+        <h3 style={{ margin: 0, fontSize: "24px", color: "#0f172a" }}>{title}</h3>
         {caption != null ? <p style={{ margin: "8px 0 0", color: "#475569", lineHeight: 1.6 }}>{caption}</p> : null}
       </header>
 

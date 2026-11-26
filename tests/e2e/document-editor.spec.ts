@@ -86,3 +86,42 @@ test.describe("Document editor", () => {
     await expect(outStory.getByRole("region", { name: "浮动块" })).toBeVisible();
   });
 });
+
+test.describe("Document editor · 快照面板真的工作", () => {
+  test("快照计数递增、JSON 可读、重新加载回到快照", async ({ page }) => {
+    await openStory(page, workbookStoryIds.documentEditorBasic);
+    const story = page.locator('[data-testid="workbook-story-document-editor-basic"]');
+    await expect(story).toBeVisible({ timeout: 15_000 });
+
+    const base = "workbook-story-document-editor-basic";
+    const count = story.getByTestId(`${base}-snapshot-count`);
+    await expect(count).toContainText("已快照 0 次");
+    await expect(story.getByTestId(`${base}-copy`)).toBeVisible();
+
+    const editable = story.locator(".bf-editor-content");
+    await editable.click();
+    await page.keyboard.press("End");
+    await page.keyboard.type(" 快照点一");
+
+    await story.getByTestId(`${base}-snapshot`).click();
+    await expect(count).toContainText("已快照 1 次");
+
+    // JSON 面板必须是多行可读的，不是一行塞满
+    const saved = story.getByTestId(`${base}-saved`);
+    await expect(saved).toContainText("快照点一");
+    const lines = (await saved.innerText()).split("\n").filter((line) => line.trim().length > 0);
+    expect(lines.length).toBeGreaterThan(3);
+
+    // 再改一次，然后重新加载应回到快照，而不是保留新改动
+    await editable.click();
+    await page.keyboard.press("End");
+    await page.keyboard.type(" 快照后改动");
+    await expect(editable).toContainText("快照后改动");
+
+    await story.getByRole("button", { name: "重新加载" }).click();
+    const reloaded = story.locator(".bf-editor-content");
+    await expect(reloaded).toContainText("快照点一");
+    await expect(reloaded).not.toContainText("快照后改动");
+    await expect(story.getByTestId(`${base}-restored`)).toBeVisible();
+  });
+});

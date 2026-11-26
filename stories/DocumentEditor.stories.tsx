@@ -1,8 +1,8 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { useState } from "react";
-import { DocumentEditor } from "../src/editor";
+import { useRef, useState } from "react";
+import { DocumentEditor, type DocumentEditorHandle } from "../src/editor";
 import type { WorkbookDefinition } from "../src/schema/generated-types";
-import { CodeBlock, StoryShell } from "./StoryShell";
+import { StoryShell } from "./StoryShell";
 import { docsLink, sourceLink, storyNote } from "./storyDocs";
 
 const componentDocs = `### 适用场景
@@ -226,6 +226,20 @@ const outOfFlowWorkbook = makeWorkbook([
   { type: "footer", content: [{ type: "paragraph", runs: [{ type: "text", text: "合同编号：BF-2026-001" }] }] },
 ]);
 
+interface Snapshot {
+  id: number;
+  savedAt: string;
+  workbook: WorkbookDefinition;
+}
+
+/** Swaps the edited page view into the story's base workbook. */
+function withPageView(workbook: WorkbookDefinition, next: WorkbookDefinition): WorkbookDefinition {
+  return {
+    ...workbook,
+    views: next.views,
+  } as WorkbookDefinition;
+}
+
 function EditorDemo({
   workbook,
   testId,
@@ -233,7 +247,6 @@ function EditorDemo({
   caption,
   capabilities,
   code,
-  withSave,
 }: {
   workbook: WorkbookDefinition;
   testId: string;
@@ -241,10 +254,48 @@ function EditorDemo({
   caption: string;
   capabilities: string[];
   code: string;
-  withSave?: boolean;
 }) {
+  const editorRef = useRef<DocumentEditorHandle>(null);
+  const [snapshots, setSnapshots] = useState<Snapshot[]>([]);
   const [saved, setSaved] = useState<WorkbookDefinition | null>(null);
   const [generation, setGeneration] = useState(0);
+  const [restoredAt, setRestoredAt] = useState<string | null>(null);
+  const [copyLabel, setCopyLabel] = useState("复制 JSON");
+
+  const capture = () => {
+    const next = editorRef.current?.save();
+    if (next == null) {
+      return;
+    }
+    const savedAt = new Date().toLocaleTimeString("zh-CN", { hour12: false });
+    setSnapshots((list) => [...list, { id: list.length + 1, savedAt, workbook: next }]);
+    setSaved(next);
+    setRestoredAt(null);
+  };
+
+  const reload = () => {
+    const latest = snapshots.at(-1);
+    if (latest != null) {
+      setSaved(withPageView(workbook, latest.workbook));
+      setRestoredAt(latest.savedAt);
+    }
+    setGeneration((value) => value + 1);
+  };
+
+  const copyJson = async () => {
+    const text = JSON.stringify(panelWorkbook?.views[0] ?? null, null, 2);
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopyLabel("已复制");
+    } catch {
+      console.warn("[storybook] clipboard unavailable, JSON stays in the panel");
+      setCopyLabel("复制失败");
+    }
+  };
+
+  const latest = snapshots.at(-1);
+  // 工具栏「保存」和「快照」都会更新面板：前者只存最近一次保存，后者留档可回滚。
+  const panelWorkbook = latest?.workbook ?? saved;
 
   return (
     <StoryShell
@@ -257,13 +308,24 @@ function EditorDemo({
         <div style={{ display: "grid", gap: 10 }}>
           <h3 style={{ margin: 0, fontSize: 15 }}>保存与重载</h3>
           <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-            <button type="button" onClick={() => setSaved(saved)} data-testid={`${testId}-snapshot`}>
+            <button type="button" onClick={capture} data-testid={`${testId}-snapshot`}>
               快照
             </button>
-            <button type="button" onClick={() => setGeneration((value) => value + 1)}>
+            <button type="button" onClick={reload} data-testid={`${testId}-restore`}>
               重新加载
             </button>
+            <button type="button" onClick={copyJson} data-testid={`${testId}-copy`}>
+              {copyLabel}
+            </button>
           </div>
+          <p data-testid={`${testId}-snapshot-count`} style={{ margin: 0, fontSize: 12, color: "#526173" }}>
+            已快照 {snapshots.length} 次{latest == null ? "" : ` · 最近 ${latest.savedAt}`}
+          </p>
+          {restoredAt == null ? null : (
+            <p data-testid={`${testId}-restored`} style={{ margin: 0, fontSize: 12, color: "#1d4ed8" }}>
+              已从 {restoredAt} 的快照恢复
+            </p>
+          )}
           <pre
             data-testid={`${testId}-saved`}
             style={{
@@ -273,20 +335,21 @@ function EditorDemo({
               color: "#dbeafe",
               padding: 10,
               fontSize: 11,
+              margin: 0,
             }}
           >
-            {saved == null ? "尚未保存" : JSON.stringify(saved.views[0])}
+            {panelWorkbook == null ? "尚未保存" : JSON.stringify(panelWorkbook.views[0], null, 2)}
           </pre>
         </div>
       }
     >
       <DocumentEditor
         key={generation}
+        ref={editorRef}
         workbook={saved ?? workbook}
         data={workbook.data as Record<string, unknown>}
         onSave={(next) => setSaved(next)}
       />
-      {withSave ? <CodeBlock code={code} /> : null}
     </StoryShell>
   );
 }
@@ -297,7 +360,6 @@ export const Basic: Story = {
   ),
   render: () => (
     <EditorDemo
-      withSave
       testId="workbook-story-document-editor-basic"
       title="文档编辑器 · 正文与命名样式"
       caption="富文本编辑保留命名样式 id；工具栏修改字号只写入直接格式覆盖。"
