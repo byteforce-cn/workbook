@@ -107,7 +107,7 @@ function DocumentEditorInner({
   initialZoom = 1,
   handleRef,
 }: InnerProps) {
-  const { registry, locale, fallbackLocale, conditionContext } = useWorkbookRuntime();
+  const { registry, locale, fallbackLocale, conditionContext, styleResolver } = useWorkbookRuntime();
   const { data } = useWorkbookData();
   const styles: WorkbookStyleCatalog | undefined = workbook.styles;
   const effectivePreviewData = resolveEditorPreviewData(previewData, data);
@@ -166,6 +166,7 @@ function DocumentEditorInner({
     registry,
     styles,
     conditionContext,
+    styleResolver,
   });
   contextRef.current = {
     data: effectivePreviewData,
@@ -173,6 +174,7 @@ function DocumentEditorInner({
     registry,
     styles,
     conditionContext,
+    styleResolver,
   };
 
   const extensions = useMemo(() => createEditorExtensions(() => contextRef.current), []);

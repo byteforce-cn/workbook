@@ -29,6 +29,48 @@ test.describe("Document editor", () => {
     await expect(preview).toContainText("追加条款");
   });
 
+  test("表格边框与内边距在编辑态和预览态一致", async ({ page }) => {
+    await openStory(page, workbookStoryIds.documentEditorTable);
+    const story = page.locator('[data-testid="workbook-story-document-editor-table"]');
+    await expect(story.locator(".bf-editor-content table")).toBeVisible({ timeout: 15_000 });
+
+    await story.getByRole("button", { name: "打印预览" }).click();
+    await expect(story.locator("[data-bf-editor-preview] td").first()).toBeVisible({ timeout: 10_000 });
+
+    const styles = await page.evaluate(() => {
+      const editorCell = document.querySelector(
+        '[data-testid="workbook-story-document-editor-table"] .bf-editor-content td',
+      );
+      const previewCell = document.querySelector(
+        '[data-testid="workbook-story-document-editor-table"] [data-bf-editor-preview] td',
+      );
+      if (editorCell == null || previewCell == null) {
+        throw new Error("table cell missing");
+      }
+
+      const properties = [
+        "borderTopWidth",
+        "borderRightWidth",
+        "borderBottomWidth",
+        "borderLeftWidth",
+        "borderTopStyle",
+        "borderTopColor",
+        "paddingTop",
+        "paddingRight",
+        "paddingBottom",
+        "paddingLeft",
+      ] as const;
+      const read = (element: Element) => {
+        const style = getComputedStyle(element);
+        return Object.fromEntries(properties.map((property) => [property, style[property]]));
+      };
+
+      return { editor: read(editorCell), preview: read(previewCell) };
+    });
+
+    expect(styles.editor).toEqual(styles.preview);
+  });
+
   test("表格与出流层面板可用", async ({ page }) => {
     await openStory(page, workbookStoryIds.documentEditorTable);
     const tableStory = page.locator('[data-testid="workbook-story-document-editor-table"]');

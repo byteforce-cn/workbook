@@ -88,6 +88,8 @@ focus on open and the caret returns to the editor when switching back.
 |---|---|---|---|
 | Line breaking | Browser text layout | Estimated glyph widths in `pageLayout.ts` | Not aligned; preview is authoritative |
 | Table row height | Content-driven | `DEFAULT_TABLE_ROW_HEIGHT` / authored height | Documented difference |
+| Table borders & padding | Derived from `tableStyles` / `border` via `tableBorders.ts` | Same resolver | Kept in sync (e2e computed-style parity) |
+| Table / cell backgrounds, fonts | Theme defaults; `cellStyles` not expanded | `tableStyles` / `cellStyles` resolved | Planned |
 | List indentation | CSS defaults | `listStyles` resolution | Theme both sides |
 | Page breaks | Not drawn in the flow | Real pagination | Preview only |
 | Fonts | Browser fallback | `pageSettings` defaults + PDF font embedding | Host provides fonts |

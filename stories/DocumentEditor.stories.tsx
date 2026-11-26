@@ -248,7 +248,7 @@ export const Table: Story = {
     <EditorDemo
       testId="workbook-story-document-editor-table"
       title="文档编辑器 · 表格"
-      caption="百分比列宽、合并单元格、行高与单元格样式往返保真。"
+      caption="百分比列宽、合并单元格、行高与单元格样式往返保真；边框与内边距和 TableSvg 共用解析，e2e 断言计算样式一致。"
       capabilities={["百分比列宽", "合并单元格", "行高"]}
       code={'columns: ["40%", "20%", "20%", "20%"]'}
       workbook={tableWorkbook}
