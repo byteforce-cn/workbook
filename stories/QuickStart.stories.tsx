@@ -4,11 +4,46 @@ import { useState } from "react";
 import { SimpleForm } from "../src/quick/SimpleForm";
 import type { SimpleFieldDef, SimpleFormLayout } from "../src/quick/types";
 import { CodeBlock, StoryShell } from "./StoryShell";
+import { docsLink, sourceLink, storyNote } from "./storyDocs";
+
+const componentDocs = `### 适用场景
+字段少、不想维护 schema 文件、也不需要分页文档/Sheet 台账时，用它在十几行内交出可提交表单。
+要把同一份定义同时渲染成表单、分页文档、Sheet 与 PDF 时，改用 \`Workbook\` + \`BFDocumentSchema\`。
+
+### 最小可运行示例
+\`\`\`tsx
+import { SimpleForm } from "@byteforce/workbook/quick";
+
+<SimpleForm
+  fields={[
+    { name: "customerName", type: "text", label: "客户名称", required: true },
+    { name: "amount", type: "number", label: "订单金额" },
+    { name: "deliveryDate", type: "date", label: "交付日期" },
+  ]}
+  layout="grid"
+  onSubmit={(data) => console.log(data)}
+/>
+\`\`\`
+
+### API
+- \`fields\`：\`{ name, type, label, required?, options?, placeholder? }\` 数组；\`type\` 支持 text / number / email / date / textarea / select / multiselect 等。
+- \`layout\`：\`vertical\`（默认）/ \`horizontal\` / \`grid\`。
+- \`initialData\` 为非受控初值；\`onChange\` 每次改动回调；\`onSubmit\` 在原生校验通过后调用。
+- \`readOnly\` 一次性禁用全部字段并隐藏提交/重置；需要受控数据或异步校验时改用 \`Workbook\` + \`DataProvider\`。
+
+### 边界与错误
+- 字段 \`name\` 需唯一，重复声明时后定义者生效。
+- \`onSubmit\` 只在 HTML 层面的校验通过后触发；业务级异步校验请用 \`Workbook\` 的校验插件。
+- \`initialData\` 只在首次挂载时读取；之后再改变它不会回写表单。
+
+### 源码
+${sourceLink("src/quick/SimpleForm.tsx")} · ${docsLink("getting-started", "getting-started")}`;
 
 const meta = {
   title: "Quick Start/SimpleForm",
   component: SimpleForm,
   tags: ["autodocs"],
+  parameters: { docs: { description: { component: componentDocs } } },
 } satisfies Meta<typeof SimpleForm>;
 
 export default meta;
@@ -104,6 +139,9 @@ function SubmitPanel({ title, onSubmit }: { title: string; onSubmit: (data: Reco
 }
 
 export const SimpleFormBasics: Story = {
+  parameters: storyNote(
+    "试着清空「客户名称」直接提交：原生必填阻断，右侧面板会记下每次 onSubmit 的数据。字段类型从 text 到 textarea 一次看完。",
+  ),
   render: () => <SubmitPanel title="SimpleForm 基础表单" onSubmit={() => undefined} />,
 };
 
@@ -196,6 +234,9 @@ function LiveForm({ fields, initialData = {} }: { fields: SimpleFieldDef[]; init
 }
 
 export const SimpleFormSelect: Story = {
+  parameters: storyNote(
+    "展开「所属区域」看单选下拉与多选标签的区别；已选值会回显在下方提交结果里，用于确认 SimpleForm 的 options 与 initialData 能对上。",
+  ),
   render: () => <SelectDemo />,
 };
 
@@ -218,6 +259,9 @@ const layoutCode = `import { SimpleForm } from "@byteforce/workbook/quick";
 <SimpleForm fields={fields} layout="grid" />`;
 
 export const SimpleFormLayouts: Story = {
+  parameters: storyNote(
+    "同一份字段定义并列渲染三份表单，只改 layout：vertical 一行一字段、horizontal 标签左置、grid 两列网格。缩放窗口可看 grid 如何收敛。",
+  ),
   render: () => (
     <StoryShell
       testId="workbook-story-quick-layouts"

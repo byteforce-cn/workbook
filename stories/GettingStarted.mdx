@@ -1,5 +1,7 @@
 import { Meta } from "@storybook/addon-docs/blocks";
 
+import { specCount, storyCount, testCount } from "./storybookStats";
+
 <Meta title="Getting Started" />
 
 # BF Workbook — Schema 驱动的业务文档运行时
@@ -7,8 +9,9 @@ import { Meta } from "@storybook/addon-docs/blocks";
 > **一句话**：用一份 `BFDocumentSchema v4.1.1` 描述业务数据，同一份 schema 同时驱动
 > **表单录入 → 分页文档 → Sheet 台账 → PDF 二进制输出**。
 
-本 Storybook 是给 **开发者** 与 **使用者** 建立生产落地信心的入口。每个 story 均附带
-**可运行的示例代码**、**实时数据树** 与 **无障碍 (a11y) 检查**。
+本 Storybook 是给 **开发者** 与 **使用者** 建立生产落地信心的入口。使用 `StoryShell` 包装的
+story 会附带**可复制的示例代码**与**实时数据树**；没有包装的 story（如 Quick Start 的 API 示例）
+只展示运行时行为。无障碍检查目前依赖 Storybook 的 Accessibility 面板手动运行，尚未纳入 CI 门禁。
 
 ---
 
@@ -63,11 +66,14 @@ export function OrderForm() {
 
 ## 生产就绪度
 
-- ✅ **核心能力全覆盖**：18 个能力域中 14+ 已在 Storybook 中以交互式 story 呈现（34 个 story）
-- ✅ **一致性容器**：所有 story 统一使用 `StoryShell`（标题、能力标签、示例代码、实时数据树）
-- ✅ **无障碍自动化**：每个 story 均可通过 **Accessibility 面板** 运行 axe 规则检查
-- ✅ **e2e 守护**：35 条 Playwright 用例（9 个 spec）覆盖全部能力级 story，防止回归
+- ✅ **能力覆盖**：{storyCount} 个 story 覆盖 16 个能力域（form / page / sheet / editor / runtime / plugins）
+- ✅ **一致性容器**：`StoryShell` 统一提供标题、能力标签与示例代码面板
+- ⚠️ **无障碍**：可手动通过 Accessibility 面板运行 axe 规则；自动化门禁尚未接入
+- ✅ **e2e 守护**：{testCount} 条 Playwright 用例（{specCount} 个 spec）覆盖能力级 story，防止回归
 - ✅ **静态构建**：`pnpm build-storybook` 产出可部署的 `storybook-static/`
+
+> 上述数字来自 `stories/storybookStats.ts`，并由 `stories/storybookStats.test.ts` 对照
+> `stories/*.stories.tsx` 与 `tests/e2e/*.spec.ts` 校验——改故事或改测试会让单测变红。
 
 ---
 
@@ -75,7 +81,7 @@ export function OrderForm() {
 
 1. **评估能力**：先看「生产样张」—— 同一 schema 驱动 form → page → sheet → PDF
 2. **验证场景**：在对应能力域 story 中修改字段，观察数据树与错误状态是否符合业务预期
-3. **跑通 a11y**：打开 Accessibility 面板确认关键流程无障碍达标
-4. **复制落地**：每个 story 的「查看示例代码」均可直接复制到业务代码
+3. **复制落地**：`StoryShell` 包装的 story 可在「查看示例代码」中展开完整片段并复制
+4. **查 API**：每个能力域的 docs 页有「适用场景 / 最小示例 / API / 边界 / 源码」五段说明
 
 > 所有能力均可在本 Storybook 中交互验证；问题与建议欢迎通过 GitHub Issues 反馈。

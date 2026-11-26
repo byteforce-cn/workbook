@@ -3,12 +3,74 @@ import { useState } from "react";
 import { DocumentEditor } from "../src/editor";
 import type { WorkbookDefinition } from "../src/schema/generated-types";
 import { CodeBlock, StoryShell } from "./StoryShell";
+import { docsLink, sourceLink, storyNote } from "./storyDocs";
+
+const componentDocs = `### 适用场景
+在浏览器里直接编辑 \`page\` 视图（正文、表格、页眉页脚、水印、浮动块）时使用。
+只需要只读输出用 \`DocumentRenderer\`，只需要表单录入用 \`Workbook\`，三者共享同一份 schema。
+
+### 最小可运行示例
+\`\`\`tsx
+import { DocumentEditor } from "@byteforce/workbook/editor";
+
+<DocumentEditor
+  workbook={workbook}                 // 至少含一个 page 视图
+  data={data}                         // 供 {{path}} 绑定与条件块使用
+  onDataChange={setData}
+  onSave={(next) => persist(next)}    // 工具栏「保存」
+  initialZoom={1}
+/>
+\`\`\`
+
+### API
+props 见下方表格；命令式操作通过 ref（\`DocumentEditorHandle\`）：
+
+| 方法 | 语义 | 调用时机 |
+|---|---|---|
+| \`save()\` | 序列化、校验、合并面板后返回新 workbook；失败返回 \`undefined\` | 点工具栏「保存」或自行提交前 |
+| \`getView()\` | 最近一次合法的 page 视图，含未保存编辑 | 需要草稿/快照时 |
+| \`isDirty()\` | 是否有未保存修改 | 离开页面前确认 |
+
+### 边界与错误
+- 序列化或 schema 校验失败时 \`save()\` 返回 \`undefined\`，界面显示错误文案，且不调用 \`onSave\`。
+- \`workbook\` 里没有 page 视图时渲染空态，不抛异常。
+- 受控（传 \`data\`）与非受控（只传 \`initialData\`）不能混用：有 \`data\` 时 \`initialData\` 被忽略，且必须有 \`onDataChange\`，否则编辑会被丢弃并打印警告。
+- 切换 \`workbook\` / \`viewId\` 会重建编辑器状态；卸载时销毁 tiptap 实例。
+
+### 源码
+${sourceLink("src/editor/DocumentEditor.tsx")} · ${docsLink("guides/document-editor", "guides/document-editor")}`;
 
 const meta = {
   title: "Workbook/DocumentEditor",
   component: DocumentEditor,
   tags: ["autodocs"],
-  parameters: { controls: { disable: true } },
+  parameters: {
+    controls: { disable: true },
+    docs: { description: { component: componentDocs } },
+  },
+  argTypes: {
+    workbook: {
+      control: false,
+      description: "要编辑的 `BFDocumentSchema v4.1.1`，至少含一个 `page` 视图；其余视图原样保留。",
+    },
+    viewId: { control: false, description: "指定编辑哪个 page 视图；缺省取第一个 page 视图。" },
+    data: { control: false, description: "受控数据树。传入即由父组件持有数据，编辑通过 `onDataChange` 回到父组件。" },
+    initialData: { control: false, description: "非受控初始数据，仅首次挂载时读取；与 `data` 同时传入时被忽略。" },
+    previewData: { control: false, description: "只读预览数据，只影响条件块显隐，不写回、不会让 `isDirty()` 变真。" },
+    onDataChange: { control: false, description: "数据变更回调。受控模式下必须提供，否则编辑会被丢弃并打印警告。" },
+    onSave: {
+      control: false,
+      description: "`save()` 成功（序列化 + 校验通过）后回调，参数是合并了面板与正文的新 workbook。",
+    },
+    onChange: { control: false, description: "每次 page 视图内容变化时回调，包含尚未保存的编辑。" },
+    registry: { control: false, description: "插件注册表，用于自定义节点/字段的渲染与解析。" },
+    locale: { control: false, description: "编辑器 UI 语言，如 `zh-CN`。" },
+    fallbackLocale: { control: false, description: "`locale` 缺少对应文案时的回落语言。" },
+    conditionContext: { control: false, description: "条件块求值上下文；未提供时使用数据树。" },
+    readOnly: { control: false, description: "只读模式：正文不可编辑、保存按钮禁用，仍可切换打印预览与缩放。" },
+    className: { control: false, description: "附加到编辑器根节点的 class。" },
+    initialZoom: { control: false, description: "编辑/预览画布的初始缩放比例，`1` 表示 100%。" },
+  },
 } satisfies Meta<typeof DocumentEditor>;
 
 export default meta;
@@ -230,6 +292,9 @@ function EditorDemo({
 }
 
 export const Basic: Story = {
+  parameters: storyNote(
+    "先看正文的命名样式，再用工具栏改字号——改的是直接格式覆盖，结构仍是命名样式 id。点右上「保存」会走 save()，右侧「保存与重载」面板记录快照。",
+  ),
   render: () => (
     <EditorDemo
       withSave
@@ -244,6 +309,9 @@ export const Basic: Story = {
 };
 
 export const Table: Story = {
+  parameters: storyNote(
+    "拖列边界调整百分比列宽、合并单元格，再切到打印预览：边框与内边距应与编辑态一致（两者共用同一套解析）。",
+  ),
   render: () => (
     <EditorDemo
       testId="workbook-story-document-editor-table"
@@ -257,6 +325,9 @@ export const Table: Story = {
 };
 
 export const Bindings: Story = {
+  parameters: storyNote(
+    "正文里的 {{customer.name}} 是绑定 chip，改预览数据会立即改变渲染值，但保存下来的仍是模板而不是插值结果。",
+  ),
   render: () => (
     <EditorDemo
       testId="workbook-story-document-editor-bindings"
@@ -270,6 +341,7 @@ export const Bindings: Story = {
 };
 
 export const OutOfFlow: Story = {
+  parameters: storyNote("依次切到页眉、页脚、水印、浮动块面板：它们不进入正文流，也不会改变正文的分页结果。"),
   render: () => (
     <EditorDemo
       testId="workbook-story-document-editor-out-of-flow"

@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { CodeBlock, StoryShell } from "./StoryShell";
+import { docsLink, sourceLink, storyNote } from "./storyDocs";
 import { WorkbookStoryHarness } from "./WorkbookStoryHarness";
 import {
   createAsyncValidationRegistry,
@@ -8,10 +9,40 @@ import {
   createSyncValidatorsWorkbook,
 } from "./workbookCapabilityFixtures";
 
+const componentDocs = `### 适用场景
+需要在 schema 里声明字段校验（必填、范围、正则、异步唯一性、条件必填）而不是在业务组件里散写规则时使用。
+
+### 最小可运行示例
+\`\`\`tsx
+{ type: "field", name: "amount", overrides: {
+  type: "number",
+  validations: [
+    { type: "required", message: "金额必填" },
+    { type: "min", params: { value: 0 }, message: "不能为负" },
+    { type: "min", params: { value: 500 }, message: "超 500 需说明原因",
+      condition: { field: "needsReason", equals: true } },
+  ],
+}}
+\`\`\`
+
+### API
+- 内置同步规则：\`required\` / \`min\` / \`max\` / \`minLength\` / \`maxLength\` / \`pattern\`（参数放在 \`params\`，失败显示 \`message\`）。
+- 其他 \`type\` 由 \`registry.registerValidation(id, plugin)\` 注册，可同步也可 \`async: true\`。
+- 每条规则都可加 \`condition\`，不满足时该规则不参与校验。
+
+### 边界与错误
+- 未注册的 \`type\` 会被跳过（不报错也不拦截），拼错规则名等于关闭校验。
+- \`pattern\` 是字符串正则，非法正则会直接返回 \`message\`（视为不通过）。
+- 异步校验不会阻断输入，只在结果回来时更新错误状态；快速连续输入以最后一次为准。
+
+### 源码
+${sourceLink("src/core/validation/validator.ts")} · ${docsLink("guides/custom-validation", "guides/custom-validation")}`;
+
 const meta = {
   title: "Workbook/Validation",
   component: WorkbookStoryHarness,
   tags: ["autodocs"],
+  parameters: { docs: { description: { component: componentDocs } } },
 } satisfies Meta<typeof WorkbookStoryHarness>;
 
 export default meta;
@@ -19,6 +50,9 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const SyncValidators: Story = {
+  parameters: storyNote(
+    "逐个把字段清空或改成越界值：错误文案出现在字段下方，右侧数据树仍保留原值。改回合法值后错误立即消失，说明同步规则在 onChange 时就跑。",
+  ),
   args: {
     testId: "workbook-story-validation-sync",
     workbook: createSyncValidatorsWorkbook(),
@@ -48,6 +82,9 @@ export const SyncValidators: Story = {
 };
 
 export const AsyncValidation: Story = {
+  parameters: storyNote(
+    "输入一个已存在的用户名（如 admin）会触发 600ms 的异步唯一性校验：先看到「校验中」再看到失败文案；换成新名字则通过。",
+  ),
   args: {
     testId: "workbook-story-validation-async",
     workbook: createAsyncValidationWorkbook(),
@@ -97,6 +134,7 @@ registry.validation.set("uniqueUsername", async ({ value }) => {
 };
 
 export const ConditionalValidation: Story = {
+  parameters: storyNote("金额超 500 时，「原因」才变必填：先填 100 提交能过，改成 5000 后同一字段会阻断提交。"),
   args: {
     testId: "workbook-story-validation-conditional",
     workbook: createConditionalValidationWorkbook(),

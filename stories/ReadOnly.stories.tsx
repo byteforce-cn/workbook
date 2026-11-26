@@ -1,13 +1,42 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { SimpleForm } from "../src/quick/SimpleForm";
 import { StoryShell } from "./StoryShell";
+import { sourceLink, storyNote } from "./storyDocs";
 import { WorkbookStoryHarness } from "./WorkbookStoryHarness";
+
+const componentDocs = `### 适用场景
+单据进入审核/归档阶段后，同一份 schema 要整体切换成只读；或者同屏对比「可编辑草稿 vs 审核中只读」。
+
+### 最小可运行示例
+\`\`\`tsx
+// 由 schema 的 formView.config 驱动
+formView: { config: { readOnly: true, readOnlyDisplay: "disabled" } }
+
+// 或在组件层整体只读（Quick API）
+<SimpleForm fields={fields} readOnly />
+\`\`\`
+
+### API
+- \`config.readOnly\`：字段全部禁用，提交/重置按钮隐藏，明细不可增删。
+- \`config.readOnlyDisplay\`：\`"disabled"\`（默认，保留输入框但禁用）或 \`"text"\`（渲染成 label + 文本，无表单控件）。
+- 字段级 \`readOnly\` 可单独覆盖视图级设置。
+
+### 边界与错误
+- 只读不影响校验：已存在的不合法数据仍会显示错误文案，但不会阻止渲染。
+- 只读状态下的数据仍可被写回（例如外部 \`data\` 更新），只是用户不能编辑。
+- \`readOnlyDisplay: "text"\` 会丢失输入框的交互语义，屏幕阅读器读到的是纯文本。
+
+### 源码
+${sourceLink("src/renderers/form/FormRenderer.tsx")}
+`;
+
 import { createEditableDraftWorkbook, createReadOnlyReviewWorkbook } from "./workbookReadOnlyFixtures";
 
 const meta = {
   title: "Workbook/ReadOnly",
   component: WorkbookStoryHarness,
   tags: ["autodocs"],
+  parameters: { docs: { description: { component: componentDocs } } },
 } satisfies Meta<typeof WorkbookStoryHarness>;
 
 export default meta;
@@ -15,6 +44,9 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const ApprovingReadOnly: Story = {
+  parameters: storyNote(
+    "整张单据处于审核中：字段全部禁用、提交/重置不渲染、明细的增删按钮禁用。试试 Tab 键，焦点仍会经过这些字段（可被屏幕阅读器读到）。",
+  ),
   args: {
     testId: "workbook-story-readonly-approving",
     workbook: createReadOnlyReviewWorkbook(),
@@ -63,6 +95,9 @@ const workbook = {
 };
 
 export const DraftVsApproving: StoryObj = {
+  parameters: storyNote(
+    "同一份定义的两种只读状态并排：左边可编辑并能提交，右边禁用且没有操作按钮。窄屏会自动上下堆叠，两边对照看字段状态差异。",
+  ),
   render: () => (
     <StoryShell
       testId="workbook-story-readonly-compare-shell"
@@ -91,6 +126,9 @@ createChangeWorkbook({ readOnly: true });  // 审核中：只读`}
 };
 
 export const QuickReadOnly: StoryObj = {
+  parameters: storyNote(
+    "Quick API 的一行开关：同一个 SimpleForm 传 readOnly 前后对比，字段禁用规则与 schema 驱动的只读保持一致。",
+  ),
   render: () => (
     <StoryShell
       testId="workbook-story-readonly-quick-shell"

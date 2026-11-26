@@ -5,12 +5,43 @@ import { ResponsiveRenderer } from "../src/device/ResponsiveRenderer";
 import type { DeviceMode, DeviceType } from "../src/device/types";
 import type { WorkbookDefinition } from "../src/schema/generated-types";
 import { StoryShell } from "./StoryShell";
+import { sourceLink, storyNote } from "./storyDocs";
+
+const componentDocs = `### 适用场景
+同一份 schema 需要按设备（桌面 / 平板 / 手机）切换布局与触控目标时使用；也可以在桌面浏览器里强制预览移动端效果。
+
+### 最小可运行示例
+\`\`\`tsx
+import { ResponsiveRenderer } from "@byteforce/workbook/device";
+
+// 强制手机
+<ResponsiveRenderer workbook={schema} data={data} device="mobile" />
+
+// 按视口自动判断（默认），自定义断点
+<ResponsiveRenderer workbook={schema} device="auto" breakpoints={{ mobile: 480 }} />
+\`\`\`
+
+### API
+- \`device\`：\`"auto"\`（默认）/ \`"desktop"\` / \`"tablet"\` / \`"mobile"\`。
+- \`breakpoints\`：仅 \`auto\` 模式生效的视口阈值。
+- 其余 props 与 \`DocumentRenderer\` 完全一致。
+
+### 边界与错误
+- \`auto\` 监听视口宽度，不是容器宽度；把渲染器放进窄栏时请显式传 \`device\`。
+- 切设备会重建视图（表格列数、触控目标、吸底操作栏），未保存的输入由数据树决定是否保留。
+- 分页文档在移动端按比例缩放，不会重新分页。
+
+### 源码
+${sourceLink("src/device/ResponsiveRenderer.tsx")}
+`;
+
 import { createFrozenPanesWorkbook, createHeadersFootersWorkbook } from "./workbookPageSheetFixtures";
 
 const meta = {
   title: "Workbook/Device",
   component: ResponsiveRenderer,
   tags: ["autodocs"],
+  parameters: { docs: { description: { component: componentDocs } } },
 } satisfies Meta<typeof ResponsiveRenderer>;
 
 export default meta;
@@ -322,6 +353,9 @@ function DevicePreview({
 /* ------------------------------------------------------------------ */
 
 export const ResponsiveForm: Story = {
+  parameters: storyNote(
+    "依次点 desktop / tablet / mobile：表单列数从 4 收敛到 2 再到 1，mobile 出现吸底操作栏，输入框触控高度变成 44px。",
+  ),
   render: () => (
     <DevicePreview
       testId="workbook-story-device-form"
@@ -348,6 +382,9 @@ import { ResponsiveRenderer } from "@byteforce/workbook";
 /* ------------------------------------------------------------------ */
 
 export const ResponsivePage: Story = {
+  parameters: storyNote(
+    "同一份分页文档在三档设备下按比例缩放而不是重新分页；到 mobile 时页眉页脚仍对齐，内容不横向溢出。",
+  ),
   render: () => (
     <DevicePreview
       testId="workbook-story-device-page"
@@ -369,6 +406,7 @@ export const ResponsivePage: Story = {
 /* ------------------------------------------------------------------ */
 
 export const ResponsiveSheet: Story = {
+  parameters: storyNote("Sheet 在移动端收起次要列并放大行高：切到 mobile 后横向滚动仍可用，但一屏能读到的列变少。"),
   render: () => (
     <DevicePreview
       testId="workbook-story-device-sheet"
@@ -388,6 +426,9 @@ export const ResponsiveSheet: Story = {
 /* ------------------------------------------------------------------ */
 
 export const AutoDetect: Story = {
+  parameters: storyNote(
+    "不传 device：拖动浏览器窗口宽度跨过断点，看布局自动切换；这是 auto 模式的真实行为，也是唯一受视口影响的 story。",
+  ),
   render: () => (
     <DevicePreview
       testId="workbook-story-device-auto"
