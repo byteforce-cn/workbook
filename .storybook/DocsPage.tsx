@@ -16,7 +16,14 @@ export function DocsPage(): ReactNode {
       <Subtitle />
       <Description />
       <Primary />
-      <ArgTypes compact />
+      {/*
+        Props table: keep its natural width on narrow docs columns and scroll
+        inside a focusable region (an unfocusable scroll area fails axe's
+        `scrollable-region-focusable`).
+      */}
+      <div className="bf-docs-props" role="region" aria-label="Props" tabIndex={0}>
+        <ArgTypes compact />
+      </div>
       {/* 默认模板会再渲染一次 primary story：`<Primary/>` 之后它仍在列表里（issue #73 P0-4）。 */}
       <Stories includePrimary={false} />
     </>
