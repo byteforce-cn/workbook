@@ -1,10 +1,16 @@
 import type { Preview } from "@storybook/react";
 
 import "../src/styles/workbook-theme.css";
+import { DocsPage } from "./DocsPage";
 
 const preview: Preview = {
   parameters: {
     layout: "fullscreen",
+    docs: {
+      // Explicit template so the props table stays a Name/Description table
+      // instead of showing an empty Control column on every page (issue #73).
+      page: DocsPage,
+    },
     controls: {
       matchers: {
         color: /(background|color)$/i,

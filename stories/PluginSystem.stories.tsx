@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { StoryShell } from "./StoryShell";
+import { docsLink, sourceLink, storyNote } from "./storyDocs";
 import { WorkbookStoryHarness } from "./WorkbookStoryHarness";
 import {
   createCustomConditionWorkbook,
@@ -10,10 +11,42 @@ import {
   createPluginSystemRegistry,
 } from "./workbookPluginSystemFixtures";
 
+const componentDocs = `### 适用场景
+内置字段/布局/校验/条件/页面块不够用时，通过 registry 扩展，而不是 fork 渲染器。五类插件可分别注册，也可并存在一个 registry 里。
+
+### 最小可运行示例
+\`\`\`tsx
+import { createPluginRegistry } from "@byteforce/workbook";
+
+const registry = createPluginRegistry();
+registry.registerField("status", StatusSegmented);   // 字段控件
+registry.registerValidation("idCard", idCardValidator);
+registry.registerCondition("isWorkday", isWorkday);
+registry.registerLayout("card", CardLayout);
+registry.registerPageBlock("seal", SealBlock);
+
+<Workbook workbook={schema} data={data} registry={registry} />;
+\`\`\`
+
+### API
+- \`registerField(id, component)\`：接收 \`{ field, value, onChange, onBlur, errors, readOnly }\`。
+- \`registerValidation(id, plugin)\`：返回 \`string | undefined\` 或 \`Promise\`；异步需在 schema 里写 \`async: true\`。
+- \`registerCondition(id, predicate)\`、\`registerOptionSource(id, loader)\`、\`registerLayout(id, component)\`、\`registerPageBlock(id, component)\`。
+- 多个 registry 用 \`<PluginProvider registry={…}>\` 隔离，非受控区域内不共享插件。
+
+### 边界与错误
+- 未注册的 custom 字段/page block 不会降级成内置控件，而是不渲染（空位）；条件插件未注册时默认 **false**。
+- 插件抛错会被错误边界捕获并显示降级 UI，不会弄崩整个表单。
+- 同一个 id 重复注册以最后一次为准，不警告。
+
+### 源码
+${sourceLink("src/react/registry.ts")} · ${docsLink("guides/custom-field", "guides/custom-field")}`;
+
 const meta = {
   title: "Workbook/Plugin System",
   component: WorkbookStoryHarness,
   tags: ["autodocs"],
+  parameters: { docs: { description: { component: componentDocs } } },
 } satisfies Meta<typeof WorkbookStoryHarness>;
 
 export default meta;
@@ -21,6 +54,9 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const CustomField: Story = {
+  parameters: storyNote(
+    "中间那段分段控件不是内置字段类型：它在 registry 里注册为 custom field。点选不同状态，右侧数据树用字段名回显写回值。",
+  ),
   args: {
     testId: "workbook-story-plugin-field",
     workbook: createCustomFieldWorkbook(),
@@ -64,6 +100,9 @@ registry.field.set("shadcn/status-segmented", StatusSegmented);
 };
 
 export const CustomLayout: Story = {
+  parameters: storyNote(
+    "卡片背景与分组标题来自注册的 card 布局插件；它仍然递归渲染 children，所以内部字段的校验与依赖照常生效。",
+  ),
   args: {
     testId: "workbook-story-plugin-layout",
     workbook: createCustomLayoutWorkbook(),
@@ -101,6 +140,9 @@ registry.layout.set("storybook/card", CardLayout);
 };
 
 export const CustomValidation: Story = {
+  parameters: storyNote(
+    "输入一个 18 位身份证号：校验位不对时提示来自注册的插件而不是内置规则；把最后一位改错能复现失败。",
+  ),
   args: {
     testId: "workbook-story-plugin-validation",
     workbook: createCustomValidationWorkbook(),
@@ -132,6 +174,9 @@ registry.validation.set("storybook/id-card", idCardValidation);
 };
 
 export const CustomCondition: Story = {
+  parameters: storyNote(
+    "选一个周末日期：「会议室」字段会被注册的 isWorkday 条件隐藏；改回工作日又重新出现，值不被清空。",
+  ),
   args: {
     testId: "workbook-story-plugin-condition",
     workbook: createCustomConditionWorkbook(),
@@ -164,6 +209,9 @@ registry.condition.set("storybook/is-workday", isWorkday);
 };
 
 export const CustomPageBlock: Story = {
+  parameters: storyNote(
+    "页面顶部的印章/横幅是 page 视图里的 custom block，按 component id 命中注册插件；它的高度参与分页测量，所以内容不会被下一页覆盖。",
+  ),
   args: {
     testId: "workbook-story-plugin-page-block",
     workbook: createCustomPageBlockWorkbook(),

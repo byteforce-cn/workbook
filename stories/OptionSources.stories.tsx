@@ -1,12 +1,47 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { useEffect, useState } from "react";
-
+import { docsLink, sourceLink, storyNote } from "./storyDocs";
 import { WorkbookStoryHarness } from "./WorkbookStoryHarness";
 import {
   createOptionsCapabilityRegistry,
   createOptionsCapabilityWorkbook,
   createRemoteOptionsCapabilityWorkbook,
 } from "./workbookCapabilityFixtures";
+
+const componentDocs = `### 适用场景
+下拉/多选的选项来自静态常量、远程接口或插件时，用 \`optionSource\` 统一声明，而不是把选项硬编码到组件里。
+
+### 最小可运行示例
+\`\`\`tsx
+// 静态
+options: [{ value: "east", label: "华东" }]
+
+// 远程
+options: {
+  type: "url",
+  endpoint: "/api/cities",
+  params: { region: "east" },
+  dependsOn: ["region"],
+  cache: "memory",
+  cacheKey: "cities",
+  dataPath: "data.items",
+  valueKey: "code",
+  labelKey: "name",
+}
+\`\`\`
+
+### API
+- 形式一：\`{ value, label, disabled?, group? }[]\`。
+- 形式二：\`{ type: "url" | "graphql" | "custom", endpoint?, method?, params?, query?, dataPath?, valueKey?, labelKey?, cache?, cacheKey?, dependsOn?, searchDebounce? }\`。
+- \`custom\` 类型由 \`registry.registerOptionSource\` 注册；\`dependsOn\` 中的字段变化会重拉。
+
+### 边界与错误
+- 请求失败时字段保留旧选项并进入错误态，不会清空已选值。
+- \`dataPath\` 写错时拿到空数组，不会抛错——表现为「没有选项」。
+- \`cache: "memory"\` 需配合 \`cacheKey\` 才能在数据变更时主动失效（\`clearOptionCache\`）。
+
+### 源码
+${sourceLink("src/core/options/fetchOptions.ts", "src/core/options/fetchOptions.ts")} · ${docsLink("guides/custom-option-source", "guides/custom-option-source")}`;
 
 function createJsonResponse(payload: unknown) {
   return new Response(JSON.stringify(payload), {
@@ -130,6 +165,7 @@ const meta = {
   title: "Workbook/Option Sources",
   component: WorkbookStoryHarness,
   tags: ["autodocs"],
+  parameters: { docs: { description: { component: componentDocs } } },
 } satisfies Meta<typeof WorkbookStoryHarness>;
 
 export default meta;
@@ -137,6 +173,9 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const CustomDrivenOptions: Story = {
+  parameters: storyNote(
+    "先改「所属区域」，再看「城市」：选项来自 registry 注册的 custom optionSource，会随区域重新解析，而不是一次写死。",
+  ),
   args: {
     testId: "workbook-story-options",
     workbook: createOptionsCapabilityWorkbook(),
@@ -147,6 +186,9 @@ export const CustomDrivenOptions: Story = {
 };
 
 export const UrlAndGraphqlRemoteOptions: Story = {
+  parameters: storyNote(
+    "右侧面板提供 url / graphql 两个开关（本 demo 用本地 mock 响应）：切换后下拉选项改由远程拉取，输入关键字会走 searchDebounce。",
+  ),
   args: {
     testId: "workbook-story-remote-options-harness",
     workbook: createRemoteOptionsCapabilityWorkbook(),

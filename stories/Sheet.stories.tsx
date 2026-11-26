@@ -3,6 +3,7 @@ import { useState } from "react";
 
 import { DocumentRenderer } from "../src/DocumentRenderer";
 import { StoryShell } from "./StoryShell";
+import { docsLink, sourceLink, storyNote } from "./storyDocs";
 import {
   createFormulasWorkbook,
   createFrozenPanesWorkbook,
@@ -10,10 +11,42 @@ import {
   createVirtualScrollWorkbook,
 } from "./workbookPageSheetFixtures";
 
+const componentDocs = `### 适用场景
+台账、报价明细、对账单这类行列都多、需要冻结、公式或虚拟滚动的场景，用 \`sheet\` 视图，不要拿表格字段硬撑。
+
+### 最小可运行示例
+\`\`\`tsx
+views: [{
+  type: "sheet",
+  id: "ledger",
+  label: "明细账",
+  widthMode: "stretch",      // "fixed" | "stretch"
+  frozenRows: 1,
+  frozenCols: 1,
+  columns: [{ width: 120 }, { width: 180 }],
+  rows: [{ height: 32, cells: [{ column: 0, value: "编号" }] }],
+}]
+\`\`\`
+
+### API
+- \`widthMode\`：\`fixed\` 保留自然列宽并居中，\`stretch\` 铺满容器（受列 \`minWidth\` / \`maxWidth\` 约束）。
+- \`frozenRows\` / \`frozenCols\`：冻结行列数，四窗格各自独立 Canvas 绘制。
+- 单元格支持 \`value\` / \`formula\`（SUM、AVG 等）/ \`style\`；行高与列宽可单独指定。
+- 行数超过阈值时自动启用虚拟滚动。
+
+### 边界与错误
+- 公式只支持内置函数，未识别函数按文本处理，不抛错。
+- 冻结行/列数大于数据尺寸时只冻结实际存在的行列。
+- 屏幕阅读器读到的是隐藏的 HTML 表格回退，而不是 Canvas 内容。
+
+### 源码
+${sourceLink("src/renderers/sheet/SheetView.tsx")} · ${docsLink("guides/performance", "guides/performance")}`;
+
 const meta = {
   title: "Workbook/Sheet",
   component: DocumentRenderer,
   tags: ["autodocs"],
+  parameters: { docs: { description: { component: componentDocs } } },
 } satisfies Meta<typeof DocumentRenderer>;
 
 export default meta;
@@ -26,6 +59,9 @@ type Story = StoryObj;
 /* ------------------------------------------------------------------ */
 
 export const FrozenPanes: Story = {
+  parameters: storyNote(
+    "在表格里向上下左右滚动：首行与首列保持不动，四窗格各自绘制。对照右侧「DOM 结构」可以确认 pane 划分。",
+  ),
   render: () => (
     <StoryShell
       testId="workbook-story-sheet-frozen-panes"
@@ -154,6 +190,9 @@ views: [{
 }
 
 export const StretchToWidth: Story = {
+  parameters: storyNote(
+    "切换 fixed / stretch：stretch 下列宽按容器等比放大，但不会超过列声明的 maxWidth；fixed 保留自然宽并居中。",
+  ),
   render: () => <StretchWidthPanel />,
 };
 
@@ -170,6 +209,9 @@ const FORMULA_EXPECTATIONS = [
 ] as const;
 
 export const Formulas: Story = {
+  parameters: storyNote(
+    "改任意数值单元格：SUM / AVG 结果立即重算，公式写在单元格上而不是业务代码里。把引用格清空可以看空值参与运算的结果。",
+  ),
   render: () => (
     <StoryShell
       testId="workbook-story-sheet-formulas"
@@ -225,6 +267,7 @@ export const Formulas: Story = {
 /* ------------------------------------------------------------------ */
 
 export const VirtualScroll: Story = {
+  parameters: storyNote("300 行台账：快速拖动滚动条，行被惰渲染但序号与内容对得上；注意滚动时冻结区与视口的对齐。"),
   render: () => (
     <StoryShell
       testId="workbook-story-sheet-virtual-scroll"

@@ -5,6 +5,7 @@ import { DocumentRenderer } from "../src/DocumentRenderer";
 import { layoutPageView } from "../src/renderers/page/pageLayout";
 import type { WorkbookDefinition } from "../src/schema/generated-types";
 import { CodeBlock, StoryShell } from "./StoryShell";
+import { docsLink, sourceLink, storyNote } from "./storyDocs";
 import {
   createComplexTablesWorkbook,
   createFloatingBlocksWorkbook,
@@ -13,10 +14,37 @@ import {
   type WatermarkMode,
 } from "./workbookPageSheetFixtures";
 
+const componentDocs = `### 适用场景
+输出分页文档（报价单、合同、报告）时，用 \`page\` 视图描述正文、页眉页脚、水印与浮动块，并交给 \`DocumentRenderer\` 渲染或导 PDF。
+
+### 最小可运行示例
+\`\`\`tsx
+<DocumentRenderer
+  workbook={workbook}      // 含 page 视图
+  data={data}
+  registry={registry}      // 需要自定义块时传
+/>
+\`\`\`
+
+### API
+- 块类型：\`paragraph\` / \`heading\` / \`table\` / \`list\` / \`image\` / \`header\` / \`footer\` / \`watermark\` / \`floating\` / \`html\`。
+- \`header\` / \`footer\` 支持 \`alignment\`、\`showOnFirstPage\`、\`showOnEvenPages\`、\`showOnOddPages\`。
+- \`floating\` 用 \`layout: { x, y, width, height }\` 定位，不进入正文流。
+- 分页规则由 \`pageLayout\` 计算（页边距、页高、块高度），影响打印与 PDF。
+
+### 边界与错误
+- 块高超过页面可用高度时会被拆到下一页，而不是被裁掉；表格跨页会重复表头。
+- \`floating\` 越界时按页面边界裁剪，不会自动缩放。
+- \`html\` 块经过 XSS 清洗，脚本与事件属性会被移除。
+
+### 源码
+${sourceLink("src/renderers/page/BlockRenderer.tsx")} · ${docsLink("guides/print-and-export", "guides/print-and-export")}`;
+
 const meta = {
   title: "Workbook/Page",
   component: DocumentRenderer,
   tags: ["autodocs"],
+  parameters: { docs: { description: { component: componentDocs } } },
 } satisfies Meta<typeof DocumentRenderer>;
 
 export default meta;
@@ -145,6 +173,9 @@ assets: { seal: { src: "data:image/svg+xml;...", type: "image/svg+xml" } },
 }
 
 export const Watermarks: Story = {
+  parameters: storyNote(
+    "切换文字/图片两种水印，并调重复与不透明度：水印画在所有页面底层，不参与分页计算，也不影响正文的可选文本。",
+  ),
   render: () => <WatermarksDemo />,
 };
 
@@ -153,6 +184,9 @@ export const Watermarks: Story = {
 /* ------------------------------------------------------------------ */
 
 export const HeadersFooters: Story = {
+  parameters: storyNote(
+    "三页文档：首页页眉右对齐、偶数页页脚与奇数页页脚各不相同。滚到第二、三页比对页眉是否按 showOnEvenPages / showOnOddPages 切换。",
+  ),
   render: () => (
     <PageStoryDemo
       workbook={createHeadersFootersWorkbook()}
@@ -186,6 +220,7 @@ export const HeadersFooters: Story = {
 /* ------------------------------------------------------------------ */
 
 export const FloatingBlocks: Story = {
+  parameters: storyNote("印章与批准栏是 floating 块：拖动右侧滑块改坐标，它们始终贴在页面固定位置，不会把正文往下推。"),
   render: () => (
     <PageStoryDemo
       workbook={createFloatingBlocksWorkbook()}
@@ -225,6 +260,9 @@ export const FloatingBlocks: Story = {
 /* ------------------------------------------------------------------ */
 
 export const ComplexTables: Story = {
+  parameters: storyNote(
+    "把表格拉宽到跨页：表头会在下一页重复，单元格内长文本会换行而不是被裁掉。对比分页前后同一行的边框与内边距。",
+  ),
   render: () => (
     <PageStoryDemo
       workbook={createComplexTablesWorkbook()}

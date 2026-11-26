@@ -13,11 +13,44 @@ import { FormView as WorkbookFormView } from "../src/renderers/form/FormView";
 import { PageView as WorkbookPageView } from "../src/renderers/page/PageView";
 import type { WorkbookDefinition } from "../src/schema/generated-types";
 import { CodeBlock, StoryShell } from "./StoryShell";
+import { docsLink, sourceLink, storyNote } from "./storyDocs";
+
+const componentDocs = `### 适用场景
+业务侧已经有自己的状态管理或插件体系，需要把 workbook 运行时（数据、locale、registry、conditionContext）包一层再渲染，或者需要自己控制错误降级的粒度。
+
+### 最小可运行示例
+\`\`\`tsx
+import { DataProvider, PluginProvider, WorkbookErrorBoundary, createPluginRegistry } from "@byteforce/workbook/react";
+
+<WorkbookErrorBoundary fallback={<p>渲染失败</p>}>
+  <PluginProvider registry={createPluginRegistry()}>
+    <DataProvider data={data} onDataChange={setData}>
+      <Workbook workbook={schema} />
+    </DataProvider>
+  </PluginProvider>
+</WorkbookErrorBoundary>
+\`\`\`
+
+### API
+- \`DataProvider\`：\`data\`（受控）或 \`initialData\`（非受控）配合 \`onDataChange\`；受控模式下拿不到回调会丢弃编辑并告警。
+- \`useWorkbookData()\`：读取当前数据与写回函数。
+- \`PluginProvider\` / \`usePluginRegistry()\`：把 registry 限定在子树内。
+- \`WorkbookErrorBoundary\` / \`FieldErrorBoundary\` / \`BlockErrorBoundary\`：三级降级粒度。
+- \`WorkbookRuntimeProvider\`：一次注入 \`workbook\` / \`registry\` / \`locale\` / \`fallbackLocale\` / \`conditionContext\`。
+
+### 边界与错误
+- 错误边界能拦住渲染期异常，但不会上报；需要自己接错误上报。
+- 嵌套 \`PluginProvider\` 时内层覆盖外层，不合并同名插件。
+- 嵌套 \`DataProvider\` 时子节点只看到最近的数据；跨视图联动要把数据提到同一层。
+
+### 源码
+${sourceLink("src/react/DataProvider.tsx")} · ${sourceLink("src/react/ErrorBoundary.tsx", "src/react/ErrorBoundary.tsx")} · ${docsLink("guides/integrity", "guides/integrity")}`;
 
 const meta = {
   title: "Workbook/React Integration",
   component: WorkbookRuntimeProvider,
   tags: ["autodocs"],
+  parameters: { docs: { description: { component: componentDocs } } },
 } satisfies Meta<typeof WorkbookRuntimeProvider>;
 
 export default meta;
@@ -157,6 +190,9 @@ import { DataProvider, WorkbookFormView, WorkbookPageView } from "@byteforce/wor
 }
 
 export const DataProvider: Story = {
+  parameters: storyNote(
+    "两个视图共享同一个 DataProvider：在表单里改一个字段，分页预览里的绑定值立即跟着变。再切到非受控模式对比写回差异。",
+  ),
   render: () => <DataProviderDemo />,
 };
 
@@ -241,6 +277,9 @@ scopeB.registerField("status-segmented", MyFieldB);
 }
 
 export const PluginProvider: Story = {
+  parameters: storyNote(
+    "同一个 custom 字段在两棵子树里用了不同的 registry：外层是默认实现，PluginProvider 内层是另一套，互不影响。",
+  ),
   render: () => <PluginProviderDemo />,
 };
 
@@ -446,5 +485,8 @@ function ErrorBoundaryDemo() {
 }
 
 export const ErrorBoundary: Story = {
+  parameters: storyNote(
+    "三个按钮分别触发字段级、页面块级、整页级异常：降级范围越小，其余区域越能继续用。看清是哪个边界接住了错误。",
+  ),
   render: () => <ErrorBoundaryDemo />,
 };

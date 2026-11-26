@@ -6,11 +6,46 @@ import { DocumentRenderer } from "../src/DocumentRenderer";
 import { createPluginRegistry } from "../src/react/registry";
 import type { WorkbookDefinition } from "../src/schema/generated-types";
 import { CodeBlock, StoryShell } from "./StoryShell";
+import { docsLink, sourceLink, storyNote } from "./storyDocs";
+
+const componentDocs = `### 适用场景
+同一份 schema 需要多语言、按条件显隐、或者在数据流的关键节点插钩子时，用 runtime 提供的能力，而不是在各处散写 if。
+
+### 最小可运行示例
+\`\`\`tsx
+import { Workbook, createPluginRegistry } from "@byteforce/workbook";
+
+<Workbook
+  workbook={schema}
+  locale="zh-CN"
+  fallbackLocale="en-US"
+  conditionContext={{ user: { roles: ["finance"] } }}
+  hooks={[
+    { trigger: "onMount", type: "function", config: { name: "audit" } },
+    { trigger: "onChange", type: "api", config: { endpoint: "/api/autosave" }, debounce: 400 },
+  ]}
+/>
+\`\`\`
+
+### API
+- \`locale\` / \`fallbackLocale\`：UI 文案与 schema 里 \`label: { zh-CN: "…" }\` 的取值；缺键时回落到 fallbackLocale，再回落到 key 本身。
+- \`conditionContext\`：\`$context.\` 条件的数据源，常用来做权限/租户判断。
+- 条件引擎支持 \`equals\` / \`notEquals\` / \`in\` / \`gt\` / \`lt\` / \`and\` / \`or\` / \`not\` 组合。
+- 钩子：\`beforeMount\` / \`afterMount\` / \`beforeSubmit\` / \`afterSubmit\` / \`beforeUnmount\`（以 stories 演示的为准）。
+
+### 边界与错误
+- 文案缺键不会报错，只在界面上显示未翻译的 key——这是排查 i18n 缺失最快的线索。
+- 钩子抛错会冒泡到错误边界；\`beforeSubmit\` 的异常会阻断提交。
+- 条件里引用了 \`conditionContext\` 不存在的路径时按 \`undefined\` 处理（不会抛错）。
+
+### 源码
+${sourceLink("src/core/condition/evaluate.ts")} · ${docsLink("guides/i18n", "guides/i18n")}`;
 
 const meta = {
   title: "Workbook/Runtime",
   component: DocumentRenderer,
   tags: ["autodocs"],
+  parameters: { docs: { description: { component: componentDocs } } },
 } satisfies Meta<typeof DocumentRenderer>;
 
 export default meta;
@@ -157,6 +192,9 @@ function I18nDemo() {
 }
 
 export const I18n: Story = {
+  parameters: storyNote(
+    "切换语言下拉：字段标签、校验文案、操作按钮一起换；故意留空的文案会回落到 fallbackLocale 或显示 key 本身。",
+  ),
   render: () => <I18nDemo />,
 };
 
@@ -347,6 +385,9 @@ const result = evaluateCondition(
 }
 
 export const ConditionEngine: Story = {
+  parameters: storyNote(
+    "矩阵里每一行是条件表达式 + 上下文 + 期望结果：改上下文（角色、金额、租户）看哪些行翻转，用来确认 $context 条件的求值规则。",
+  ),
   render: () => <ConditionEngineDemo />,
 };
 
@@ -552,5 +593,8 @@ registry.hook.set("storybook/audit", ({ hook, data }) => {
 }
 
 export const HookLifecycle: Story = {
+  parameters: storyNote(
+    "点「提交」看时间线：onMount 先出现，改动字段触发 onChange（带 400ms 防抖），提交时再出现 onSubmit；每条都记录了触发类型与去向。",
+  ),
   render: () => <HookLifecycleDemo />,
 };
