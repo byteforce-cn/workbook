@@ -247,6 +247,7 @@ function EditorDemo({
   caption,
   capabilities,
   code,
+  panels = true,
 }: {
   workbook: WorkbookDefinition;
   testId: string;
@@ -254,6 +255,8 @@ function EditorDemo({
   caption: string;
   capabilities: string[];
   code: string;
+  /** Render the out-of-flow editor panels next to the document. */
+  panels?: boolean;
 }) {
   const editorRef = useRef<DocumentEditorHandle>(null);
   const [snapshots, setSnapshots] = useState<Snapshot[]>([]);
@@ -343,27 +346,30 @@ function EditorDemo({
         </div>
       }
     >
-      <DocumentEditor
-        key={generation}
-        ref={editorRef}
-        workbook={saved ?? workbook}
-        data={workbook.data as Record<string, unknown>}
-        onSave={(next) => setSaved(next)}
-      />
+      <div className={panels ? undefined : "bf-story-body-only"}>
+        <DocumentEditor
+          key={generation}
+          ref={editorRef}
+          workbook={saved ?? workbook}
+          data={workbook.data as Record<string, unknown>}
+          onSave={(next) => setSaved(next)}
+        />
+      </div>
     </StoryShell>
   );
 }
 
 export const Basic: Story = {
   parameters: storyNote(
-    "先看正文的命名样式，再用工具栏改字号——改的是直接格式覆盖，结构仍是命名样式 id。点右上「保存」会走 save()，右侧「保存与重载」面板记录快照。",
+    "先看正文的命名样式，再用工具栏改字号——改的是直接格式覆盖，结构仍是命名样式 id。点右上「保存」会走 save()，右侧「保存与重载」面板记录快照。页眉页脚、水印与浮动块在「出流层」story 里。",
   ),
   render: () => (
     <EditorDemo
       testId="workbook-story-document-editor-basic"
       title="文档编辑器 · 正文与命名样式"
-      caption="富文本编辑保留命名样式 id；工具栏修改字号只写入直接格式覆盖。"
-      capabilities={["富文本", "命名样式", "页眉页脚"]}
+      caption="富文本编辑保留命名样式 id；工具栏修改字号只写入直接格式覆盖。页眉页脚等出流层内容见「出流层」story。"
+      capabilities={["富文本", "命名样式", "保存与快照"]}
+      panels={false}
       code={"<DocumentEditor workbook={workbook} onSave={(next) => persist(next)} />"}
       workbook={basicWorkbook}
     />

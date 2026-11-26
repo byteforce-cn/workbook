@@ -17,7 +17,7 @@ export function WorkbookStoryHarness({
   workbook,
   testId,
   registry,
-  width = "1200px",
+  width = "100%",
   caption,
   inspector,
 }: WorkbookStoryHarnessProps) {
@@ -32,11 +32,13 @@ export function WorkbookStoryHarness({
       data-testid={testId}
       style={{
         width,
+        maxWidth: "1200px",
+        boxSizing: "border-box",
         margin: "0 auto",
         background: "#ffffff",
         border: "1px solid #d9e1ec",
         borderRadius: "20px",
-        padding: "24px",
+        padding: "clamp(12px, 3vw, 24px)",
         boxShadow: "0 18px 48px rgba(15, 23, 42, 0.08)",
       }}
     >
@@ -46,14 +48,7 @@ export function WorkbookStoryHarness({
         {caption != null ? <p style={{ margin: "8px 0 0", color: "#475569", lineHeight: 1.6 }}>{caption}</p> : null}
       </header>
 
-      <div
-        style={{
-          display: "grid",
-          gap: "24px",
-          alignItems: "start",
-          gridTemplateColumns: "minmax(0, 2fr) minmax(300px, 1fr)",
-        }}
-      >
+      <div className="bf-story-harness-body">
         <div style={{ border: "1px solid #e2e8f0", borderRadius: "16px", padding: "20px", background: "#f8fafc" }}>
           <DocumentRenderer
             workbook={workbookDocument}

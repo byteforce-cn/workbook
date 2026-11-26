@@ -1,0 +1,130 @@
+/*
+ * Storybook 自动生成的 props 表（ArgsTable）宽度由内容决定，外层的 emotion
+ * 容器默认 `overflow: visible`，在 390px 的 docs 画布里会把整页撑出横向滚动
+ * （issue #73 P1-3）。这里只让它的包裹层可横向滚动，不改表格自身的列宽。
+ */
+.sbdocs-content div:has(> table.docblock-argstable) {
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+/*
+ * StoryShell 的「内容 +  inspector」双列布局。内联样式写不了媒体查询，而 390px 下
+ * 再给 inspector 固定 300px 会把内容列压到 24px（issue #73 P0-3）。
+ */
+.bf-story-shell-main {
+  display: grid;
+  gap: 18px;
+  align-items: start;
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.bf-story-shell-main--inspector {
+  grid-template-columns: minmax(0, 1fr) 300px;
+}
+
+@media (max-width: 900px) {
+  .bf-story-shell-main--inspector {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/*
+ * DraftVsApproving：并排对比两个 harness。1100px 以下两列会把每个面板压到
+ * 容器一半宽，读者既看不清草稿也看不清只读视图（issue #73 P0-3），故堆叠。
+ */
+.bf-readonly-compare {
+  display: grid;
+  gap: 24px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+@media (max-width: 1100px) {
+  .bf-readonly-compare {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/*
+ * WorkbookStoryHarness 的「文档 + 数据树」双列布局。宽屏保持 2fr/1fr 的原有
+ * 比例（行布局等 e2e 断言依赖内容列宽度），窄屏单列堆叠（issue #73 P1-3）。
+ */
+.bf-story-harness-body {
+  display: grid;
+  gap: 24px;
+  align-items: start;
+  grid-template-columns: minmax(0, 1fr);
+}
+
+@media (min-width: 900px) {
+  .bf-story-harness-body {
+    grid-template-columns: minmax(0, 2fr) minmax(300px, 1fr);
+  }
+}
+
+/*
+ * Basic story: the out-of-flow panels (页眉 / 页脚 / 水印 / 浮动块) have their
+ * own story, so keep them out of the body demo — otherwise the 340px panel
+ * column squeezes the document and duplicates the "出流层" story.
+ */
+.bf-story-body-only .bf-editor-body {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.bf-story-body-only .bf-editor-panels {
+  display: none;
+}
+
+/*
+ * Docs prose (#73 P1-3): inline code is `nowrap` in the Storybook theme and
+ * long signatures push the whole docs page sideways; code blocks and GFM
+ * tables are wider than the 390px column. Let inline code wrap and let blocks
+ * scroll inside their own box instead of widening the page.
+ */
+.sbdocs-content :not(pre) > code {
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+.sbdocs-content pre {
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+/* GFM tables must fit the column without becoming scroll containers (axe
+ * flags unfocusable scrollable regions); let cells wrap instead. */
+.sbdocs-content table {
+  width: 100%;
+  max-width: 100%;
+}
+
+.sbdocs-content th,
+.sbdocs-content td {
+  overflow-wrap: anywhere;
+}
+
+/*
+ * Props table: identifiers must not break mid-word. Keep the table at its
+ * natural width and scroll it inside the focusable `.bf-docs-props` region.
+ */
+.bf-docs-props {
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+.sbdocs-content .bf-docs-props table {
+  width: auto;
+  min-width: 100%;
+  max-width: none;
+}
+
+.sbdocs-content .bf-docs-props th,
+.sbdocs-content .bf-docs-props td {
+  overflow-wrap: normal;
+}
+
+/* Keep table headers on one line; otherwise the first column collapses to a
+ * single character per line when the table is constrained. */
+.sbdocs-content th {
+  white-space: nowrap;
+}

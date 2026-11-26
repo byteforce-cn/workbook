@@ -52,7 +52,7 @@ export const VisibilityAndDisableState: Story = {
     testId: "workbook-story-dependencies",
     workbook: createDependencyCapabilityWorkbook(),
     caption: "通过字段依赖切换 disabled 与 visible，验证 dependency 引擎不是静态声明，而是直接驱动表单运行时状态。",
-    width: "1080px",
+    width: "min(1080px, 100%)",
   },
   render: (args) => <WorkbookStoryHarness {...args} />,
 };

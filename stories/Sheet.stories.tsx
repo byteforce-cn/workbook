@@ -119,7 +119,7 @@ function StretchWidthPanel() {
       title="自适应宽度（widthMode）"
       caption="fixed 保持自然列宽（宽容器右侧留白、sheet 居中）；stretch 把多余容器宽度按比例分配给各列铺满容器，并尊重列 maxWidth 上限。"
       capabilities={["widthMode", "stretch 拉伸", "容器自适应", "HiDPI"]}
-      width="900px"
+      width="min(900px, 100%)"
       code={`// schema 声明即可，无需业务代码
 views: [{
   type: "sheet",
@@ -182,7 +182,7 @@ views: [{
         </p>
         <p style={{ margin: 0 }}>HiDPI 下 canvas 按 devicePixelRatio 分配 backing store；超大表自动降采样保底。</p>
       </div>
-      <div style={{ width: 820 }}>
+      <div style={{ width: "100%", maxWidth: 820 }}>
         <DocumentRenderer workbook={createStretchWorkbook(widthMode)} />
       </div>
     </StoryShell>

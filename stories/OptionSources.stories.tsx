@@ -132,7 +132,7 @@ function RemoteOptionsStory() {
           testId="workbook-story-remote-options-harness"
           workbook={createRemoteOptionsCapabilityWorkbook()}
           caption="同时覆盖 url 与 graphql 两类远端 options source，右侧日志直接暴露请求次数、query/variables 与 $field 解析结果。"
-          width="1080px"
+          width="min(1080px, 100%)"
           inspector={
             <div>
               <h3 style={{ marginTop: 0, marginBottom: "12px", fontSize: "16px", color: "#0f172a" }}>请求日志</h3>
@@ -180,7 +180,7 @@ export const CustomDrivenOptions: Story = {
     testId: "workbook-story-options",
     workbook: createOptionsCapabilityWorkbook(),
     caption: "同时展示静态 options 与基于 registry 的 custom optionSource，区域切换后城市选项会同步刷新。",
-    width: "1080px",
+    width: "min(1080px, 100%)",
   },
   render: (args) => <WorkbookStoryHarness {...args} registry={createOptionsCapabilityRegistry()} />,
 };

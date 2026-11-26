@@ -64,6 +64,7 @@ function StoryShell({ testId, children, width = "100%" }: { testId: string; chil
       data-testid={testId}
       style={{
         width,
+        boxSizing: "border-box",
         margin: "0 auto",
         background: "#ffffff",
         border: "1px solid #d9e1ec",
@@ -101,7 +102,8 @@ function ProductionShowcasePanel({ workbook }: { workbook: ReturnType<typeof cre
     <section
       data-testid="workbook-story-production-showcase"
       style={{
-        width: "min(1280px, calc(100vw - 48px))",
+        width: "100%",
+        boxSizing: "border-box",
         margin: "0 auto",
         display: "grid",
         gap: "18px",
@@ -265,7 +267,7 @@ export const FormEditable: Story = {
     workbook: createFormWorkbook(),
   },
   render: (args) => (
-    <StoryShell testId="workbook-story-form-editable" width="720px">
+    <StoryShell testId="workbook-story-form-editable" width="min(720px, 100%)">
       <DocumentRenderer {...args} />
     </StoryShell>
   ),
@@ -277,7 +279,7 @@ export const PagePreview: Story = {
     workbook: createPageWorkbook(),
   },
   render: (args) => (
-    <StoryShell testId="workbook-story-page-preview" width="720px">
+    <StoryShell testId="workbook-story-page-preview" width="min(720px, 100%)">
       <DocumentRenderer {...args} />
     </StoryShell>
   ),
@@ -291,7 +293,7 @@ export const SheetPreview: Story = {
     workbook: createSheetWorkbook(),
   },
   render: (args) => (
-    <StoryShell testId="workbook-story-sheet-preview" width="720px">
+    <StoryShell testId="workbook-story-sheet-preview" width="min(720px, 100%)">
       <DocumentRenderer {...args} />
     </StoryShell>
   ),
@@ -313,7 +315,7 @@ export const PagedPrintExport: Story = {
         : createWorkbookPdfFromPageView(pageView, { data: args.workbook.data, config: args.workbook.printConfig });
 
     return (
-      <StoryShell testId="workbook-story-paged-print-export" width="920px">
+      <StoryShell testId="workbook-story-paged-print-export" width="min(920px, 100%)">
         <div style={{ display: "grid", gridTemplateColumns: "minmax(0, 1fr) 220px", gap: "20px", alignItems: "start" }}>
           <DocumentRenderer {...args} />
           <aside
