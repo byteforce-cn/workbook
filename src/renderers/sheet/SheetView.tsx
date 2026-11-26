@@ -388,40 +388,45 @@ export function SheetView({ view, embedded = false, maxWidth, maxHeight }: Sheet
     >
       {!embedded ? <h2>{view.label ?? view.name}</h2> : null}
       {/* Accessible fallback: hidden HTML table for screen readers */}
-      <table
-        aria-label={a11yTable.caption}
+      <div
         style={{
           position: "absolute",
           width: "1px",
           height: "1px",
-          padding: "0",
           margin: "-1px",
           overflow: "hidden",
           clip: "rect(0, 0, 0, 0)",
           whiteSpace: "nowrap",
-          border: "0",
         }}
       >
-        <caption>{a11yTable.caption}</caption>
-        <thead>
-          <tr>
-            {a11yTable.headers.map((header, i) => (
-              <th key={i} scope="col">
-                {header}
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {a11yTable.body.map((row, rowIndex) => (
-            <tr key={rowIndex}>
-              {row.map((cell, cellIndex) => (
-                <td key={cellIndex}>{cell}</td>
+        {/*
+         * The table itself cannot clip its layout (`overflow` is ignored on
+         * table boxes), so a wrapper carries the clipping — otherwise the
+         * hidden table's content width leaks into the page's scrollWidth and
+         * makes print/PDF pages scroll sideways.
+         */}
+        <table aria-label={a11yTable.caption} style={{ border: "0", borderCollapse: "collapse" }}>
+          <caption>{a11yTable.caption}</caption>
+          <thead>
+            <tr>
+              {a11yTable.headers.map((header, i) => (
+                <th key={i} scope="col">
+                  {header}
+                </th>
               ))}
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {a11yTable.body.map((row, rowIndex) => (
+              <tr key={rowIndex}>
+                {row.map((cell, cellIndex) => (
+                  <td key={cellIndex}>{cell}</td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
       {!hasFrozenPanes ? (
         isVirtualized ? (
           <div

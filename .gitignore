@@ -32,3 +32,6 @@ temp/
 
 # Internal-only material — NEVER commit
 .internal/
+
+# Superpowers SDD scratch workspace
+.superpowers/

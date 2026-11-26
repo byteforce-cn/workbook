@@ -11,7 +11,7 @@ export interface StoryShellProps {
   capabilities?: string[];
   /** Optional source code snippet shown in a collapsible panel */
   code?: string;
-  /** Content width (default "min(1280px, calc(100vw - 48px))") */
+  /** Content width (default "min(1280px, 100%)", i.e. decided by the container) */
   width?: string;
   /** Main interactive content */
   children: ReactNode;
@@ -33,7 +33,7 @@ export function StoryShell({
   caption,
   capabilities,
   code,
-  width = "min(1280px, calc(100vw - 48px))",
+  width = "min(1280px, 100%)",
   children,
   inspector,
 }: StoryShellProps) {
@@ -42,6 +42,7 @@ export function StoryShell({
       data-testid={testId}
       style={{
         width,
+        boxSizing: "border-box",
         margin: "0 auto",
         display: "grid",
         gap: "18px",
@@ -147,12 +148,7 @@ export function StoryShell({
       </header>
 
       <main
-        style={{
-          display: "grid",
-          gridTemplateColumns: inspector != null ? "minmax(0, 1fr) 300px" : "minmax(0, 1fr)",
-          gap: "18px",
-          alignItems: "start",
-        }}
+        className={inspector != null ? "bf-story-shell-main bf-story-shell-main--inspector" : "bf-story-shell-main"}
       >
         <section
           style={{
@@ -160,7 +156,6 @@ export function StoryShell({
             borderRadius: "8px",
             background: "#ffffff",
             padding: "18px",
-            overflow: "auto",
             minWidth: 0,
           }}
         >

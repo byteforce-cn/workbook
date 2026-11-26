@@ -2,6 +2,7 @@ import type { Preview } from "@storybook/react";
 
 import "../src/styles/workbook-theme.css";
 import { DocsPage } from "./DocsPage";
+import "./preview.css";
 
 const preview: Preview = {
   parameters: {

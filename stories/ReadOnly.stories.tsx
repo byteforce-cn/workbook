@@ -107,9 +107,8 @@ export const DraftVsApproving: StoryObj = {
       code={`// 同一份定义，仅 config.readOnly 不同
 createChangeWorkbook({ readOnly: false }); // 草稿：可编辑
 createChangeWorkbook({ readOnly: true });  // 审核中：只读`}
-      width="min(1440px, calc(100vw - 48px))"
     >
-      <div style={{ display: "grid", gap: "24px", gridTemplateColumns: "repeat(auto-fit, minmax(420px, 1fr))" }}>
+      <div className="bf-readonly-compare">
         <WorkbookStoryHarness
           testId="workbook-story-readonly-draft"
           workbook={createEditableDraftWorkbook()}
