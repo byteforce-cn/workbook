@@ -8,8 +8,7 @@
 
 import { NodeViewWrapper, type ReactNodeViewProps } from "@tiptap/react";
 import { useState } from "react";
-import { resolveBindValue } from "../../../core/bind/resolveBind";
-import type { BindDefinition } from "../../../core/types";
+import { bindChipLabel, bindFromAttrs, bindPlaceholderText, resolveBindPreview } from "../../data/preview";
 import { useEditorContext } from "../../editorContext";
 import { useEditorText } from "../../i18n";
 
@@ -19,9 +18,7 @@ export function BindNodeView({ node, updateAttributes, deleteNode, selected }: R
   const [editing, setEditing] = useState(false);
   const [path, setPath] = useState(String(attrs.path ?? ""));
   const [format, setFormat] = useState(String(attrs.format ?? ""));
-  const [placeholder, setPlaceholder] = useState(
-    attrs.placeholder == null || typeof attrs.placeholder === "object" ? "" : String(attrs.placeholder),
-  );
+  const [placeholder, setPlaceholder] = useState(() => bindPlaceholderText(attrs));
 
   const label = useEditorText("EDITOR_INSERT_BIND", "插入数据绑定");
   const pathLabel = useEditorText("EDITOR_BIND_PATH", "绑定路径");
@@ -31,12 +28,7 @@ export function BindNodeView({ node, updateAttributes, deleteNode, selected }: R
   const cancelLabel = useEditorText("EDITOR_CANCEL", "取消");
   const deleteLabel = useEditorText("EDITOR_DELETE", "删除");
 
-  const bind: BindDefinition = {
-    path: String(attrs.path ?? ""),
-    ...(typeof attrs.format === "string" ? { format: attrs.format } : {}),
-    ...(attrs.placeholder != null ? { placeholder: attrs.placeholder } : {}),
-  };
-  const resolved = resolveBindValue(bind, previewData);
+  const resolved = resolveBindPreview(bindFromAttrs(attrs), previewData);
 
   return (
     <NodeViewWrapper
@@ -53,7 +45,7 @@ export function BindNodeView({ node, updateAttributes, deleteNode, selected }: R
         aria-expanded={editing}
         onClick={() => setEditing((current) => !current)}
       >
-        {`{{${String(attrs.path ?? "")}${attrs.format ? ` | ${String(attrs.format)}` : ""}}}`}
+        {bindChipLabel(attrs)}
       </button>
       {editing ? (
         <span className="bf-editor-bind-popover" role="dialog" aria-label={label}>
@@ -94,7 +86,7 @@ export function BindNodeView({ node, updateAttributes, deleteNode, selected }: R
         </span>
       ) : null}
       <span className="bf-editor-bind-preview" aria-hidden="true">
-        {resolved == null ? "—" : String(resolved)}
+        {resolved ?? "—"}
       </span>
     </NodeViewWrapper>
   );
