@@ -18,6 +18,7 @@ import { EditorSerializationError } from "./codec/errors";
 import { fromProseMirror } from "./codec/fromProseMirror";
 import { toProseMirror } from "./codec/toProseMirror";
 import { Toolbar } from "./components/Toolbar";
+import { resolveEditorPreviewData } from "./data/preview";
 import { EditorContextProvider } from "./editorContext";
 import { useEditorText } from "./i18n";
 import { isOverlayBlock, mergeEditorContent } from "./layout/mergeContent";
@@ -99,7 +100,7 @@ function DocumentEditorInner({
   const { registry, locale, fallbackLocale, conditionContext } = useWorkbookRuntime();
   const { data } = useWorkbookData();
   const styles: WorkbookStyleCatalog | undefined = workbook.styles;
-  const effectivePreviewData = previewData ?? data;
+  const effectivePreviewData = resolveEditorPreviewData(previewData, data);
 
   const initialFlow = useMemo(() => baseView.content.filter((block) => !isOverlayBlock(block)), [baseView]);
   const [headers, setHeaders] = useState<HeaderBlock[]>(() =>
