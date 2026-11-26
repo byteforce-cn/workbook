@@ -101,7 +101,10 @@ function TagSelectorFieldEditor({
             onClick={() => removeTag(tag)}
           >
             <span>{tag}</span>
-            <span aria-hidden="true">x</span>
+            {/* 图标而不是字母 x：字母会成为可见文本，与 aria-label 对不上（WCAG 2.5.3）。 */}
+            <svg aria-hidden="true" width="10" height="10" viewBox="0 0 10 10" focusable="false">
+              <path d="M1 1l8 8M9 1l-8 8" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+            </svg>
           </button>
         ))}
         <input

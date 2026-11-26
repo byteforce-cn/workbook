@@ -28,6 +28,8 @@ export function ImageSvg({ block, x, y, width, height }: ImageSvgProps) {
       y={y}
       width={renderedWidth}
       height={renderedHeight}
+      // SVG <image> only allows aria-label with an explicit role (axe: aria-prohibited-attr).
+      role="img"
       aria-label={block.alt}
       preserveAspectRatio={block.lockAspectRatio === false ? "none" : "xMidYMid meet"}
     />

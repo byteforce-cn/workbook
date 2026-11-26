@@ -41,7 +41,8 @@ export function BindNodeView({ node, updateAttributes, deleteNode, selected }: R
       <button
         type="button"
         className="bf-editor-bind-chip"
-        aria-label={label}
+        // 可访问名称必须包含 chip 上的可见文本（WCAG 2.5.3），否则屏幕阅读器读到的名字与眼睛看到的不一致。
+        aria-label={`${label} ${bindChipLabel(attrs)}`}
         aria-expanded={editing}
         onClick={() => setEditing((current) => !current)}
       >
