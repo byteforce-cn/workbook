@@ -20,6 +20,10 @@ const preview: Preview = {
       expanded: true,
     },
     options: {
+      // Published showcase: the canvas is the content. Keep the addons panel
+      // (Actions / Interactions / Accessibility) available but collapsed by
+      // default, otherwise it eats half of the story viewport.
+      showPanel: false,
       storySort: {
         order: ["Getting Started", "Quick Start", "Workbook"],
       },
