@@ -10,7 +10,7 @@
  */
 export const storyCount = 48;
 export const specCount = 16;
-export const testCount = 58;
+export const testCount = 59;
 
 /** Number of autodocs pages (`--docs` entries) in the Storybook index. */
 export const docPageCount = 16;
