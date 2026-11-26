@@ -17,7 +17,8 @@ export function DocsPage(): ReactNode {
       <Description />
       <Primary />
       <ArgTypes compact />
-      <Stories />
+      {/* 默认模板会再渲染一次 primary story：`<Primary/>` 之后它仍在列表里（issue #73 P0-4）。 */}
+      <Stories includePrimary={false} />
     </>
   );
 }

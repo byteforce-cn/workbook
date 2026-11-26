@@ -508,7 +508,7 @@ function HookLifecycleDemo() {
   return (
     <StoryShell
       testId="workbook-story-runtime-hooks"
-      title="Hook 生命周期"
+      title="Hook 生命周期（onMount → onChange → onSubmit）"
       caption="onMount 加载、onChange 防抖自动保存、onSubmit 提交，加上自定义 function hook 审计日志。"
       capabilities={["onMount", "onChange+debounce", "onSubmit", "自定义 hook"]}
       code={`// schema 声明 hooks（声明式，无需业务代码）
