@@ -78,7 +78,9 @@ editor.current?.isDirty();
 **Editing layout is not print output.** The editor edits HTML; preview and PDF
 are produced by the workbook renderer (`layoutPageView` + SVG + the PDF writer),
 which use estimated heights and font metrics. The print preview uses that same
-code path; it never grows a second measurement implementation.
+code path; it never grows a second measurement implementation. Switching modes
+preserves the reader's scroll position and zoom; the preview pane receives
+focus on open and the caret returns to the editor when switching back.
 
 ### Known differences
 
