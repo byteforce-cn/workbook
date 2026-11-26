@@ -40,8 +40,7 @@ export function PreviewPane({
   const previewWorkbook = useMemo<WorkbookDefinition>(() => {
     const views = [...workbook.views];
     const index = views.findIndex(
-      (candidate) =>
-        candidate === view || (viewId != null ? candidate.id === viewId : candidate.type === "page"),
+      (candidate) => candidate === view || (viewId != null ? candidate.id === viewId : candidate.type === "page"),
     );
     if (index >= 0) {
       views[index] = view;
