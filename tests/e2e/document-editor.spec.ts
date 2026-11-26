@@ -29,6 +29,31 @@ test.describe("Document editor", () => {
     await expect(preview).toContainText("追加条款");
   });
 
+  test("条件样式徽标不会盖住正文首行", async ({ page }) => {
+    await openStory(page, workbookStoryIds.documentEditorBasic);
+    const story = page.locator('[data-testid="workbook-story-document-editor-basic"]');
+    const content = story.locator(".bf-editor-content");
+    await expect(content).toBeVisible({ timeout: 15_000 });
+
+    const overlap = await content.evaluate((root) => {
+      const heading = root.querySelector("p");
+      const conditional = root.querySelector("[data-bf-conditional-style]");
+      if (heading == null || conditional == null) {
+        throw new Error("conditional-style paragraph missing");
+      }
+
+      const rect = heading.getBoundingClientRect();
+      const hit = document.elementFromPoint(rect.left + 4, rect.top + 2);
+      return {
+        headingText: heading.textContent?.trim() ?? "",
+        hitIsBadge: hit != null && conditional.contains(hit),
+      };
+    });
+
+    expect(overlap.headingText).toContain("第一条");
+    expect(overlap.hitIsBadge).toBe(false);
+  });
+
   test("表格边框与内边距在编辑态和预览态一致", async ({ page }) => {
     await openStory(page, workbookStoryIds.documentEditorTable);
     const story = page.locator('[data-testid="workbook-story-document-editor-table"]');

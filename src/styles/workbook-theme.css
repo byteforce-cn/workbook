@@ -792,6 +792,10 @@
   gap: 12px;
   color: var(--bf-text, #172033);
   font-family: Inter, "Noto Sans SC", ui-sans-serif, system-ui, sans-serif;
+  /* Query container for the document/panel split below: the editor is also
+     embedded in narrow hosts (Storybook docs column, cards), where viewport
+     media queries keep the 340px panel and squeeze the document to ~170px. */
+  container-type: inline-size;
 }
 
 .bf-editor-header,
@@ -921,6 +925,15 @@
 }
 
 .bf-editor-block--conditional {
+  position: relative;
+}
+
+/*
+ * The "条件样式（只读）" badge is absolutely positioned above its paragraph.
+ * Without positioning on the paragraph it anchors to the ProseMirror root and
+ * paints over the first line of the document.
+ */
+.bf-editor-block--conditional-style {
   position: relative;
 }
 
@@ -1071,6 +1084,12 @@
 }
 
 @media (max-width: 900px) {
+  .bf-editor-body {
+    grid-template-columns: 1fr;
+  }
+}
+
+@container (max-width: 880px) {
   .bf-editor-body {
     grid-template-columns: 1fr;
   }
