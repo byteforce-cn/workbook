@@ -38,10 +38,14 @@ export function PreviewPane({
   const notice = useEditorText("EDITOR_PREVIEW_NOTICE", "编辑态与打印版式可能不同，预览使用 workbook 渲染器。");
 
   const previewWorkbook = useMemo<WorkbookDefinition>(() => {
-    const views = workbook.views.map((candidate) =>
-      candidate === view || (viewId != null && candidate.id === viewId) ? view : candidate,
+    const views = [...workbook.views];
+    const index = views.findIndex(
+      (candidate) =>
+        candidate === view || (viewId != null ? candidate.id === viewId : candidate.type === "page"),
     );
-    if (!views.includes(view)) {
+    if (index >= 0) {
+      views[index] = view;
+    } else {
       views.push(view);
     }
     return { ...workbook, views: views as WorkbookDefinition["views"] };
