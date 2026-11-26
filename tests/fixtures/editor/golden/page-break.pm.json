@@ -1,0 +1,122 @@
+{
+  "type": "doc",
+  "content": [
+    {
+      "type": "wbParagraph",
+      "attrs": {
+        "style": null,
+        "visible": null,
+        "alignment": "left",
+        "indent": null,
+        "spaceBefore": null,
+        "spaceAfter": null,
+        "lineHeight": null,
+        "comment": null,
+        "renderHints": null
+      },
+      "content": [
+        {
+          "type": "text",
+          "marks": [
+            {
+              "type": "wbText",
+              "attrs": {
+                "style": null,
+                "fontWeight": null,
+                "fontStyle": null,
+                "textDecoration": null,
+                "fontFamily": null,
+                "fontSize": null,
+                "color": null,
+                "link": null
+              }
+            }
+          ],
+          "text": "第一页内容"
+        }
+      ]
+    },
+    {
+      "type": "wbPageBreak",
+      "attrs": {
+        "comment": null
+      }
+    },
+    {
+      "type": "wbParagraph",
+      "attrs": {
+        "style": null,
+        "visible": null,
+        "alignment": "left",
+        "indent": null,
+        "spaceBefore": null,
+        "spaceAfter": null,
+        "lineHeight": null,
+        "comment": null,
+        "renderHints": null
+      },
+      "content": [
+        {
+          "type": "text",
+          "marks": [
+            {
+              "type": "wbText",
+              "attrs": {
+                "style": null,
+                "fontWeight": null,
+                "fontStyle": null,
+                "textDecoration": null,
+                "fontFamily": null,
+                "fontSize": null,
+                "color": null,
+                "link": null
+              }
+            }
+          ],
+          "text": "第二页内容（分页后）"
+        }
+      ]
+    },
+    {
+      "type": "wbPageBreak",
+      "attrs": {
+        "comment": "显式分页分隔"
+      }
+    },
+    {
+      "type": "wbParagraph",
+      "attrs": {
+        "style": null,
+        "visible": null,
+        "alignment": "left",
+        "indent": null,
+        "spaceBefore": null,
+        "spaceAfter": null,
+        "lineHeight": null,
+        "comment": null,
+        "renderHints": null
+      },
+      "content": [
+        {
+          "type": "text",
+          "marks": [
+            {
+              "type": "wbText",
+              "attrs": {
+                "style": null,
+                "fontWeight": null,
+                "fontStyle": null,
+                "textDecoration": null,
+                "fontFamily": null,
+                "fontSize": null,
+                "color": null,
+                "link": null
+              }
+            }
+          ],
+          "text": "第三页内容"
+        }
+      ]
+    }
+  ]
+}

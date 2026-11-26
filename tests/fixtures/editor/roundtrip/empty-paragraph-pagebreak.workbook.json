@@ -1,0 +1,48 @@
+{
+  "kind": "workbook",
+  "schemaVersion": "4.1.1",
+  "locale": "zh-CN",
+  "data": {
+    "customer": {
+      "name": "Alice"
+    }
+  },
+  "views": [
+    {
+      "type": "page",
+      "id": "empty-paragraph-pagebreak",
+      "label": "页面 conformance",
+      "pageSettings": {
+        "width": 595,
+        "height": 842,
+        "marginTop": 72,
+        "marginLeft": 72,
+        "marginRight": 72,
+        "marginBottom": 72
+      },
+      "content": [
+        {
+          "type": "paragraph",
+          "runs": [
+            {
+              "type": "text",
+              "text": ""
+            }
+          ]
+        },
+        {
+          "type": "page-break"
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            {
+              "type": "text",
+              "text": "after break"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

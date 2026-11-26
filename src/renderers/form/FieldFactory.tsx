@@ -86,7 +86,7 @@ export function FieldFactory({
   onFieldBlur,
 }: FieldFactoryProps) {
   const { data } = useWorkbookData();
-  const { registry, locale, fallbackLocale, i18n } = useWorkbookRuntime();
+  const { registry, locale, fallbackLocale, i18n, conditionContext } = useWorkbookRuntime();
   const [options, setOptions] = useState<Awaited<ReturnType<typeof fetchOptions>>>([]);
   const optionLifecycleRef = useRef<{
     source?: OptionSourceDefinition;
@@ -115,8 +115,8 @@ export function FieldFactory({
   }, [data, depDebounceMs]);
 
   const runtimeState = useMemo(
-    () => resolveFieldState(field, debouncedDepData, registry, rowContext),
-    [debouncedDepData, field, registry, rowContext],
+    () => resolveFieldState(field, debouncedDepData, registry, rowContext, conditionContext),
+    [conditionContext, debouncedDepData, field, registry, rowContext],
   );
   const optionReloadKey = createOptionReloadKey(runtimeState.options, data, rowContext);
 
@@ -167,7 +167,8 @@ export function FieldFactory({
     };
   }, [data, optionReloadKey, registry, rowContext, runtimeState.options]);
 
-  const visible = runtimeState.visible && evaluateBooleanLike(field.visible, data, registry, true, rowContext);
+  const visible =
+    runtimeState.visible && evaluateBooleanLike(field.visible, data, registry, true, rowContext, conditionContext);
   if (!visible) {
     return null;
   }
@@ -176,7 +177,7 @@ export function FieldFactory({
   const label = resolveI18nText(field.label ?? field.name, locale, i18n, fallbackLocale) ?? field.name;
   const errors = fieldErrors[fieldPath] ?? [];
   // readOnly 表单级只读：与字段级 disabled（含依赖条件）叠加，任一为真即禁用
-  const disabled = runtimeState.disabled || readOnly === true;
+  const disabled = runtimeState.disabled || readOnly === true || field.readOnly === true;
   // 必填标记：字段 validations（含依赖 required 效果）任一 required 即渲染星号
   const required = runtimeState.required || runtimeState.validations.some((v) => v.type === "required");
 
@@ -187,16 +188,18 @@ export function FieldFactory({
       options.length > 0 ? options : Array.isArray(field.options) ? field.options : [];
 
     return (
-      <ReadOnlyField
-        field={field}
-        label={label}
-        required={required}
-        value={fieldValue}
-        options={displayOptions}
-        emptyText={resolveBuiltInText(WORKBOOK_I18N_KEYS.READONLY_EMPTY, locale, i18n, fallbackLocale, "—")}
-        trueText={resolveBuiltInText(WORKBOOK_I18N_KEYS.BOOLEAN_TRUE, locale, i18n, fallbackLocale, "是")}
-        falseText={resolveBuiltInText(WORKBOOK_I18N_KEYS.BOOLEAN_FALSE, locale, i18n, fallbackLocale, "否")}
-      />
+      <div className="bf-workbook-field-instance" data-field-name={fieldPath}>
+        <ReadOnlyField
+          field={field}
+          label={label}
+          required={required}
+          value={fieldValue}
+          options={displayOptions}
+          emptyText={resolveBuiltInText(WORKBOOK_I18N_KEYS.READONLY_EMPTY, locale, i18n, fallbackLocale, "—")}
+          trueText={resolveBuiltInText(WORKBOOK_I18N_KEYS.BOOLEAN_TRUE, locale, i18n, fallbackLocale, "是")}
+          falseText={resolveBuiltInText(WORKBOOK_I18N_KEYS.BOOLEAN_FALSE, locale, i18n, fallbackLocale, "否")}
+        />
+      </div>
     );
   }
   const commonProps = {
@@ -214,40 +217,48 @@ export function FieldFactory({
     },
   };
 
-  switch (field.type) {
-    case "string":
-      return <TextField {...commonProps} />;
-    case "number":
-      return <NumberField {...commonProps} />;
-    case "boolean":
-      return <BooleanField {...commonProps} />;
-    case "date":
-      return <DateField {...commonProps} />;
-    case "textarea":
-      return <TextareaField {...commonProps} />;
-    case "select":
-      return <SelectField {...commonProps} options={options} />;
-    case "multiselect":
-      return <SelectField {...commonProps} multiple options={options} />;
-    case "array":
-      return <ArrayField {...commonProps} field={field} />;
-    case "object":
-      return <ObjectField {...commonProps} />;
-    case "custom":
-      return (
-        <CustomField
-          componentName={field.component ?? ""}
-          field={field}
-          fieldPath={fieldPath}
-          value={fieldValue}
-          errors={errors}
-          disabled={disabled}
-          rowContext={rowContext}
-          onChange={(nextValue) => onFieldChange(field, fieldPath, nextValue, rowContext)}
-          onBlur={() => onFieldBlur(field, fieldPath, rowContext)}
-        />
-      );
-    default:
-      return null;
-  }
+  const content = (() => {
+    switch (field.type) {
+      case "string":
+        return <TextField {...commonProps} />;
+      case "number":
+        return <NumberField {...commonProps} />;
+      case "boolean":
+        return <BooleanField {...commonProps} />;
+      case "date":
+        return <DateField {...commonProps} />;
+      case "textarea":
+        return <TextareaField {...commonProps} />;
+      case "select":
+        return <SelectField {...commonProps} options={options} />;
+      case "multiselect":
+        return <SelectField {...commonProps} multiple options={options} />;
+      case "array":
+        return <ArrayField {...commonProps} field={field} />;
+      case "object":
+        return <ObjectField {...commonProps} />;
+      case "custom":
+        return (
+          <CustomField
+            componentName={field.component ?? ""}
+            field={field}
+            fieldPath={fieldPath}
+            value={fieldValue}
+            errors={errors}
+            disabled={disabled}
+            rowContext={rowContext}
+            onChange={(nextValue) => onFieldChange(field, fieldPath, nextValue, rowContext)}
+            onBlur={() => onFieldBlur(field, fieldPath, rowContext)}
+          />
+        );
+      default:
+        return null;
+    }
+  })();
+
+  return (
+    <div className="bf-workbook-field-instance" data-field-name={fieldPath}>
+      {content}
+    </div>
+  );
 }

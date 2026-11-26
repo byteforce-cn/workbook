@@ -1,0 +1,421 @@
+{
+  "type": "doc",
+  "content": [
+    {
+      "type": "wbParagraph",
+      "attrs": {
+        "style": null,
+        "visible": null,
+        "alignment": "center",
+        "indent": 24,
+        "spaceBefore": 12,
+        "spaceAfter": 18,
+        "lineHeight": 1.6,
+        "comment": null,
+        "renderHints": null
+      },
+      "content": [
+        {
+          "type": "text",
+          "marks": [
+            {
+              "type": "wbText",
+              "attrs": {
+                "style": null,
+                "fontWeight": null,
+                "fontStyle": null,
+                "textDecoration": null,
+                "fontFamily": null,
+                "fontSize": null,
+                "color": null,
+                "link": null
+              }
+            }
+          ],
+          "text": "段落字段消费"
+        }
+      ]
+    },
+    {
+      "type": "wbList",
+      "attrs": {
+        "style": null,
+        "visible": null,
+        "listType": "ordered",
+        "bulletChar": null,
+        "numberFormat": "upperRoman",
+        "start": 3,
+        "comment": null,
+        "renderHints": null
+      },
+      "content": [
+        {
+          "type": "wbListItem",
+          "content": [
+            {
+              "type": "wbParagraph",
+              "attrs": {
+                "style": null,
+                "visible": null,
+                "alignment": null,
+                "indent": null,
+                "spaceBefore": null,
+                "spaceAfter": null,
+                "lineHeight": null,
+                "comment": null,
+                "renderHints": null
+              },
+              "content": [
+                {
+                  "type": "text",
+                  "marks": [
+                    {
+                      "type": "wbText",
+                      "attrs": {
+                        "style": null,
+                        "fontWeight": null,
+                        "fontStyle": null,
+                        "textDecoration": null,
+                        "fontFamily": null,
+                        "fontSize": null,
+                        "color": null,
+                        "link": null
+                      }
+                    }
+                  ],
+                  "text": "第一项"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "wbListItem",
+          "content": [
+            {
+              "type": "wbParagraph",
+              "attrs": {
+                "style": null,
+                "visible": null,
+                "alignment": null,
+                "indent": null,
+                "spaceBefore": null,
+                "spaceAfter": null,
+                "lineHeight": null,
+                "comment": null,
+                "renderHints": null
+              },
+              "content": [
+                {
+                  "type": "text",
+                  "marks": [
+                    {
+                      "type": "wbText",
+                      "attrs": {
+                        "style": null,
+                        "fontWeight": null,
+                        "fontStyle": null,
+                        "textDecoration": null,
+                        "fontFamily": null,
+                        "fontSize": null,
+                        "color": null,
+                        "link": null
+                      }
+                    }
+                  ],
+                  "text": "第二项"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "wbList",
+      "attrs": {
+        "style": null,
+        "visible": null,
+        "listType": "bullet",
+        "bulletChar": "◆",
+        "numberFormat": null,
+        "start": null,
+        "comment": null,
+        "renderHints": null
+      },
+      "content": [
+        {
+          "type": "wbListItem",
+          "content": [
+            {
+              "type": "wbParagraph",
+              "attrs": {
+                "style": null,
+                "visible": null,
+                "alignment": null,
+                "indent": null,
+                "spaceBefore": null,
+                "spaceAfter": null,
+                "lineHeight": null,
+                "comment": null,
+                "renderHints": null
+              },
+              "content": [
+                {
+                  "type": "text",
+                  "marks": [
+                    {
+                      "type": "wbText",
+                      "attrs": {
+                        "style": null,
+                        "fontWeight": null,
+                        "fontStyle": null,
+                        "textDecoration": null,
+                        "fontFamily": null,
+                        "fontSize": null,
+                        "color": null,
+                        "link": null
+                      }
+                    }
+                  ],
+                  "text": "自定义项目符号"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "wbTable",
+      "attrs": {
+        "style": null,
+        "visible": null,
+        "width": 320,
+        "border": {
+          "style": "thick",
+          "color": "#2563eb"
+        },
+        "fill": "#fef3c7",
+        "comment": null,
+        "renderHints": null
+      },
+      "content": [
+        {
+          "type": "wbTableColgroup",
+          "attrs": {
+            "widths": [160, 160]
+          }
+        },
+        {
+          "type": "wbTableRow",
+          "attrs": {
+            "height": 54
+          },
+          "content": [
+            {
+              "type": "wbTableCell",
+              "attrs": {
+                "colSpan": null,
+                "rowSpan": null,
+                "style": null,
+                "width": 80,
+                "verticalAlign": null,
+                "comment": null
+              },
+              "content": [
+                {
+                  "type": "wbParagraph",
+                  "attrs": {
+                    "style": null,
+                    "visible": null,
+                    "alignment": null,
+                    "indent": null,
+                    "spaceBefore": null,
+                    "spaceAfter": null,
+                    "lineHeight": null,
+                    "comment": null,
+                    "renderHints": null
+                  },
+                  "content": [
+                    {
+                      "type": "text",
+                      "marks": [
+                        {
+                          "type": "wbText",
+                          "attrs": {
+                            "style": null,
+                            "fontWeight": null,
+                            "fontStyle": null,
+                            "textDecoration": null,
+                            "fontFamily": null,
+                            "fontSize": null,
+                            "color": null,
+                            "link": null
+                          }
+                        }
+                      ],
+                      "text": "窄单元格"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "wbTableCell",
+              "attrs": {
+                "colSpan": null,
+                "rowSpan": null,
+                "style": null,
+                "width": null,
+                "verticalAlign": null,
+                "comment": null
+              },
+              "content": [
+                {
+                  "type": "wbParagraph",
+                  "attrs": {
+                    "style": null,
+                    "visible": null,
+                    "alignment": null,
+                    "indent": null,
+                    "spaceBefore": null,
+                    "spaceAfter": null,
+                    "lineHeight": null,
+                    "comment": null,
+                    "renderHints": null
+                  },
+                  "content": [
+                    {
+                      "type": "text",
+                      "marks": [
+                        {
+                          "type": "wbText",
+                          "attrs": {
+                            "style": null,
+                            "fontWeight": null,
+                            "fontStyle": null,
+                            "textDecoration": null,
+                            "fontFamily": null,
+                            "fontSize": null,
+                            "color": null,
+                            "link": null
+                          }
+                        }
+                      ],
+                      "text": "宽列"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "wbTableRow",
+          "attrs": {
+            "height": null
+          },
+          "content": [
+            {
+              "type": "wbTableCell",
+              "attrs": {
+                "colSpan": null,
+                "rowSpan": null,
+                "style": null,
+                "width": null,
+                "verticalAlign": null,
+                "comment": null
+              },
+              "content": [
+                {
+                  "type": "wbParagraph",
+                  "attrs": {
+                    "style": null,
+                    "visible": null,
+                    "alignment": null,
+                    "indent": null,
+                    "spaceBefore": null,
+                    "spaceAfter": null,
+                    "lineHeight": null,
+                    "comment": null,
+                    "renderHints": null
+                  },
+                  "content": [
+                    {
+                      "type": "text",
+                      "marks": [
+                        {
+                          "type": "wbText",
+                          "attrs": {
+                            "style": null,
+                            "fontWeight": null,
+                            "fontStyle": null,
+                            "textDecoration": null,
+                            "fontFamily": null,
+                            "fontSize": null,
+                            "color": null,
+                            "link": null
+                          }
+                        }
+                      ],
+                      "text": "固定高行"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "wbTableCell",
+              "attrs": {
+                "colSpan": null,
+                "rowSpan": null,
+                "style": null,
+                "width": null,
+                "verticalAlign": null,
+                "comment": null
+              },
+              "content": [
+                {
+                  "type": "wbParagraph",
+                  "attrs": {
+                    "style": null,
+                    "visible": null,
+                    "alignment": null,
+                    "indent": null,
+                    "spaceBefore": null,
+                    "spaceAfter": null,
+                    "lineHeight": null,
+                    "comment": null,
+                    "renderHints": null
+                  },
+                  "content": [
+                    {
+                      "type": "text",
+                      "marks": [
+                        {
+                          "type": "wbText",
+                          "attrs": {
+                            "style": null,
+                            "fontWeight": null,
+                            "fontStyle": null,
+                            "textDecoration": null,
+                            "fontFamily": null,
+                            "fontSize": null,
+                            "color": null,
+                            "link": null
+                          }
+                        }
+                      ],
+                      "text": "普通单元格"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

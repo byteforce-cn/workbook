@@ -1,7 +1,8 @@
 import { Fragment, forwardRef, useCallback, useEffect, useImperativeHandle, useRef } from "react";
-import { evaluateBooleanLike } from "./core/condition/evaluate";
+import { type ConditionContext, evaluateBooleanLike } from "./core/condition/evaluate";
 import type { WorkbookData, WorkbookViewDefinition } from "./core/types";
 import { DataProvider, useWorkbookData } from "./react/DataProvider";
+import { createFieldErrorChannel, FieldErrorChannelProvider, type FieldErrorInput } from "./react/fieldErrorChannel";
 import { runWorkbookHooks } from "./react/hooks/useWorkbookHooks";
 import { useWorkbookRuntime, WorkbookRuntimeProvider } from "./react/RuntimeProvider";
 import type { WorkbookPluginRegistry } from "./react/registry";
@@ -22,14 +23,14 @@ function VisibleViews({
   onSubmit?: (data: WorkbookData) => void | Promise<void>;
 }) {
   const { data } = useWorkbookData();
-  const { registry } = useWorkbookRuntime();
+  const { registry, conditionContext } = useWorkbookRuntime();
 
   const visibleViews = workbook.views.filter((view) => {
     if (activeViewId != null && view.id !== activeViewId) {
       return false;
     }
 
-    return evaluateBooleanLike(view.visible, data, registry, true);
+    return evaluateBooleanLike(view.visible, data, registry, true, undefined, conditionContext);
   });
 
   return (
@@ -121,6 +122,8 @@ export interface DocumentRendererProps {
   registry?: WorkbookPluginRegistry;
   locale?: string;
   fallbackLocale?: string;
+  /** Read-only permissions/user/tenant context for `$context.` conditions. */
+  conditionContext?: ConditionContext;
   activeViewId?: string;
   /** Data for an uncontrolled document (snapshot taken on mount). */
   initialData?: WorkbookData;
@@ -160,10 +163,30 @@ export interface DocumentRendererHandle {
    * renders its own action bar (`config.hideActions`).
    */
   submit(): Promise<boolean>;
+  /**
+   * Attach an error to one field (e.g. the server rejected a value with a 409).
+   * The active form merges it with its own validation errors and focuses the
+   * field. Nested paths accept dot/bracket notation (`lines[0].amount`).
+   */
+  setFieldErrors(fieldPath: string, message: FieldErrorInput): void;
+  /** Clear one field's externally supplied errors, or every field's when omitted. */
+  clearFieldErrors(fieldPath?: string): void;
 }
 
 export const DocumentRenderer = forwardRef<DocumentRendererHandle, DocumentRendererProps>(function DocumentRenderer(
-  { workbook, registry, locale, fallbackLocale, activeViewId, initialData, data, onDataChange, onSubmit, validate },
+  {
+    workbook,
+    registry,
+    locale,
+    fallbackLocale,
+    conditionContext,
+    activeViewId,
+    initialData,
+    data,
+    onDataChange,
+    onSubmit,
+    validate,
+  },
   ref,
 ) {
   const validation = (validate ?? validateWorkbookDocument)(workbook);
@@ -176,30 +199,41 @@ export const DocumentRenderer = forwardRef<DocumentRendererHandle, DocumentRende
   const isControlled = data !== undefined;
 
   const submitChannel = useRef(createSubmitChannel()).current;
+  const fieldErrorChannel = useRef(createFieldErrorChannel()).current;
 
   useImperativeHandle(
     ref,
     () => ({
       submit: async () => (await submitChannel.current?.()) ?? false,
+      setFieldErrors: (fieldPath, message) => fieldErrorChannel.setFieldErrors(fieldPath, message),
+      clearFieldErrors: (fieldPath) => fieldErrorChannel.clearFieldErrors(fieldPath),
     }),
-    [submitChannel],
+    [fieldErrorChannel, submitChannel],
   );
 
   return (
-    <WorkbookRuntimeProvider workbook={workbook} registry={registry} locale={locale} fallbackLocale={fallbackLocale}>
+    <WorkbookRuntimeProvider
+      workbook={workbook}
+      registry={registry}
+      locale={locale}
+      fallbackLocale={fallbackLocale}
+      conditionContext={conditionContext}
+    >
       <SubmitChannelProvider value={submitChannel}>
-        <DataProvider
-          initialData={initialData ?? (workbook.data as WorkbookData)}
-          data={data}
-          onDataChange={isControlled ? onDataChange : undefined}
-        >
-          <WorkbookSurface
-            workbook={workbook}
-            activeViewId={activeViewId}
-            onDataChange={isControlled ? undefined : onDataChange}
-            onSubmit={onSubmit}
-          />
-        </DataProvider>
+        <FieldErrorChannelProvider value={fieldErrorChannel}>
+          <DataProvider
+            initialData={initialData ?? (workbook.data as WorkbookData)}
+            data={data}
+            onDataChange={isControlled ? onDataChange : undefined}
+          >
+            <WorkbookSurface
+              workbook={workbook}
+              activeViewId={activeViewId}
+              onDataChange={isControlled ? undefined : onDataChange}
+              onSubmit={onSubmit}
+            />
+          </DataProvider>
+        </FieldErrorChannelProvider>
       </SubmitChannelProvider>
     </WorkbookRuntimeProvider>
   );

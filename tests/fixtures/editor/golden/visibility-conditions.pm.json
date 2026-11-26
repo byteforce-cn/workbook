@@ -1,0 +1,237 @@
+{
+  "type": "doc",
+  "content": [
+    {
+      "type": "wbParagraph",
+      "attrs": {
+        "style": null,
+        "visible": {
+          "op": "eq",
+          "path": "customer.name",
+          "value": "Alice"
+        },
+        "alignment": null,
+        "indent": null,
+        "spaceBefore": null,
+        "spaceAfter": null,
+        "lineHeight": null,
+        "comment": null,
+        "renderHints": null
+      },
+      "content": [
+        {
+          "type": "text",
+          "marks": [
+            {
+              "type": "wbText",
+              "attrs": {
+                "style": null,
+                "fontWeight": null,
+                "fontStyle": null,
+                "textDecoration": null,
+                "fontFamily": null,
+                "fontSize": null,
+                "color": null,
+                "link": null
+              }
+            }
+          ],
+          "text": "eq"
+        }
+      ]
+    },
+    {
+      "type": "wbTable",
+      "attrs": {
+        "style": null,
+        "visible": {
+          "op": "and",
+          "conditions": [
+            {
+              "op": "eq",
+              "path": "customer.name",
+              "value": "Alice"
+            },
+            {
+              "op": "gt",
+              "path": "total",
+              "value": 10
+            }
+          ]
+        },
+        "width": null,
+        "border": null,
+        "fill": null,
+        "comment": null,
+        "renderHints": null
+      },
+      "content": [
+        {
+          "type": "wbTableColgroup",
+          "attrs": {
+            "widths": ["50%", "50%"]
+          }
+        },
+        {
+          "type": "wbTableRow",
+          "attrs": {
+            "height": null
+          },
+          "content": [
+            {
+              "type": "wbTableCell",
+              "attrs": {
+                "colSpan": null,
+                "rowSpan": null,
+                "style": null,
+                "width": null,
+                "verticalAlign": null,
+                "comment": null
+              },
+              "content": [
+                {
+                  "type": "wbParagraph",
+                  "attrs": {
+                    "style": null,
+                    "visible": null,
+                    "alignment": null,
+                    "indent": null,
+                    "spaceBefore": null,
+                    "spaceAfter": null,
+                    "lineHeight": null,
+                    "comment": null,
+                    "renderHints": null
+                  },
+                  "content": [
+                    {
+                      "type": "text",
+                      "marks": [
+                        {
+                          "type": "wbText",
+                          "attrs": {
+                            "style": null,
+                            "fontWeight": null,
+                            "fontStyle": null,
+                            "textDecoration": null,
+                            "fontFamily": null,
+                            "fontSize": null,
+                            "color": null,
+                            "link": null
+                          }
+                        }
+                      ],
+                      "text": "a"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "wbTableCell",
+              "attrs": {
+                "colSpan": null,
+                "rowSpan": null,
+                "style": null,
+                "width": null,
+                "verticalAlign": null,
+                "comment": null
+              },
+              "content": [
+                {
+                  "type": "wbParagraph",
+                  "attrs": {
+                    "style": null,
+                    "visible": null,
+                    "alignment": null,
+                    "indent": null,
+                    "spaceBefore": null,
+                    "spaceAfter": null,
+                    "lineHeight": null,
+                    "comment": null,
+                    "renderHints": null
+                  },
+                  "content": [
+                    {
+                      "type": "text",
+                      "marks": [
+                        {
+                          "type": "wbText",
+                          "attrs": {
+                            "style": null,
+                            "fontWeight": null,
+                            "fontStyle": null,
+                            "textDecoration": null,
+                            "fontFamily": null,
+                            "fontSize": null,
+                            "color": null,
+                            "link": null
+                          }
+                        }
+                      ],
+                      "text": "b"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "wbList",
+      "attrs": {
+        "style": null,
+        "visible": false,
+        "listType": null,
+        "bulletChar": null,
+        "numberFormat": null,
+        "start": null,
+        "comment": null,
+        "renderHints": null
+      },
+      "content": [
+        {
+          "type": "wbListItem",
+          "content": [
+            {
+              "type": "wbParagraph",
+              "attrs": {
+                "style": null,
+                "visible": null,
+                "alignment": null,
+                "indent": null,
+                "spaceBefore": null,
+                "spaceAfter": null,
+                "lineHeight": null,
+                "comment": null,
+                "renderHints": null
+              },
+              "content": [
+                {
+                  "type": "text",
+                  "marks": [
+                    {
+                      "type": "wbText",
+                      "attrs": {
+                        "style": null,
+                        "fontWeight": null,
+                        "fontStyle": null,
+                        "textDecoration": null,
+                        "fontFamily": null,
+                        "fontSize": null,
+                        "color": null,
+                        "link": null
+                      }
+                    }
+                  ],
+                  "text": "hidden"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

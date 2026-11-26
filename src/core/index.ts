@@ -57,12 +57,35 @@ export { resolveBuiltInText, resolveI18nText, WORKBOOK_I18N_KEYS } from "./i18n/
 export type {
   FetchOptionPageRequest,
   FetchOptionPageResult,
+  OptionCacheInvalidation,
 } from "./options/fetchOptions";
 // Options
 export {
   clearOptionCache,
   fetchOptions,
 } from "./options/fetchOptions";
+// Persistence / integrity
+export {
+  canonicalBytes,
+  canonicalize,
+} from "./persist/canonical";
+export type { ContentHashOptions, ContentKey } from "./persist/hash";
+export {
+  contentHash,
+  contentPayload,
+  DEFAULT_CONTENT_KEYS,
+  sha256Hex,
+} from "./persist/hash";
+export type { MigrateWorkbookOptions, MigrateWorkbookResult, WorkbookMigration } from "./persist/migrate";
+export {
+  CURRENT_SCHEMA_VERSION,
+  clearMigrations,
+  migrateWorkbook,
+  registerMigration,
+  supportedSchemaVersions,
+} from "./persist/migrate";
+export type { DocumentSignature, DocumentSigner, DocumentVerifier } from "./persist/signature";
+export { signDocument, verifyDocument } from "./persist/signature";
 export type {
   CorePluginSlots,
   EnhancedPluginRegistry,

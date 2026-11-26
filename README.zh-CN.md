@@ -95,7 +95,27 @@ import "@byteforce/workbook/styles.css";
 | `@byteforce/workbook/quick` | 零配置 `SimpleForm` |
 | `@byteforce/workbook/react-native` | React Native 渲染（**实验特性**） |
 | `@byteforce/workbook/adapters/zod` | Zod 校验适配器（可选） |
+| `@byteforce/workbook/editor` | 可选文档编辑器（Tiptap/ProseMirror peer 依赖） |
 | `@byteforce/workbook/styles.css` | 默认主题 |
+
+## 文档编辑器
+
+`@byteforce/workbook/editor` 只编辑页面视图的流式内容，持久化对象仍是
+`WorkbookDefinition`。Tiptap/ProseMirror 是可选且精确锁定的 peer 依赖，不会进入渲染入口。
+
+```bash
+npm install @tiptap/core@3.35.0 @tiptap/pm@3.35.0 @tiptap/react@3.35.0 @tiptap/extension-text@3.35.0
+```
+
+```tsx
+import { DocumentEditor } from "@byteforce/workbook/editor";
+
+<DocumentEditor workbook={workbook} onSave={(next) => persist(next)} />;
+```
+
+编辑态不是打印输出：预览与 PDF 使用 workbook 渲染器。详见
+[文档编辑器指南](./docs-site/zh-CN/guides/document-editor.md) 与
+[完整性规则](./docs-site/zh-CN/guides/integrity.md)。
 
 ## 兼容性
 

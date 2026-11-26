@@ -67,6 +67,11 @@
       "import": "./dist/adapters/zod.js",
       "default": "./dist/adapters/zod.js"
     },
+    "./editor": {
+      "types": "./dist/editor.d.ts",
+      "import": "./dist/editor.js",
+      "default": "./dist/editor.js"
+    },
     "./schema": "./src/schema/bf-schema-v4.1.1.json",
     "./styles.css": "./src/styles/workbook-theme.css",
     "./package.json": "./package.json"
@@ -110,11 +115,27 @@
     "immer": "^11.0.0"
   },
   "peerDependencies": {
+    "@tiptap/core": "3.35.0",
+    "@tiptap/extension-text": "3.35.0",
+    "@tiptap/pm": "3.35.0",
+    "@tiptap/react": "3.35.0",
     "react": "^18.0.0 || ^19.0.0",
     "react-dom": "^18.0.0 || ^19.0.0",
     "zod": "^4.0.0"
   },
   "peerDependenciesMeta": {
+    "@tiptap/core": {
+      "optional": true
+    },
+    "@tiptap/extension-text": {
+      "optional": true
+    },
+    "@tiptap/pm": {
+      "optional": true
+    },
+    "@tiptap/react": {
+      "optional": true
+    },
     "react-dom": {
       "optional": true
     },
@@ -133,6 +154,10 @@
     "@storybook/react-vite": "10.6.1",
     "@testing-library/react": "16.3.3",
     "@testing-library/user-event": "14.6.7",
+    "@tiptap/core": "3.35.0",
+    "@tiptap/extension-text": "3.35.0",
+    "@tiptap/pm": "3.35.0",
+    "@tiptap/react": "3.35.0",
     "@types/react": "19.3.0",
     "@types/react-dom": "19.3.0",
     "@vitest/coverage-v8": "^4.1.11",

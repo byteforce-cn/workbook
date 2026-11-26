@@ -5,6 +5,7 @@
 
 import { createContext, type PropsWithChildren, useContext, useMemo } from "react";
 import { AssetLoader } from "../core/assets/assetLoader";
+import type { ConditionContext } from "../core/condition/evaluate";
 import type { WorkbookDefinition } from "../schema/generated-types";
 import { createStyleCatalogResolver } from "../styles/catalog";
 import { PluginRegistryContext, useOptionalPluginRegistry } from "./pluginRegistryContext";
@@ -19,6 +20,8 @@ export interface WorkbookRuntimeValue {
   registry: WorkbookPluginRegistry;
   assetLoader: AssetLoader;
   styleResolver: ReturnType<typeof createStyleCatalogResolver>;
+  /** Read-only host context for `$context.` condition paths. */
+  conditionContext: ConditionContext | undefined;
 }
 
 const WorkbookRuntimeContext = createContext<WorkbookRuntimeValue | null>(null);
@@ -28,6 +31,8 @@ export interface WorkbookRuntimeProviderProps extends PropsWithChildren {
   registry?: WorkbookPluginRegistry;
   locale?: string;
   fallbackLocale?: string;
+  /** Read-only permissions/user/tenant context for `$context.` conditions. */
+  conditionContext?: ConditionContext;
 }
 
 export function WorkbookRuntimeProvider({
@@ -36,6 +41,7 @@ export function WorkbookRuntimeProvider({
   registry: registryProp,
   locale,
   fallbackLocale = "en-US",
+  conditionContext,
 }: WorkbookRuntimeProviderProps) {
   const parentRegistry = useOptionalPluginRegistry();
 
@@ -50,9 +56,11 @@ export function WorkbookRuntimeProvider({
       hooks: workbook.hooks,
       registry,
       assetLoader: new AssetLoader(workbook.assets ?? {}),
-      styleResolver: createStyleCatalogResolver(workbook.styles, registry),
+      styleResolver: createStyleCatalogResolver(workbook.styles, registry, conditionContext),
+      conditionContext,
     }),
     [
+      conditionContext,
       fallbackLocale,
       locale,
       registry,

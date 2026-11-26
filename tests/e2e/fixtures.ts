@@ -38,6 +38,10 @@ export const workbookStoryIds = {
   deviceSheet: "workbook-device--responsive-sheet",
   deviceAuto: "workbook-device--auto-detect",
   rowFieldSpan: "workbook-layout--row-field-span",
+  documentEditorBasic: "workbook-documenteditor--basic",
+  documentEditorTable: "workbook-documenteditor--table",
+  documentEditorBindings: "workbook-documenteditor--bindings",
+  documentEditorOutOfFlow: "workbook-documenteditor--out-of-flow",
 } as const;
 
 export function storyUrl(id: string) {

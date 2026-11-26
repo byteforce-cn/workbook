@@ -1,0 +1,73 @@
+{
+  "kind": "workbook",
+  "schemaVersion": "4.1.1",
+  "locale": "zh-CN",
+  "data": {
+    "customer": {
+      "name": "Alice"
+    }
+  },
+  "views": [
+    {
+      "type": "page",
+      "id": "list-bullet-nested",
+      "label": "页面 conformance",
+      "pageSettings": {
+        "width": 595,
+        "height": 842,
+        "marginTop": 72,
+        "marginLeft": 72,
+        "marginRight": 72,
+        "marginBottom": 72
+      },
+      "content": [
+        {
+          "type": "list",
+          "listType": "bullet",
+          "bulletChar": "•",
+          "items": [
+            [
+              {
+                "type": "paragraph",
+                "runs": [
+                  {
+                    "type": "text",
+                    "text": "outer"
+                  }
+                ]
+              },
+              {
+                "type": "list",
+                "listType": "bullet",
+                "items": [
+                  [
+                    {
+                      "type": "paragraph",
+                      "runs": [
+                        {
+                          "type": "text",
+                          "text": "inner"
+                        }
+                      ]
+                    }
+                  ]
+                ]
+              }
+            ],
+            [
+              {
+                "type": "paragraph",
+                "runs": [
+                  {
+                    "type": "text",
+                    "text": "second"
+                  }
+                ]
+              }
+            ]
+          ]
+        }
+      ]
+    }
+  ]
+}

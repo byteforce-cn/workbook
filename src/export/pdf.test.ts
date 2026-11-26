@@ -1,6 +1,8 @@
 import { describe, expect, it } from "vitest";
 
 import type { PageViewDefinition } from "../core/types";
+import { fromProseMirror } from "../editor/codec/fromProseMirror";
+import { toProseMirror } from "../editor/codec/toProseMirror";
 import { createWorkbookPdfFromPageView } from "./pdf";
 
 const pageView: PageViewDefinition = {
@@ -50,6 +52,17 @@ describe("workbook binary pdf export", () => {
     expect(text).toContain(`/Count ${result.pageCount}`);
     expect(result.pageCount).toBeGreaterThan(1);
     expect(result.bytes.byteLength).toBeGreaterThan(800);
+  });
+
+  it("produces identical bytes after an editor round-trip", () => {
+    const { doc } = toProseMirror(pageView);
+    const roundTripped = fromProseMirror(doc as NonNullable<typeof doc>, pageView).view;
+
+    const original = createWorkbookPdfFromPageView(pageView);
+    const edited = createWorkbookPdfFromPageView(roundTripped);
+
+    expect(edited.pageCount).toBe(original.pageCount);
+    expect(edited.bytes).toEqual(original.bytes);
   });
 
   it("resolves bound text before writing PDF content streams", () => {

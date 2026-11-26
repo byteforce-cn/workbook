@@ -12,8 +12,25 @@
  *   - @byteforce/workbook/adapters/zod  — optional Zod validation adapter
  */
 
+export type { ConditionContext } from "./core/condition/evaluate";
 // ---- Core Re-exports (stable, documented) ----
 export { evaluateCondition } from "./core/condition/evaluate";
+export type { OptionCacheInvalidation } from "./core/options/fetchOptions";
+export { clearOptionCache } from "./core/options/fetchOptions";
+// ---- Persistence / integrity ----
+export { canonicalBytes, canonicalize } from "./core/persist/canonical";
+export type { ContentHashOptions, ContentKey } from "./core/persist/hash";
+export { contentHash, contentPayload, DEFAULT_CONTENT_KEYS, sha256Hex } from "./core/persist/hash";
+export type { MigrateWorkbookOptions, MigrateWorkbookResult, WorkbookMigration } from "./core/persist/migrate";
+export {
+  CURRENT_SCHEMA_VERSION,
+  clearMigrations,
+  migrateWorkbook,
+  registerMigration,
+  supportedSchemaVersions,
+} from "./core/persist/migrate";
+export type { DocumentSignature, DocumentSigner, DocumentVerifier } from "./core/persist/signature";
+export { signDocument, verifyDocument } from "./core/persist/signature";
 // ---- Security ----
 export { sanitizeHtml } from "./core/sanitize/sanitize";
 // ---- Public Types ----

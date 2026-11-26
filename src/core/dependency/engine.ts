@@ -10,7 +10,7 @@ import type {
   WorkbookData,
   WorkbookRowContext,
 } from "../../core/types";
-import { evaluateCondition } from "../condition/evaluate";
+import { type ConditionContext, evaluateCondition } from "../condition/evaluate";
 import type { CorePluginSlots } from "../registry/registry";
 
 function mergeDependencyEffect(
@@ -41,6 +41,7 @@ function resolveStaticDisabled(
   data: WorkbookData,
   registry: CorePluginSlots,
   rowContext?: WorkbookRowContext,
+  conditionContext?: ConditionContext,
 ): boolean {
   const staticDisabled = field.disabled;
   if (typeof staticDisabled === "boolean") {
@@ -49,7 +50,7 @@ function resolveStaticDisabled(
   if (staticDisabled == null) {
     return false;
   }
-  return evaluateCondition(staticDisabled, data, registry, rowContext);
+  return evaluateCondition(staticDisabled, data, registry, rowContext, conditionContext);
 }
 
 export function resolveFieldState(
@@ -57,11 +58,12 @@ export function resolveFieldState(
   data: WorkbookData,
   registry: CorePluginSlots,
   rowContext?: WorkbookRowContext,
+  conditionContext?: ConditionContext,
 ): ResolvedFieldState {
   const baseState: ResolvedFieldState = {
     visible: true,
     required: false,
-    disabled: resolveStaticDisabled(field, data, registry, rowContext),
+    disabled: resolveStaticDisabled(field, data, registry, rowContext, conditionContext),
     options: field.options,
     validations: [...(field.validations ?? [])],
     props: { ...(field.props ?? {}) },
@@ -69,7 +71,7 @@ export function resolveFieldState(
   };
 
   return (field.dependencies ?? []).reduce((currentState, dependency) => {
-    const matched = evaluateCondition(dependency.condition, data, registry, rowContext);
+    const matched = evaluateCondition(dependency.condition, data, registry, rowContext, conditionContext);
     return mergeDependencyEffect(currentState, dependency, matched);
   }, baseState);
 }

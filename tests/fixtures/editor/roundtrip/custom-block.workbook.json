@@ -1,0 +1,37 @@
+{
+  "kind": "workbook",
+  "schemaVersion": "4.1.1",
+  "locale": "zh-CN",
+  "data": {
+    "customer": {
+      "name": "Alice"
+    }
+  },
+  "views": [
+    {
+      "type": "page",
+      "id": "custom-block",
+      "label": "页面 conformance",
+      "pageSettings": {
+        "width": 595,
+        "height": 842,
+        "marginTop": 72,
+        "marginLeft": 72,
+        "marginRight": 72,
+        "marginBottom": 72
+      },
+      "content": [
+        {
+          "type": "custom",
+          "component": "app:flowStepper",
+          "props": {
+            "step": 2
+          },
+          "renderHints": {
+            "height": 160
+          }
+        }
+      ]
+    }
+  ]
+}

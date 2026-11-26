@@ -1,0 +1,53 @@
+{
+  "kind": "workbook",
+  "schemaVersion": "4.1.1",
+  "locale": "zh-CN",
+  "data": {
+    "customer": {
+      "name": "Alice"
+    }
+  },
+  "views": [
+    {
+      "type": "page",
+      "id": "binds-formats",
+      "label": "页面 conformance",
+      "pageSettings": {
+        "width": 595,
+        "height": 842,
+        "marginTop": 72,
+        "marginLeft": 72,
+        "marginRight": 72,
+        "marginBottom": 72
+      },
+      "content": [
+        {
+          "type": "paragraph",
+          "runs": [
+            {
+              "type": "text",
+              "bind": {
+                "path": "customer.name",
+                "format": "upper"
+              },
+              "style": "Emphasis"
+            },
+            {
+              "type": "text",
+              "text": " / "
+            },
+            {
+              "type": "text",
+              "bind": {
+                "path": "total",
+                "format": "json",
+                "placeholder": 0
+              },
+              "fontWeight": "bold"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -203,6 +203,53 @@ describe("fetchOptions remote sources", () => {
     });
   });
 
+  it("invalidates memory entries by business cacheKey", async () => {
+    const fetchMock = vi
+      .spyOn(globalThis, "fetch")
+      .mockImplementation(async () => createJsonResponse({ payload: { records: [{ id: "d1", name: "研发部" }] } }));
+    const registry = createPluginRegistry();
+    const source = {
+      type: "url",
+      endpoint: "https://workbook.example/api/departments",
+      cache: "memory",
+      cacheKey: "departments",
+      dataPath: "payload.records",
+      valueKey: "id",
+      labelKey: "name",
+    } as const;
+
+    await fetchOptions(source, {}, registry);
+    await fetchOptions(source, {}, registry);
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+
+    expect(clearOptionCache("memory", { key: "other" })).toBe(0);
+    expect(clearOptionCache("memory", { key: "departments" })).toBe(1);
+
+    await fetchOptions(source, {}, registry);
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+  });
+
+  it("invalidates by cacheKey prefix", async () => {
+    const fetchMock = vi
+      .spyOn(globalThis, "fetch")
+      .mockImplementation(async () => createJsonResponse({ payload: { records: [{ id: "d1", name: "研发部" }] } }));
+    const registry = createPluginRegistry();
+    const source = {
+      type: "url",
+      endpoint: "https://workbook.example/api/departments",
+      cache: "memory",
+      cacheKey: "hr:departments",
+      dataPath: "payload.records",
+      valueKey: "id",
+      labelKey: "name",
+    } as const;
+
+    await fetchOptions(source, {}, registry);
+    expect(clearOptionCache("memory", { prefix: "hr:" })).toBe(1);
+    await fetchOptions(source, {}, registry);
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+  });
+
   it("sends GraphQL query with variables, maps nested response data, and reuses session cache", async () => {
     const fetchMock = vi.spyOn(globalThis, "fetch").mockImplementation(async () =>
       createJsonResponse({

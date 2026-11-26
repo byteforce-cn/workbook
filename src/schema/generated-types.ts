@@ -174,6 +174,10 @@ export type OptionSource =
       dependsOn?: string[];
       fetchOnMount?: boolean;
       cache?: "none" | "memory" | "session";
+      /**
+       * Business key used by clearOptionCache to invalidate this source (e.g. 'departments').
+       */
+      cacheKey?: string;
       searchDebounce?: number;
     };
 /**
@@ -979,6 +983,7 @@ export interface FieldDefinition {
   options?: OptionSource;
   visible?: boolean | Condition;
   disabled?: boolean | Condition;
+  readOnly?: boolean;
   component?: string;
   props?: {
     [k: string]: unknown | undefined;

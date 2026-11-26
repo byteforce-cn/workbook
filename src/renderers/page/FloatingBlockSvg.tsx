@@ -7,25 +7,14 @@ import { TableSvg } from "./TableSvg";
 
 export interface FloatingBlockSvgProps {
   block: Extract<PageBlockDefinition, { type: "floating" }>;
-  pageWidth: number;
-  pageHeight: number;
+  x: number;
+  y: number;
+  width: number;
+  height: number;
   defaults?: PageTextDefaults;
 }
 
-function resolveMeasurement(value: number | string, size: number): number {
-  if (typeof value === "number") {
-    return value;
-  }
-
-  return (Number(value.replace("%", "")) / 100) * size;
-}
-
-export function FloatingBlockSvg({ block, pageWidth, pageHeight, defaults }: FloatingBlockSvgProps) {
-  const x = resolveMeasurement(block.layout.x, pageWidth);
-  const y = resolveMeasurement(block.layout.y, pageHeight);
-  const width = resolveMeasurement(block.layout.width, pageWidth);
-  const height = resolveMeasurement(block.layout.height, pageHeight);
-
+export function FloatingBlockSvg({ block, x, y, width, height, defaults }: FloatingBlockSvgProps) {
   switch (block.content.type) {
     case "paragraph":
       return <ParagraphSvg block={block.content} x={x} y={y} width={width} height={height} defaults={defaults} />;

@@ -30,6 +30,35 @@ function evalOp(op: WorkbookConditionDefinition["op"], path: string, value?: unk
   return evaluateCondition({ op, path, value }, data, registry);
 }
 
+describe("condition context", () => {
+  it("resolves $context paths without touching the data tree", () => {
+    const context = { user: { role: "admin" }, tenant: "acme" };
+    expect(
+      evaluateCondition(
+        { op: "eq", path: "$context.user.role", value: "admin" },
+        { user: { role: "viewer" } },
+        registry,
+        undefined,
+        context,
+      ),
+    ).toBe(true);
+    expect(
+      evaluateCondition({ op: "eq", path: "$context.tenant", value: "acme" }, {}, registry, undefined, context),
+    ).toBe(true);
+    expect(
+      evaluateCondition({ op: "eq", path: "$context.missing", value: "x" }, {}, registry, undefined, context),
+    ).toBe(false);
+  });
+
+  it("passes context to custom condition plugins", () => {
+    const customRegistry = emptyRegistry();
+    customRegistry.condition.set("canEdit", ({ context }) => context?.user !== undefined);
+    expect(
+      evaluateCondition({ op: "custom", name: "canEdit" }, {}, customRegistry, undefined, { user: { role: "admin" } }),
+    ).toBe(true);
+  });
+});
+
 describe("evaluateCondition", () => {
   describe("eq", () => {
     it("matches equal values", () => {

@@ -35,6 +35,8 @@ export interface WorkbookConditionContext {
   condition: WorkbookConditionDefinition;
   data: WorkbookData;
   rowContext?: WorkbookRowContext;
+  /** Read-only host context exposed to conditions via `$context.` paths. */
+  context?: Record<string, unknown>;
 }
 
 export interface WorkbookOptionSourceContext {

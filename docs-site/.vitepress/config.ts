@@ -76,6 +76,8 @@ export default defineConfig({
                     text: "Custom Option Source",
                     link: "/guides/custom-option-source",
                   },
+                  { text: "Document Editor", link: "/guides/document-editor" },
+                  { text: "Integrity", link: "/guides/integrity" },
                   { text: "Print & Export", link: "/guides/print-and-export" },
                   { text: "Internationalization", link: "/guides/i18n" },
                   { text: "Theming", link: "/guides/theming" },

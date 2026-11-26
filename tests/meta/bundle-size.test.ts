@@ -41,6 +41,9 @@ const THRESHOLDS: Record<string, { rawMaxKb: number; gzipMaxKb: number }> = {
   "core.js": { rawMaxKb: 40, gzipMaxKb: 15 },
   "react.js": { rawMaxKb: 20, gzipMaxKb: 8 },
   "quick.js": { rawMaxKb: 15, gzipMaxKb: 5 },
+  // Measured 2026-11-26: raw 95.1 KB / gzip 20.1 KB with Tiptap externalized.
+  // Headroom covers editor UI growth without letting the main entries absorb it.
+  "editor.js": { rawMaxKb: 250, gzipMaxKb: 60 },
 };
 
 describe("D7: Bundle size analysis", () => {

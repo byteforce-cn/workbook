@@ -1,8 +1,9 @@
 import { resolveBindValue } from "../../core/bind/resolveBind";
-import { evaluateBooleanLike } from "../../core/condition/evaluate";
+import { type ConditionContext, evaluateBooleanLike } from "../../core/condition/evaluate";
 import type { PageBlockDefinition, PageViewDefinition, WorkbookData, WorkbookRowContext } from "../../core/types";
 import { pluginRegistry, type WorkbookPluginRegistry } from "../../react/registry";
 import type { createStyleCatalogResolver } from "../../styles/catalog";
+import { resolveFloatingRect } from "./floatingLayout";
 
 const BLOCK_GAP = 16;
 const DEFAULT_FONT_SIZE = 14;
@@ -28,12 +29,14 @@ export interface PageLayoutOptions {
   data?: WorkbookData;
   registry?: WorkbookPluginRegistry;
   styleResolver?: PageLayoutStyleResolver;
+  conditionContext?: ConditionContext;
 }
 
 interface ResolvedPageLayoutOptions {
   data: WorkbookData;
   registry: WorkbookPluginRegistry;
   styleResolver?: PageLayoutStyleResolver;
+  conditionContext?: ConditionContext;
 }
 
 export interface PageLayoutBlock<TBlock extends PageBlockDefinition = PageBlockDefinition> {
@@ -74,6 +77,7 @@ function resolveOptions(options: PageLayoutOptions): ResolvedPageLayoutOptions {
     data: options.data ?? {},
     registry: options.registry ?? pluginRegistry,
     styleResolver: options.styleResolver,
+    conditionContext: options.conditionContext,
   };
 }
 
@@ -689,10 +693,7 @@ function attachOverlayBlocks(view: PageViewDefinition, pages: PageLayoutPage[]) 
     }));
     page.floatingBlocks = floatingBlocks.map((block) => ({
       block,
-      x: 0,
-      y: 0,
-      width: page.contentWidth,
-      height: page.height,
+      ...resolveFloatingRect(block, page.width, page.height),
     }));
   }
 }
@@ -742,6 +743,8 @@ export function layoutPageView(view: PageViewDefinition, options: PageLayoutOpti
         resolvedOptions.data,
         resolvedOptions.registry,
         true,
+        undefined,
+        resolvedOptions.conditionContext,
       )
     ) {
       continue;

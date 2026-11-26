@@ -778,3 +778,295 @@
     min-height: var(--bf-control-height-mobile, 44px);
   }
 }
+
+/* ==========================================================================
+ * Document editor (`@byteforce/workbook/editor`)
+ *
+ * Load this stylesheet alongside the editor entry; editing is HTML while the
+ * print preview remains workbook's SVG renderer, so small layout differences
+ * are expected and documented in docs-site/guides/document-editor.md.
+ * ========================================================================== */
+
+.bf-editor {
+  display: grid;
+  gap: 12px;
+  color: var(--bf-text, #172033);
+  font-family: Inter, "Noto Sans SC", ui-sans-serif, system-ui, sans-serif;
+}
+
+.bf-editor-header,
+.bf-editor-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border: 1px solid var(--bf-border-subtle, #d7dee9);
+  border-radius: var(--bf-radius, 6px);
+  background: var(--bf-surface, #ffffff);
+}
+
+.bf-editor-mode-switch {
+  display: inline-flex;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.bf-editor-mode-switch legend,
+.bf-editor-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.bf-editor button,
+.bf-editor-toolbar-button {
+  min-height: 30px;
+  padding: 4px 9px;
+  border: 1px solid var(--bf-button-border, #cbd5e1);
+  border-radius: var(--bf-radius, 6px);
+  background: var(--bf-button-bg, #ffffff);
+  color: var(--bf-button-color, #172033);
+  cursor: pointer;
+}
+
+.bf-editor button[aria-pressed="true"] {
+  border-color: var(--bf-primary, #2563eb);
+  background: var(--bf-primary-soft, #eff6ff);
+  color: var(--bf-primary, #1d4ed8);
+}
+
+.bf-editor button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.bf-editor button:focus-visible,
+.bf-editor input:focus-visible,
+.bf-editor select:focus-visible,
+.bf-editor [contenteditable]:focus-visible {
+  outline: 2px solid var(--bf-focus-ring, #2563eb);
+  outline-offset: 2px;
+}
+
+.bf-editor-toolbar-field {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  color: var(--bf-label-color, #334155);
+}
+
+.bf-editor-toolbar-field input,
+.bf-editor-toolbar-field select,
+.bf-editor-panel input,
+.bf-editor-panel select {
+  min-height: 28px;
+  padding: 2px 6px;
+  border: 1px solid var(--bf-field-border, #cbd5e1);
+  border-radius: var(--bf-field-radius, 6px);
+  background: var(--bf-field-bg, #ffffff);
+  color: var(--bf-text, #172033);
+}
+
+.bf-editor-body {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(260px, 340px);
+  gap: 16px;
+  align-items: start;
+}
+
+.bf-editor-main {
+  min-width: 0;
+}
+
+.bf-editor-canvas {
+  margin-top: 10px;
+  padding: 32px;
+  border: 1px solid var(--bf-border-subtle, #d7dee9);
+  border-radius: var(--bf-radius-lg, 10px);
+  background: #ffffff;
+  box-shadow: var(--bf-shadow-page, 0 8px 30px rgba(15, 23, 42, 0.08));
+}
+
+.bf-editor-content {
+  min-height: 320px;
+  outline: none;
+}
+
+.bf-editor-content p {
+  margin: 0 0 8px;
+}
+
+.bf-editor-content table {
+  border-collapse: collapse;
+  width: 100%;
+  table-layout: fixed;
+}
+
+.bf-editor-content td {
+  border: 1px solid #cbd5e1;
+  padding: 6px 8px;
+  vertical-align: top;
+}
+
+.bf-editor-block--conditional {
+  position: relative;
+}
+
+.bf-editor-block--conditional::before {
+  content: "条件";
+  position: absolute;
+  top: -8px;
+  right: 0;
+  padding: 0 4px;
+  border-radius: 4px;
+  background: #eff6ff;
+  color: #1d4ed8;
+  font-size: 10px;
+  line-height: 16px;
+}
+
+.bf-editor-block--condition-hidden {
+  outline: 1px dashed #f59e0b;
+  opacity: 0.45;
+}
+
+.bf-editor-block--conditional-style::after {
+  content: "条件样式（只读）";
+  position: absolute;
+  top: -8px;
+  left: 0;
+  padding: 0 4px;
+  border-radius: 4px;
+  background: #fef3c7;
+  color: #92400e;
+  font-size: 10px;
+  line-height: 16px;
+}
+
+.bf-editor-bind {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  align-items: center;
+  max-width: 100%;
+}
+
+.bf-editor-bind-chip {
+  border-style: dashed !important;
+  border-color: var(--bf-primary, #2563eb) !important;
+  color: var(--bf-primary, #1d4ed8) !important;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 12px;
+}
+
+.bf-editor-bind-preview {
+  color: var(--bf-text-muted, #64748b);
+  font-size: 11px;
+}
+
+.bf-editor-bind-popover {
+  display: grid;
+  gap: 6px;
+  padding: 8px;
+  border: 1px solid var(--bf-border-strong, #94a3b8);
+  border-radius: var(--bf-radius, 6px);
+  background: #ffffff;
+  box-shadow: var(--bf-shadow-card, 0 4px 16px rgba(15, 23, 42, 0.16));
+  font-size: 12px;
+}
+
+.bf-editor-bind-actions {
+  display: flex;
+  gap: 6px;
+}
+
+.bf-editor-panels {
+  display: grid;
+  gap: 12px;
+}
+
+.bf-editor-panel {
+  display: grid;
+  gap: 8px;
+  padding: 12px;
+  border: 1px solid var(--bf-border-subtle, #d7dee9);
+  border-radius: var(--bf-radius-lg, 10px);
+  background: var(--bf-surface, #ffffff);
+}
+
+.bf-editor-panel h3 {
+  margin: 0;
+  font-size: 14px;
+}
+
+.bf-editor-panel-item {
+  display: grid;
+  gap: 6px;
+  padding: 8px;
+  border: 1px dashed #d7dee9;
+  border-radius: var(--bf-radius, 6px);
+}
+
+.bf-editor-panel-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.bf-editor-flow {
+  min-height: 44px;
+  padding: 6px 8px;
+  border: 1px solid var(--bf-field-border, #cbd5e1);
+  border-radius: var(--bf-field-radius, 6px);
+}
+
+.bf-editor-status,
+.bf-editor-preview-notice {
+  color: var(--bf-text-muted, #64748b);
+  font-size: 12px;
+}
+
+.bf-editor-error {
+  margin: 0;
+  padding: 8px 10px;
+  border: 1px solid var(--bf-error-border, #fecaca);
+  border-radius: var(--bf-radius, 6px);
+  background: var(--bf-error-bg, #fef2f2);
+  color: var(--bf-error-color, #b91c1c);
+}
+
+.bf-editor-preview {
+  overflow: auto;
+  padding: 16px;
+  border: 1px solid var(--bf-border-subtle, #d7dee9);
+  border-radius: var(--bf-radius-lg, 10px);
+  background: #eef3f8;
+}
+
+.bf-editor-floating-canvas {
+  display: grid;
+  gap: 12px;
+  padding: 8px;
+  overflow: auto;
+  background: #eef3f8;
+}
+
+.bf-editor-floating-handle {
+  display: inline-block;
+  padding: 0 4px;
+  font-size: 11px;
+  color: #1d4ed8;
+}
+
+@media (max-width: 900px) {
+  .bf-editor-body {
+    grid-template-columns: 1fr;
+  }
+}
