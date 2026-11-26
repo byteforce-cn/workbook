@@ -53,6 +53,7 @@ describe("floating geometry", () => {
   it("parses measurements and rejects invalid input", () => {
     expect(parseMeasurement("30%")).toBe("30%");
     expect(parseMeasurement("12.5")).toBe(12.5);
+    expect(parseMeasurement("0")).toBe(0);
     expect(parseMeasurement("-1")).toBeNull();
     expect(parseMeasurement("abc")).toBeNull();
   });

@@ -86,7 +86,7 @@ export function parseMeasurement(raw: string): Measurement | null {
   }
 
   const numeric = Number(trimmed);
-  return Number.isFinite(numeric) && numeric > 0 ? numeric : null;
+  return Number.isFinite(numeric) && numeric >= 0 ? numeric : null;
 }
 
 export function formatMeasurement(value: Measurement): string {
