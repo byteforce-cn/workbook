@@ -227,7 +227,11 @@ export function Toolbar({ editor, styles, simulateConditions, onSimulateConditio
           clearTextFormatting(editor);
         }}
       >
-        Tx
+        {/* 用图标而不是 "Tx"：字母会成为可见文本，与 aria-label「清除直接格式」对不上。 */}
+        <svg aria-hidden="true" width="14" height="14" viewBox="0 0 14 14" focusable="false">
+          <path d="M2.5 2.5h9M7 2.5v7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+          <path d="M3.5 12.5l7-7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+        </svg>
       </ToolbarButton>
 
       {(["left", "center", "right", "justify"] as const).map((alignment) => (

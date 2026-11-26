@@ -123,6 +123,10 @@ export function StoryShell({
               查看示例代码
             </summary>
             <pre
+              // 可滚动的代码块需要键盘可达（axe: scrollable-region-focusable）
+              tabIndex={0}
+              role="region"
+              aria-label="示例代码"
               style={{
                 margin: "10px 0 0",
                 overflow: "auto",
@@ -184,6 +188,10 @@ export function StoryShell({
 export function CodeBlock({ code, maxHeight = "420px" }: { code: string; maxHeight?: string }) {
   return (
     <pre
+      // 可滚动的代码块需要键盘可达（axe: scrollable-region-focusable）
+      tabIndex={0}
+      role="region"
+      aria-label="示例代码"
       style={{
         margin: 0,
         overflow: "auto",

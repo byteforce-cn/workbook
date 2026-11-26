@@ -426,6 +426,10 @@ export function SheetView({ view, embedded = false, maxWidth, maxHeight }: Sheet
         isVirtualized ? (
           <div
             data-testid="bf-sheet-scroll-viewport"
+            // Scrollable viewport: keyboard users must be able to scroll it (axe: scrollable-region-focusable).
+            tabIndex={0}
+            role="region"
+            aria-label={`${view.label ?? view.name ?? "Sheet"} 数据区`}
             style={{
               width: resolvedViewportWidth,
               maxWidth: "100%",
@@ -562,6 +566,10 @@ export function SheetView({ view, embedded = false, maxWidth, maxHeight }: Sheet
 
           <div
             data-testid="bf-sheet-pane-body"
+            // Scrollable pane: keyboard users must be able to scroll it (axe: scrollable-region-focusable).
+            tabIndex={0}
+            role="region"
+            aria-label={`${view.label ?? view.name ?? "Sheet"} 数据区`}
             style={{
               position: "absolute",
               left: fittedLayout.frozenWidth,

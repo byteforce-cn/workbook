@@ -9,5 +9,8 @@
  * `testCount` counts top-level `test(...)` calls inside them.
  */
 export const storyCount = 48;
-export const specCount = 14;
-export const testCount = 50;
+export const specCount = 15;
+export const testCount = 53;
+
+/** Number of autodocs pages (`--docs` entries) in the Storybook index. */
+export const docPageCount = 16;

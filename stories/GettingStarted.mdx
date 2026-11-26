@@ -1,6 +1,6 @@
 import { Meta } from "@storybook/addon-docs/blocks";
 
-import { specCount, storyCount, testCount } from "./storybookStats";
+import { docPageCount, specCount, storyCount, testCount } from "./storybookStats";
 
 <Meta title="Getting Started" />
 
@@ -11,7 +11,7 @@ import { specCount, storyCount, testCount } from "./storybookStats";
 
 本 Storybook 是给 **开发者** 与 **使用者** 建立生产落地信心的入口。使用 `StoryShell` 包装的
 story 会附带**可复制的示例代码**与**实时数据树**；没有包装的 story（如 Quick Start 的 API 示例）
-只展示运行时行为。无障碍检查目前依赖 Storybook 的 Accessibility 面板手动运行，尚未纳入 CI 门禁。
+只展示运行时行为。无障碍由 e2e 里的 axe 扫描守着（3 个核心 story + 全部 docs 页）。
 
 ---
 
@@ -68,7 +68,7 @@ export function OrderForm() {
 
 - ✅ **能力覆盖**：{storyCount} 个 story 覆盖 16 个能力域（form / page / sheet / editor / runtime / plugins）
 - ✅ **一致性容器**：`StoryShell` 统一提供标题、能力标签与示例代码面板
-- ⚠️ **无障碍**：可手动通过 Accessibility 面板运行 axe 规则；自动化门禁尚未接入
+- ✅ **无障碍**：3 个核心 story 与 {docPageCount} 个 docs 页在 e2e 中跑 axe（WCAG 2.0/2.1 A+AA），违规即失败
 - ✅ **e2e 守护**：{testCount} 条 Playwright 用例（{specCount} 个 spec）覆盖能力级 story，防止回归
 - ✅ **静态构建**：`pnpm build-storybook` 产出可部署的 `storybook-static/`
 
