@@ -1,4 +1,4 @@
-import { type RefObject, useMemo } from "react";
+import { useMemo } from "react";
 import type { PageViewDefinition, WorkbookData } from "../../core/types";
 import { DocumentRenderer } from "../../DocumentRenderer";
 import type { WorkbookPluginRegistry } from "../../react/registry";
@@ -16,7 +16,7 @@ export interface PreviewPaneProps {
   zoom: number;
   hidden?: boolean;
   /** Focus target for the edit ↔ preview switch. */
-  sectionRef?: RefObject<HTMLElement | null>;
+  sectionRef?: (element: HTMLElement | null) => void;
 }
 
 /**

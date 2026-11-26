@@ -133,6 +133,9 @@ function DocumentEditorInner({
   const [liveFlow, setLiveFlow] = useState<PageBlockDefinition[]>(initialFlow);
   const editorHostRef = useRef<HTMLDivElement | null>(null);
   const previewRef = useRef<HTMLElement | null>(null);
+  const setPreviewElement = useCallback((element: HTMLElement | null) => {
+    previewRef.current = element;
+  }, []);
   const scrollSnapshotRef = useRef<ScrollSnapshot | null>(null);
   const hasSwitchedRef = useRef(false);
 
@@ -387,7 +390,7 @@ function DocumentEditorInner({
               registry={registry}
               zoom={zoom}
               hidden={mode !== "preview"}
-              sectionRef={previewRef}
+              sectionRef={setPreviewElement}
             />
           ) : null}
 
